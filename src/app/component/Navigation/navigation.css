@@ -1,0 +1,73 @@
+.navigation {
+    width: 100%;
+    min-height: 5ch;
+    background-image: url("/assets/images/svg/bg_nav.svg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 2em;
+}
+
+.navigation_logo {
+    width: 100%;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    bottom: 0;
+    z-index: -1;
+}
+.navigation img {
+    width: 10em;
+    align-self: center;
+    margin-top: 1em;
+    position: relative;
+}
+
+.navigation-dropdown {
+    width: 1%;
+    height: auto;
+    margin-left: auto;
+    margin-right: 2em;
+    transition: width 0.5s ease; /* Smooth transition for width change */
+    position: relative;
+}
+
+.navigation-dropdown.open {
+    width: 10%;
+    height: auto;
+    margin-left: auto;
+    margin-right: 2em;
+    transition: all 0.5s ease; /* Smooth transition for width change */
+
+    position: relative;
+}
+
+.navigation-profile {
+    width: 2em;
+    height: 2em;
+    border-radius: 50%;
+    outline: 2px solid #fff;
+    cursor: pointer;
+}
+
+.navigation-dropdown_list {
+    height: 10px;
+    width: 100%;
+    background-color: red;
+
+    position: absolute;
+    margin-top: 1em;
+    transition: height 0.2s ease-in-out; /* Smooth transition for width change */
+}
+
+.navigation-dropdown_list.open {
+    width: 100%;
+    background-color: #fff;
+    height: 300px;
+
+    position: absolute;
+    margin-top: 1em;
+}

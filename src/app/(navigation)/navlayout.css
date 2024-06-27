@@ -1,0 +1,14 @@
+.nav-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content-wrapper {
+    flex-grow: 1;
+    overflow: auto; /* Ensures the content is scrollable if it overflows the viewport */
+}
+
+.navigation {
+    flex-shrink: 0; /* Prevents the navigation from shrinking */
+}

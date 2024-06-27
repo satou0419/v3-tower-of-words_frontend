@@ -1,0 +1,22 @@
+input {
+    outline: none;
+    font-size: 0.8em;
+}
+
+.input-box {
+    border: 1px solid var(--clr-gray);
+    border-radius: 5px;
+    color: var(--clr-gray_dark);
+
+    &::placeholder {
+        color: var(--clr-gray);
+    }
+}
+
+.input-line {
+    border: none;
+    border-bottom: 2px solid var(--clr-gray_dark);
+    background-color: transparent;
+    outline: none;
+    color: var(--clr-gray_dark);
+}
