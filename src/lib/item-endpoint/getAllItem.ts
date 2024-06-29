@@ -1,5 +1,6 @@
 import { useItemStore } from "@/store/itemStore";
 import BASE_URL from "@/util/baseUrl";
+import getUserInfo from "../user-endpoint/getUserInfo";
 
 const getAllItems = async () => {
     const setItems = useItemStore.getState().setItems; // Access setItems function from useItemStore
@@ -13,15 +14,16 @@ const getAllItems = async () => {
 
         // Map fetched data to items array and update Zustand store
         const items = data.map((item: any) => ({
-            itemID: item.itemId,
-            itemName: item.item_name,
-            imagePath: item.image_path,
-            itemDescription: item.item_description,
-            itemPrice: item.item_price,
+            itemID: item.itemID,
+            itemName: item.name,
+            imagePath: item.imagePath,
+            itemDescription: item.description,
+            itemPrice: item.price,
         }));
 
+        getUserInfo();
         setItems(items); // Update Zustand store with fetched items
-
+        console.log("Items: ", items);
         return items; // Return the fetched items if needed
     } catch (error) {
         console.error("Error fetching items:", error);

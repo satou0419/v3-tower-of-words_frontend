@@ -48,6 +48,9 @@
         border-bottom-left-radius: 15px;
     }
 
+    .tab-title:first-child:active {
+        border-left: 2px solid #666;
+    }
     .tab-title:first-child {
         border-left: 2px solid #666;
     }

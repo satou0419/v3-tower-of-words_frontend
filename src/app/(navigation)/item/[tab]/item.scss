@@ -1,0 +1,31 @@
+.item-wrapper {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.inventory_wrapper {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.inventory-item {
+    outline: 1px solid #000;
+    height: 90%;
+    width: 60%;
+    border-radius: 15px;
+}
+
+.inventory-item_detail {
+    outline: 1px solid #000;
+    height: 90%;
+    width: 35%;
+    border-radius: 15px;
+}

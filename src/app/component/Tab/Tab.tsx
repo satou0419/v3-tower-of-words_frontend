@@ -1,29 +1,31 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import "./tab.scss";
 
 interface TabProps {
     tabs: {
         title: string;
+        id: string;
         content: React.ReactNode;
     }[];
+    currentTab: string;
+    onTabChange: (tabId: string) => void;
 }
 
-const Tab: React.FC<TabProps> = ({ tabs }) => {
-    const [activeTab, setActiveTab] = useState(0);
-
+const Tab: React.FC<TabProps> = ({ tabs, currentTab, onTabChange }) => {
     useEffect(() => {
+        const activeIndex = tabs.findIndex((tab) => tab.id === currentTab);
+        if (activeIndex === -1) {
+            onTabChange(tabs[0].id); // Fallback to the first tab if no match is found
+        }
+
         const tabTitles = document.querySelectorAll(".tab-title");
         tabTitles.forEach((tab, index) => {
-            tab.classList.remove("tab-title-previous", "tab-title-next");
-            if (index === activeTab - 1) {
+            tab.classList.remove("tab-title-previous");
+            if (index === activeIndex - 1) {
                 tab.classList.add("tab-title-previous");
             }
-            if (index === activeTab + 1) {
-                tab.classList.add("tab-title-next");
-            }
         });
-    }, [activeTab]);
+    }, [currentTab, tabs, onTabChange]);
 
     return (
         <main className="tab-wrapper">
@@ -33,9 +35,9 @@ const Tab: React.FC<TabProps> = ({ tabs }) => {
                         <div
                             key={index}
                             className={`tab-title ${
-                                activeTab === index ? "active" : ""
+                                currentTab === tab.id ? "active" : ""
                             }`}
-                            onClick={() => setActiveTab(index)}
+                            onClick={() => onTabChange(tab.id)}
                         >
                             {tab.title}
                         </div>
@@ -47,7 +49,7 @@ const Tab: React.FC<TabProps> = ({ tabs }) => {
                         <div
                             key={index}
                             className={`tab-content ${
-                                activeTab === index ? "active" : ""
+                                currentTab === tab.id ? "active" : ""
                             }`}
                         >
                             {tab.content}

@@ -1,17 +1,42 @@
 "use client";
 import Tab from "@/app/component/Tab/Tab";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./setting.scss";
 import { InputLine } from "@/app/component/Input/Input";
 import { useAuthStore } from "@/store/authStore";
+import { useRouter, usePathname } from "next/navigation";
 
 export default function Setting() {
     const { username } = useAuthStore((state) => ({
         username: state.username,
     }));
+
+    const router = useRouter();
+    const pathname = usePathname();
+    const pathSegments = pathname.split("/");
+
+    const initialTab =
+        pathSegments.length > 2 ? pathSegments[2] : "personal-information";
+    const [activeTab, setActiveTab] = useState<string>(initialTab);
+
+    useEffect(() => {
+        const currentPathSegments = pathname.split("/");
+        const currentTab =
+            currentPathSegments.length > 2
+                ? currentPathSegments[2]
+                : "personal-information";
+        setActiveTab(currentTab);
+    }, [pathname]);
+
+    const handleTabChange = (tab: string) => {
+        setActiveTab(tab);
+        router.push(`/setting/${tab}`);
+    };
+
     const tabData = [
         {
             title: "Personal Information",
+            id: "personal-information",
             content: (
                 <section className="change-pass_wrapper">
                     <form className="change-pass_form">
@@ -31,9 +56,9 @@ export default function Setting() {
                 </section>
             ),
         },
-
         {
             title: "Change Password",
+            id: "change-password",
             content: (
                 <section className="change-pass_wrapper">
                     <form className="change-pass_form">
@@ -57,11 +82,35 @@ export default function Setting() {
                 </section>
             ),
         },
+        {
+            title: "Notification Settings",
+            id: "notification-settings",
+            content: (
+                <section className="notification-settings_wrapper">
+                    <form className="notification-settings_form">
+                        <h1>NOTIFICATION SETTINGS</h1>
+                        <div className="input-group">
+                            <label>
+                                <input type="checkbox" /> Email Notifications
+                            </label>
+                            <label>
+                                <input type="checkbox" /> SMS Notifications
+                            </label>
+                        </div>
+                        <button type="submit">Save Changes</button>
+                    </form>
+                </section>
+            ),
+        },
     ];
 
     return (
         <main className="setting-wrapper">
-            <Tab tabs={tabData} />
+            <Tab
+                tabs={tabData}
+                currentTab={activeTab}
+                onTabChange={handleTabChange}
+            />
         </main>
     );
 }

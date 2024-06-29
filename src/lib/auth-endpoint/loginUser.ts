@@ -1,6 +1,5 @@
 // src/lib/auth-endpoint/loginUser.ts
 import { useAuthStore } from "@/store/authStore";
-import useUserDetailsStore from "@/store/userDetailsStore";
 import BASE_URL from "@/util/baseUrl";
 import getAllItems from "../item-endpoint/getAllItem";
 
@@ -21,8 +20,8 @@ const loginUser = async (username: string, password: string) => {
 
     const data = await response.json();
     getAllItems();
-    setIsLoggedIn(true); // Update auth state
-    setUserID(data.userID);
+    setIsLoggedIn(data.data.isLoggedIn); // Update auth state
+    setUserID(data.data.userId);
     setUsername(data.username);
 
     return data; // Assuming the server responds with JSON data containing authentication details

@@ -16,28 +16,11 @@ export default function Home() {
                         rel="noopener noreferrer"
                     >
                         By{" "}
-                        <Image
-                            src="/assets/images/icon/ic-tab.ico"
-                            alt="Vercel Logo"
-                            className={styles.vercelLogo}
-                            width={100}
-                            height={24}
-                            priority
-                        />
                     </a>
                 </div>
             </div>
 
-            <div className={styles.center}>
-                <Image
-                    className={styles.logo}
-                    src="/assets/images/icon/ic-tab.ico"
-                    alt="Next.js Logo"
-                    width={180}
-                    height={37}
-                    priority
-                />
-            </div>
+            <div className={styles.center}></div>
 
             <div className={styles.grid}>
                 <a

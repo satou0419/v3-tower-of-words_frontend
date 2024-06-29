@@ -1,0 +1,70 @@
+.cardmode-container {
+    height: 100%;
+    width: 100%;
+}
+
+.cardmode-card {
+    height: 20em;
+    width: 13em;
+    border: 1px solid #666666;
+    border-radius: 25px;
+
+    box-shadow: var(--shadow-gray);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.cardmode-banner {
+    display: flex;
+    min-height: 40%;
+    max-height: 40%;
+
+    align-items: center;
+    position: relative;
+
+    img {
+        width: 100%;
+        bottom: 0;
+        position: absolute;
+    }
+}
+
+.cardmode-progress {
+    background-color: var(--clr-violet);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    flex-grow: 1;
+    gap: 1em;
+
+    h1 {
+        color: #fff;
+        font-size: 1.5em;
+    }
+    span {
+        color: #ffcd6c;
+        text-shadow: var(--glow-yellow);
+        font-size: 2em;
+    }
+}
+
+.cardmode-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 0.5em 0;
+    align-items: center;
+    text-align: center;
+    flex-grow: 1.5;
+    gap: 1em;
+
+    h1 {
+        font-size: 1.5em;
+    }
+
+    span {
+        font-size: 0.8em;
+    }
+}

@@ -15,6 +15,9 @@
 
     --clr-gray: #c1c1c1;
     --clr-gray_dark: #666666;
+
+    --shadow-gray: 10px 10px 5px 0px rgba(196, 196, 196, 0.75);
+    --glow-yellow: 0 0 10px #ffcd6c;
 }
 
 a {

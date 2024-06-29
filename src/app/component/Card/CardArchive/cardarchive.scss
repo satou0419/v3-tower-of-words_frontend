@@ -1,0 +1,102 @@
+.cardarchive-container {
+    height: 100%;
+    width: 100vw;
+
+    display: flex;
+
+    justify-content: center;
+}
+
+.cardarchive-card {
+    border: 1px solid #666666;
+    border-radius: 20px;
+    height: auto;
+    width: 70%;
+    max-width: 800px; /* Limit maximum width for larger screens */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.cardarchive-details_container {
+    display: flex;
+    width: 80%;
+}
+
+.cardarchive-banner {
+    background-color: #95a299;
+    border-radius: 10px;
+    margin: 0.5em;
+
+    height: 9em;
+    width: 9em;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .outer {
+        height: 90%;
+        width: 90%;
+        background-color: #666667;
+        border-radius: 10px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .inner {
+            height: 95%;
+            width: 95%;
+            border-radius: 10px;
+
+            background: linear-gradient(
+                to bottom left,
+                #b36dea 0%,
+                #461386 100%
+            );
+        }
+    }
+}
+.cardarchive-details {
+    align-self: flex-start;
+    margin-top: 0.5em;
+    margin-left: 0.5em;
+
+    h1 {
+        font-size: 2em;
+    }
+
+    span {
+        font-size: 1em;
+    }
+}
+
+.cardarchive-collection_container {
+    height: 100%;
+    display: flex;
+    gap: 2em;
+    margin-right: 2em;
+}
+
+.cardarchive-collection {
+    background-color: #662b9a;
+    height: 100%;
+    width: 10em;
+    padding-top: 1em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 2em;
+    align-items: center;
+    h1 {
+        color: #fff;
+        font-size: 1.5em;
+    }
+
+    span {
+        text-shadow: var(--glow-yellow);
+        color: #ffcd6c;
+        font-size: 2em;
+    }
+}
