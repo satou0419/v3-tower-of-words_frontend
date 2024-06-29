@@ -1,0 +1,33 @@
+.carddetails-card {
+    &.default {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        padding: 0.5em 0;
+        align-items: center;
+        text-align: center;
+        flex-grow: 1.5;
+        gap: 1em;
+
+        h1 {
+            font-size: 1.5em;
+        }
+
+        span {
+            font-size: 0.8em;
+        }
+    }
+
+    &.alternate {
+        align-self: flex-start;
+        margin-top: 0.5em;
+        margin-left: 0.5em;
+        h1 {
+            font-size: 2em;
+        }
+
+        span {
+            font-size: 1em;
+        }
+    }
+}

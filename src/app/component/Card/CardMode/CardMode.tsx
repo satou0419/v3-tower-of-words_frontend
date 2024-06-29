@@ -1,5 +1,7 @@
 import React from "react";
 import "./cardmode.scss";
+import CardInfo from "../CardInfo/CardInfo";
+import CardDetails from "../../CardDetails/CardDetails";
 
 interface CardModeProps {
     className?: string;
@@ -26,15 +28,12 @@ const CardMode: React.FC<CardModeProps> = ({
                         <img src={bannerSrc} alt="Banner" />
                     </section>
 
-                    <section className="cardmode-progress">
-                        <h1>{progressHeader}</h1>
-                        <span>{progressValue}</span>
-                    </section>
+                    <CardInfo title={progressHeader} counter={progressValue} />
 
-                    <section className="cardmode-info">
-                        <h1>{modeTitle}</h1>
-                        <span>{modeDescription}</span>
-                    </section>
+                    <CardDetails
+                        title={modeTitle}
+                        description={modeDescription}
+                    />
                 </section>
             </section>
         </main>

@@ -1,0 +1,31 @@
+.cardword-card {
+    background-color: #95a299;
+    border-radius: 10px;
+    margin: 0.5em;
+
+    height: 9em;
+    width: 9em;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .outer {
+        height: 90%;
+        width: 90%;
+        background-color: #666667;
+        border-radius: 10px;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .inner {
+            height: 95%;
+            width: 95%;
+            border-radius: 10px;
+
+            background: var(--linear-violet);
+        }
+    }
+}

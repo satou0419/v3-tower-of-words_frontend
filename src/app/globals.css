@@ -18,6 +18,8 @@
 
     --shadow-gray: 10px 10px 5px 0px rgba(196, 196, 196, 0.75);
     --glow-yellow: 0 0 10px #ffcd6c;
+
+    --linear-violet: linear-gradient(to bottom left, #b36dea 0%, #461386 100%);
 }
 
 a {

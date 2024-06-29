@@ -20,9 +20,14 @@ const Tab: React.FC<TabProps> = ({ tabs, currentTab, onTabChange }) => {
 
         const tabTitles = document.querySelectorAll(".tab-title");
         tabTitles.forEach((tab, index) => {
-            tab.classList.remove("tab-title-previous");
+            tab.classList.remove("tab-title-previous", "tab-title-next");
+
             if (index === activeIndex - 1) {
                 tab.classList.add("tab-title-previous");
+            }
+
+            if (index === activeIndex + 1) {
+                tab.classList.add("tab-title-next");
             }
         });
     }, [currentTab, tabs, onTabChange]);

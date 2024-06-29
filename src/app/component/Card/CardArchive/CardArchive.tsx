@@ -1,45 +1,45 @@
 import React from "react";
 import "./cardarchive.scss";
+import CardWord from "../CardWord/CardWord";
+import CardInfo from "../CardInfo/CardInfo";
+import CardDetails from "../../CardDetails/CardDetails";
 
 interface CardArchiveProps {
-    archiveTitle?: string;
-    archiveDescription?: string;
-    badgesCount?: number;
-    wordsCount?: number;
+    badgesCount: number;
+    wordsCount: number;
 }
 
 const CardArchive: React.FC<CardArchiveProps> = ({
-    archiveTitle = "Archive",
-    archiveDescription = "Conquer the Towers! Collect Words and Badges in Adventure Mode",
-    badgesCount = 4,
-    wordsCount = 4,
+    badgesCount,
+    wordsCount,
 }) => {
     return (
         <main>
             <section className="cardarchive-container">
                 <section className="cardarchive-card">
                     <section className="cardarchive-details_container">
-                        <section className="cardarchive-banner">
-                            <div className="outer">
-                                <div className="inner"></div>
-                            </div>
-                        </section>
-
-                        <section className="cardarchive-details">
-                            <h1>{archiveTitle}</h1>
-                            <span>{archiveDescription}</span>
-                        </section>
+                        <CardWord />
+                        <CardDetails
+                            className="additional-class"
+                            title="Archive"
+                            description="Conquer the Towers! Collect Words and Badges in Adventure Mode"
+                            variant="alternate"
+                        />
                     </section>
 
                     <section className="cardarchive-collection_container">
-                        <section className="cardarchive-collection">
-                            <h1>Badges</h1>
-                            <span>{badgesCount}</span>
-                        </section>
-                        <section className="cardarchive-collection">
-                            <h1>Words</h1>
-                            <span>{wordsCount}</span>
-                        </section>
+                        <CardInfo
+                            title="Badges"
+                            counter={badgesCount}
+                            variant="alternate"
+                            glow={true}
+                        />
+                        <CardInfo
+                            title="Words"
+                            counter={wordsCount}
+                            variant="alternate"
+                            glow={true}
+                        />
                     </section>
                 </section>
             </section>

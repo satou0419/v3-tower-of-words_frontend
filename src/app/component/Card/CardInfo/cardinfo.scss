@@ -1,0 +1,52 @@
+.cardinfo-card {
+    &.alternate {
+        background-color: #662b9a;
+        height: 100%;
+        width: 10em;
+        padding-top: 1em;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 2em;
+        align-items: center;
+
+        h1 {
+            color: #fff;
+            font-size: 1.5em;
+        }
+
+        span {
+            font-size: 2em;
+        }
+
+        &.glow span {
+            text-shadow: var(--glow-yellow);
+            color: #ffcd6c;
+        }
+
+        &:not(.glow) span {
+            color: #f99417;
+        }
+    }
+
+    &.default {
+        background-color: var(--clr-violet);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        flex-grow: 1;
+        gap: 1em;
+
+        h1 {
+            color: #fff;
+            font-size: 1.5em;
+        }
+
+        span {
+            color: #ffcd6c;
+            text-shadow: var(--glow-yellow);
+            font-size: 2em;
+        }
+    }
+}
