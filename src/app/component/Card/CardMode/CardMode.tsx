@@ -1,7 +1,7 @@
 import React from "react";
 import "./cardmode.scss";
 import CardInfo from "../CardInfo/CardInfo";
-import CardDetails from "../../CardDetails/CardDetails";
+import CardDetails from "../CardDetails/CardDetails";
 
 interface CardModeProps {
     className?: string;

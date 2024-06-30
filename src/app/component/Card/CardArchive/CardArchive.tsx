@@ -2,7 +2,7 @@ import React from "react";
 import "./cardarchive.scss";
 import CardWord from "../CardWord/CardWord";
 import CardInfo from "../CardInfo/CardInfo";
-import CardDetails from "../../CardDetails/CardDetails";
+import CardDetails from "../CardDetails/CardDetails";
 
 interface CardArchiveProps {
     badgesCount: number;
