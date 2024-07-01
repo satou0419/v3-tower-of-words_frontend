@@ -14,23 +14,64 @@
     border-radius: 40px;
     background-color: #fff;
     display: flex;
+    position: relative;
+    align-items: center;
 }
 
 .joinroom-card {
-    width: 60%;
+    width: 70%;
+    height: 80%;
+    bottom: 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    h1 {
-        font-size: 2.5em;
-    }
+    margin-top: 2%;
+    gap: 2em;
+    top: 0;
+
+    position: absolute;
+    z-index: 1;
 
     form {
         display: flex;
+        text-align: center;
         flex-direction: column;
-        width: 80%;
+        justify-content: center;
+        width: 50%;
+        height: 100%;
         gap: 1em;
+
+        .joinroom-inputgroup {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+        h1 {
+            margin-bottom: 10%;
+            font-size: 3.5em;
+        }
+
+        input {
+            margin-bottom: 20%;
+            padding: 0.5em;
+        }
+
+        button {
+            border: none;
+            height: 3.5em;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button[type="submit"] {
+            background-color: #ffaf40;
+            color: #fff;
+        }
+        button[type="button"] {
+            background-color: #f0f0f5;
+            color: #fc5776;
+            border: 3px solid #fc5776;
+        }
     }
 }
 
@@ -43,7 +84,7 @@
     position: relative;
 
     img {
-        width: 100%;
+        width: 60%;
         position: absolute;
         bottom: 0;
         right: 5em;

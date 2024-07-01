@@ -6,11 +6,16 @@ export default function JoinRoom() {
         <main className="joinroom-wrapper">
             <section className="joinroom-container">
                 <section className="joinroom-card">
-                    <h1>Join Room</h1>
                     <form>
-                        <InputLine type="text" placeholder="Enter Tower Code" />
-                        <button type="submit">Join now</button>
-                        <button type="button">Cancel</button>
+                        <h1>Join Room</h1>
+                        <div className="joinroom-inputgroup">
+                            <InputLine
+                                type="text"
+                                placeholder="Enter Tower Code"
+                            />
+                            <button type="submit">Join now</button>
+                            <button type="button">Cancel</button>
+                        </div>
                     </form>
                 </section>
 
