@@ -12,11 +12,14 @@
     --clr-violet: #662b9a;
     --clr-violet_dark: #491f7a;
     --clr-violet_glass: #bda4d4;
+    --clr-yellow: #ffaf40;
 
     --clr-gray: #c1c1c1;
     --clr-gray_dark: #666666;
 
     --shadow-gray: 10px 10px 5px 0px rgba(196, 196, 196, 0.75);
+    --shadow-burst: -8px 8px 48px -1px rgba(196, 196, 196, 0.75);
+
     --glow-yellow: 0 0 10px #ffcd6c;
 
     --linear-violet: linear-gradient(to bottom left, #b36dea 0%, #461386 100%);

@@ -1,0 +1,13 @@
+.btn-primary {
+    background-color: var(--clr-yellow);
+    outline: none;
+    color: #fff;
+    border-radius: 0.5em;
+    border: none;
+    border-top: 2.5px solid #fff;
+    width: 150px;
+    height: 70px;
+    box-shadow: var(--shadow-burst);
+    cursor: pointer;
+    font-size: 2em;
+}

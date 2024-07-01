@@ -1,14 +1,11 @@
 "use client";
-import getUserInfo from "@/lib/user-endpoint/getUserInfo";
-import useUserInfoStore from "@/store/userInfoStore";
-import { useEffect } from "react";
+import "./trial.scss";
+import Button from "../component/Button/Button";
 
 export default function Trial() {
-    useEffect(() => {
-        getUserInfo();
-    }, []);
-    const { username } = useUserInfoStore((state) => ({
-        username: state.username,
-    }));
-    return <h1>Username: {username}</h1>;
+    return (
+        <main className="trial-wrapper">
+            <Button />
+        </main>
+    );
 }
