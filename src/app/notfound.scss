@@ -1,0 +1,22 @@
+.notfound-wrapper {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    h1 {
+        font-size: 6em;
+    }
+
+    span {
+        font-size: 4em;
+        color: #838383;
+    }
+
+    p {
+        font-size: 1.5em;
+        color: #838383;
+    }
+}

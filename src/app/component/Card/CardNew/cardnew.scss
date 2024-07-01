@@ -1,0 +1,22 @@
+.cardnew-card {
+    max-height: 28em;
+
+    min-width: 15em;
+    max-width: 15em;
+
+    border: 1px solid #666666;
+    border-radius: 25px;
+
+    background-color: #fff;
+    box-shadow: var(--shadow-burst);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 8px dashed #666;
+
+    h1 {
+        color: #666;
+        font-size: 2em;
+    }
+}

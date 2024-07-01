@@ -2,6 +2,7 @@ import React from "react";
 import "./cardmode.scss";
 import CardInfo from "../CardInfo/CardInfo";
 import CardDetails from "../CardDetails/CardDetails";
+import Link from "next/link";
 
 interface CardModeProps {
     className?: string;
@@ -10,6 +11,7 @@ interface CardModeProps {
     progressValue?: number;
     modeTitle?: string;
     modeDescription?: string;
+    link: string;
 }
 
 const CardMode: React.FC<CardModeProps> = ({
@@ -19,11 +21,12 @@ const CardMode: React.FC<CardModeProps> = ({
     progressValue = 1,
     modeTitle = "Adventure",
     modeDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing",
+    link = "#",
 }) => {
     return (
         <main className={`${className ? className : ""}`}>
             <section className="cardmode-container">
-                <section className="cardmode-card">
+                <Link href={link} className="cardmode-card">
                     <section className="cardmode-banner">
                         <img src={bannerSrc} alt="Banner" />
                     </section>
@@ -34,7 +37,7 @@ const CardMode: React.FC<CardModeProps> = ({
                         title={modeTitle}
                         description={modeDescription}
                     />
-                </section>
+                </Link>
             </section>
         </main>
     );
