@@ -82,26 +82,6 @@ export default function Setting() {
                 </section>
             ),
         },
-        {
-            title: "Notification Settings",
-            id: "notification-settings",
-            content: (
-                <section className="notification-settings_wrapper">
-                    <form className="notification-settings_form">
-                        <h1>NOTIFICATION SETTINGS</h1>
-                        <div className="input-group">
-                            <label>
-                                <input type="checkbox" /> Email Notifications
-                            </label>
-                            <label>
-                                <input type="checkbox" /> SMS Notifications
-                            </label>
-                        </div>
-                        <button type="submit">Save Changes</button>
-                    </form>
-                </section>
-            ),
-        },
     ];
 
     return (

@@ -1,0 +1,85 @@
+.cardenemy-wrapper {
+    height: 100%;
+    width: 100%;
+}
+
+.cardenemy-card {
+    width: 100%;
+    height: 20%;
+    background-color: var(--clr-violet_glass);
+    border-radius: 20px;
+
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-top: 0.5em;
+}
+
+.cardenemy-banner {
+    height: 5em;
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 4px solid var(--clr-violet);
+
+    div {
+        background-color: #fff;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+    }
+}
+
+.cardenemy-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+    .name,
+    .total {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 2em;
+    }
+    span {
+        color: #5e5e5e;
+    }
+
+    h1 {
+        color: #000;
+        background-color: #d5c2e6;
+        font-size: 1.5em;
+
+        border-radius: 0.5em;
+    }
+
+    p {
+        color: #662b9a;
+        background-color: #d5c2e6;
+        border-radius: 0.5em;
+        font-size: 1.2em;
+    }
+}
+
+.cardenemy-control {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: flex-start;
+    gap: 2em;
+    margin-right: 2em;
+
+    :first-child {
+        background-color: #ff5a79;
+        color: #fff;
+        border: none;
+        outline: none;
+        height: 1.5em;
+        aspect-ratio: 1/1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+}
