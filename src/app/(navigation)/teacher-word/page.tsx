@@ -89,7 +89,9 @@ const TeacherWord = () => {
     const [selectedWord, setSelectedWord] = useState<Word>(words[5]); // Default to "Happy"
     const [searchTerm, setSearchTerm] = useState<string>("");
     const [filteredWords, setFilteredWords] = useState<Word[]>(words);
-    const [silentLetters, setSilentLetters] = useState<string[]>([]);
+    const [selectedLetterIndices, setSelectedLetterIndices] = useState<
+        number[]
+    >([]);
 
     useEffect(() => {
         const currentPathSegments = pathname.split("/");
@@ -113,18 +115,20 @@ const TeacherWord = () => {
 
     const handleWordClick = (word: Word) => {
         setSelectedWord(word);
-        setSilentLetters([]); // Clear silent letters when a new word is selected
+        setSelectedLetterIndices([]); // Clear selected letters when a new word is selected
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
-    const toggleSilentLetter = (letter: string) => {
-        if (silentLetters.includes(letter)) {
-            setSilentLetters(silentLetters.filter((l) => l !== letter));
+    const toggleSilentLetter = (index: number) => {
+        if (selectedLetterIndices.includes(index)) {
+            setSelectedLetterIndices(
+                selectedLetterIndices.filter((idx) => idx !== index)
+            );
         } else {
-            setSilentLetters([...silentLetters, letter]);
+            setSelectedLetterIndices([...selectedLetterIndices, index]);
         }
     };
 
@@ -196,16 +200,14 @@ const TeacherWord = () => {
                                         <span
                                             key={index}
                                             className={
-                                                silentLetters.includes(
-                                                    letter.toUpperCase()
+                                                selectedLetterIndices.includes(
+                                                    index
                                                 )
                                                     ? "selected"
                                                     : ""
                                             }
                                             onClick={() =>
-                                                toggleSilentLetter(
-                                                    letter.toUpperCase()
-                                                )
+                                                toggleSilentLetter(index)
                                             }
                                         >
                                             {letter.toUpperCase()}
