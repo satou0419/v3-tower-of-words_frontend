@@ -1,0 +1,96 @@
+.content-wrapper {
+    background-image: url("/assets/images/banner/banner-createroom.webp");
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1em;
+}
+
+.createroom-card {
+    width: 50%;
+    height: 65%;
+    border-radius: 40px;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    border: 1px solid #5e5e5e;
+    justify-content: space-evenly;
+    align-items: center;
+
+    form {
+        display: flex;
+        text-align: center;
+        flex-direction: column;
+        justify-content: center;
+        width: 50%;
+        height: 50%;
+        gap: 4em;
+        .createroom-inputgroup {
+            display: flex;
+            flex-direction: column;
+            gap: 1em;
+        }
+        h1 {
+            font-size: 3.5em;
+        }
+
+        input {
+            padding: 0.5em;
+            margin-bottom: 2em;
+        }
+
+        button {
+            border: none;
+            height: 3.5em;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        button[type="submit"] {
+            background-color: #ffaf40;
+            color: #fff;
+        }
+        button[type="button"] {
+            background-color: #f0f0f5;
+            color: #fc5776;
+            border: 3px solid #fc5776;
+        }
+    }
+
+    @media (max-width: 1200px) {
+        width: 60%;
+        form {
+            width: 60%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        width: 80%;
+        height: auto;
+        padding: 2em;
+        form {
+            width: 80%;
+            h1 {
+                font-size: 2.5em;
+            }
+            button {
+                height: 3em;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        width: 90%;
+        form {
+            width: 90%;
+            h1 {
+                font-size: 2em;
+            }
+            button {
+                height: 2.5em;
+            }
+        }
+    }
+}
