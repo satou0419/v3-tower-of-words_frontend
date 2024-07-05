@@ -1,0 +1,58 @@
+.cardsetting-card {
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: var(--shadow-burst);
+    display: flex;
+    justify-content: center;
+    padding: 1em;
+
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        gap: 2em;
+
+        h1 {
+            font-size: 2em;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            width: 100%;
+
+            input {
+                height: 2.5em;
+                padding: 0.5em;
+                color: #000;
+            }
+        }
+
+        .button-group {
+            display: flex;
+            width: 100%;
+            justify-content: space-between;
+
+            button {
+                height: 3em;
+                width: 6em;
+                box-shadow: var(--shadow-burst);
+                border: none;
+                border-radius: 5px;
+                border-top: 2px solid #fff;
+                color: #fff;
+                cursor: pointer;
+            }
+
+            button[type="button"] {
+                background-color: #fc5776;
+            }
+
+            button[type="submit"] {
+                background-color: #ffaf40;
+            }
+        }
+    }
+}

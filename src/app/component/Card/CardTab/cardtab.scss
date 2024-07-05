@@ -1,0 +1,84 @@
+.cardtab-card {
+    background-color: #fff;
+    border-radius: 10px;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-burst);
+}
+
+.cardtab-title {
+    height: 2em;
+    width: 100%;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #9a6dea;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 2em;
+
+    .container {
+        height: 100%;
+        width: 98%;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        .details {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5em;
+
+            span {
+                position: relative; /* Needed for absolute positioning of ::after */
+                z-index: 1; /* Ensure span content is above ::after */
+                background: var(--linear-violet);
+                height: 1.3em;
+                border: 1px solid #000;
+                border-radius: 5px;
+                aspect-ratio: 1/1;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: calc(
+                        100% + 5px
+                    ); /* Adjust the width to include padding */
+                    height: calc(
+                        100% + 5px
+                    ); /* Adjust the height to include padding */
+                    border: 1px solid #000;
+                    z-index: -1; /* Ensure ::after is behind the span content */
+                    border-radius: 5px; /* Same border-radius as span */
+                }
+            }
+        }
+    }
+}
+
+.cardtab-content {
+    width: 100%;
+    height: 90%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .content {
+        height: 90%;
+        width: 90%;
+        overflow: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 2em;
+    }
+}
