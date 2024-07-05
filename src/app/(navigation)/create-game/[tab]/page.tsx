@@ -2,13 +2,19 @@
 import Tab from "@/app/component/Tab/Tab";
 import React, { useEffect, useState } from "react";
 import "./creategame.scss";
-import { InputLine } from "@/app/component/Input/Input";
+import { InputBox, InputLine } from "@/app/component/Input/Input";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter, usePathname } from "next/navigation";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
 import CardEnemy from "@/app/component/Card/CardEnemy/CardEnemy";
+import Toggle from "@/app/component/Toggle/Toggle";
 
 export default function CreateGame() {
+    const [isEnabled, setIsEnabled] = useState(false);
+
+    const handleToggle = (state: boolean) => {
+        setIsEnabled(state);
+    };
     const { username } = useAuthStore((state) => ({
         username: state.username,
     }));
@@ -53,6 +59,54 @@ export default function CreateGame() {
                         </section>
                     </section>
                 </section>
+            ),
+        },
+
+        {
+            title: "Setting",
+            id: "setting",
+            content: (
+                <main className="setting-wrapper">
+                    <section className="setting">
+                        <InputBox
+                            type="text"
+                            placeholder="Enter Simulation Name"
+                        />
+                        <InputBox type="time" />
+                        <select>
+                            <option>1</option>
+                            <option>1</option>
+                            <option>1</option>
+                            <option>1</option>
+                        </select>
+                        <select>
+                            <option>1</option>
+                            <option>1</option>
+                            <option>1</option>
+                            <option>1</option>
+                        </select>
+                        <Toggle
+                            className="toggle"
+                            label="Items"
+                            isEnabled={isEnabled}
+                            onToggle={handleToggle}
+                        />
+
+                        <Toggle
+                            className="toggle"
+                            label="Description"
+                            isEnabled={isEnabled}
+                            onToggle={handleToggle}
+                        />
+
+                        <Toggle
+                            className="toggle"
+                            label="Allow Replay"
+                            isEnabled={isEnabled}
+                            onToggle={handleToggle}
+                        />
+                    </section>
+                </main>
             ),
         },
     ];

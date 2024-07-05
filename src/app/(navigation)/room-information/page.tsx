@@ -1,11 +1,11 @@
 "use client";
-import React from "react";
-import CardTab from "@/app/component/Card/CardTab/CardTab";
-import "./leaderboard.scss";
-import CardSetting from "@/app/component/Card/CardSetting/CardSetting";
-import CardUser from "@/app/component/Card/CardUser/CardUser";
 
-export default function Leaderboard() {
+import CardTab from "@/app/component/Card/CardTab/CardTab";
+import "./roominformation.scss";
+import CardUser from "@/app/component/Card/CardUser/CardUser";
+import CardSetting from "@/app/component/Card/CardSetting/CardSetting";
+
+export default function RoomInformation() {
     const handleDelete = () => {
         console.log("Delete button clicked");
     };
@@ -26,18 +26,18 @@ export default function Leaderboard() {
     const inputSetting = [
         { type: "text", placeholder: "Update Simulation Name" },
         { type: "datetime-local", placeholder: "Update Time" },
-        // Add more inputs as needed
     ];
 
+    const inputAddStudent = [{ type: "text", placeholder: "Add Student" }];
     return (
-        <main className="leaderboard-wrapper">
-            <section className="leaderboard-container">
-                <h1>Student Progress</h1>
+        <main className="roominformation-wrapper">
+            <section className="roominformation-container">
+                <h1>Room Settings</h1>
 
-                <section className="leaderboard-content">
+                <section className="roominformation-content">
                     <CardTab
-                        className="leaderboard-card"
-                        title="Leaderboard"
+                        className="roominformation-card"
+                        title="roominformation"
                         subtitle="Student Total: "
                         counter="69"
                     >
@@ -46,20 +46,24 @@ export default function Leaderboard() {
                                 key={index}
                                 username={user.username}
                                 time={user.time}
-                                score={user.score}
-                                className="custom-carduser"
                             />
                         ))}
                     </CardTab>
 
-                    <section className="leaderboard-setting">
-                        <div className="button-group">
-                            <button type="button">View Words</button>
-                            <button type="button">Create a Copy</button>
-                        </div>
+                    <section className="roominformation-setting">
                         <CardSetting
                             title="Settings"
                             inputs={inputSetting}
+                            deleteButtonLabel="Delete"
+                            saveButtonLabel="Save"
+                            onDelete={handleDelete}
+                            onSave={handleSave}
+                            className="custom-cardsetting"
+                        />
+
+                        <CardSetting
+                            title="Add Student"
+                            inputs={inputAddStudent}
                             deleteButtonLabel="Delete"
                             saveButtonLabel="Save"
                             onDelete={handleDelete}

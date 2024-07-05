@@ -118,7 +118,7 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Anton Joseph Cruz</span>
-                                    <span>Leader</span>
+                                    <span>Leader/Backend Developer</span>
                                 </div>
                             </div>
                         </div>
@@ -133,7 +133,9 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Gil Joshua S. Yabao</span>
-                                    <span>Graphic Designer</span>
+                                    <span>
+                                        Graphic Designer/Backend Developer
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -148,7 +150,7 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Jhon Lorenz E. Pabroa</span>
-                                    <span>Secretary</span>
+                                    <span>Secretary/Backend Developer</span>
                                 </div>
                             </div>
                         </div>
