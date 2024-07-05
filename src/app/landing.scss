@@ -1,0 +1,300 @@
+.landing {
+    scroll-behavior: smooth;
+    &__container {
+        background-color: #211e49;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6em;
+        & .landing__banner {
+            background-image: url("/assets/images/landing/landing-hero.webp");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        & .landing__nav {
+            width: 95%;
+            height: 4em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            align-self: center;
+
+            img {
+                height: 70%;
+            }
+
+            .links {
+                color: #fff;
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 2em;
+            }
+        }
+    }
+
+    &__intro {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        margin-bottom: 4em;
+
+        & .landing__description {
+            padding: 2em;
+            background-color: #fff;
+            border-radius: 5px;
+            width: 30%;
+            min-height: 350px;
+            margin-top: 4em;
+            margin-bottom: 4em;
+
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2em;
+            h1 {
+                color: #d26500;
+                font-size: 1.5em;
+            }
+
+            span {
+                color: #444;
+                font-size: 1.2em;
+                text-align: center;
+            }
+        }
+
+        img {
+            width: 20%;
+            margin-top: 4em;
+        }
+    }
+
+    &__adventure {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        & .landing__details {
+            display: flex;
+            justify-content: flex-end;
+            gap: 2em;
+            width: 100%;
+
+            & .landing__description {
+                width: 50%;
+            }
+            h1 {
+                color: #ffaf40;
+                font-size: 4em;
+            }
+
+            span {
+                color: #fff;
+                font-size: 2em;
+            }
+            img {
+                width: 40%;
+            }
+        }
+        img {
+            width: 80%;
+        }
+    }
+
+    &__items {
+        display: flex;
+        gap: 2em;
+        img {
+            width: 40%;
+            margin-left: 2em;
+        }
+
+        & .landing__description {
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            gap: 2em;
+            h1 {
+                color: #ffaf40;
+                font-size: 4em;
+            }
+
+            span {
+                color: #fff;
+                font-size: 2em;
+            }
+        }
+    }
+
+    &__simulation {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        & .landing__details {
+            display: flex;
+            justify-content: center;
+            gap: 2em;
+            width: 100%;
+
+            & .landing__description {
+                width: 40%;
+                display: flex;
+                flex-direction: column;
+                gap: 2em;
+                margin-left: 4em;
+            }
+            h1 {
+                color: #ffaf40;
+                font-size: 4em;
+            }
+
+            span {
+                color: #fff;
+                font-size: 2em;
+            }
+            img {
+                width: 25%;
+            }
+        }
+        img {
+            width: 80%;
+        }
+    }
+
+    &__about {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2em;
+        color: #fff;
+        h1 {
+            font-size: 3em;
+            color: #ffaf40;
+            text-align: center;
+            margin-bottom: 2em;
+        }
+        & .landing__developers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: center;
+            gap: 4em;
+            width: 95%;
+
+            & .landing__profile {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                width: 100%;
+                max-width: 150px;
+                padding: 1em;
+                text-align: center;
+            }
+
+            & .landing__title {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 4em;
+
+                & .landing__name {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+                & .landing__profile-img {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    width: 10em;
+                    aspect-ratio: 1/1;
+                    border: 2px solid #593796;
+                    background-color: #9a6dea;
+                    rotate: 45deg;
+
+                    img {
+                        width: 90%;
+                        rotate: -45deg;
+                        border-radius: 50%;
+                        aspect-ratio: 1/1;
+                    }
+                }
+            }
+        }
+    }
+
+    &__footer {
+        width: 100%;
+        img {
+            width: 100%;
+        }
+    }
+
+    // Media Queries
+    @media (max-width: 1200px) {
+        .landing__intro .landing__description,
+        .landing__adventure .landing__details .landing__description,
+        .landing__items .landing__description,
+        .landing__simulation .landing__details .landing__description {
+            width: 70%;
+        }
+        .landing__adventure .landing__details img,
+        .landing__simulation .landing__details img {
+            width: 50%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .landing__intro img {
+            width: 40%;
+        }
+        .landing__adventure img,
+        .landing__simulation img {
+            width: 100%;
+        }
+        .landing__about .landing__developers {
+            flex-direction: column;
+            gap: 1em;
+        }
+        .landing__profile {
+            width: 80%;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .landing__intro .landing__description {
+            width: 90%;
+            padding: 1em;
+        }
+        .landing__adventure .landing__details,
+        .landing__simulation .landing__details {
+            flex-direction: column;
+            align-items: center;
+        }
+        .landing__adventure .landing__details .landing__description,
+        .landing__simulation .landing__details .landing__description {
+            width: 90%;
+        }
+        .landing__about h1 {
+            font-size: 2em;
+        }
+    }
+}

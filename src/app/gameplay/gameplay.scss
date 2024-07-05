@@ -1,0 +1,206 @@
+.gameplay-wrapper {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    .gameplay-platform {
+        background-image: url("/assets/images/background/bg-gameplay_small.webp");
+        height: 60%;
+        background-size: contain;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+
+        .gameplay-progress-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5em;
+            font-size: 16px;
+
+            .gameplay-progress_indicator {
+                margin-top: 10px;
+                width: 240px;
+                height: 35px;
+                background-image: url("/assets/images/background/bg-indicator_small.webp");
+                background-position: center;
+                background-size: cover;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: #fff;
+            }
+
+            .gameplay-progress_floor {
+                width: 190px;
+                height: 25px;
+                border-radius: 5px;
+                background-color: #ffcd6c;
+                border: 2px solid #be6009;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                color: #fff;
+            }
+        }
+
+        .gameplay-character {
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            outline: 2px solid green;
+            flex-grow: 1;
+
+            .gameplay-main,
+            .gameplay-enemy {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100%;
+                outline: 2px solid red;
+                flex-grow: 1;
+                position: relative;
+
+                .main-health,
+                .enemy-health {
+                    width: 155px;
+                    height: 25px;
+                    border-radius: 10px;
+                    background-color: #8471a5;
+                    border: 2px solid #593796;
+                }
+
+                .character-image {
+                    width: 150px;
+                    height: 200px;
+                    display: flex;
+                    align-items: flex-end;
+
+                    .main-sprite {
+                        background-image: url("/assets/images/sprite/character-main_small.png");
+                        background-size: contain;
+                        width: 145px;
+                        height: 186px;
+                        background-repeat: no-repeat;
+                        outline: 2px solid blue;
+                        position: absolute;
+                        bottom: 0;
+                    }
+
+                    .enemy-sprite {
+                        background-image: url("/assets/images/sprite/character-enemy.png");
+                        background-size: contain;
+                        height: 146px;
+                        width: 120px;
+                        background-position: center;
+                        background-repeat: no-repeat;
+                        outline: 2px solid green;
+                        position: absolute;
+                        bottom: 0;
+                    }
+                }
+            }
+        }
+    }
+
+    .gameplay-controls {
+        flex-grow: 1;
+        background-size: cover;
+        background-image: url("/assets/images/background/bg-border_large.webp");
+        background-color: #bda4d4;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        /* .gameplay-item,
+        .gameplay-input,
+        .gameplay-clue {
+            width: 430px;
+            height: 335px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            visibility: hidden;
+            font-size: 32px;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .gameplay-input {
+            align-items: center;
+            justify-content: center;
+            gap: 1.5rem;
+
+            input {
+                width: 340px;
+                height: 35px;
+                border-radius: 5px;
+            }
+
+            :nth-child(1) {
+                height: 35px;
+                width: 60px;
+                color: #000;
+            }
+
+            :nth-child(3) {
+                height: 40px;
+                width: 130px;
+                color: #000;
+            }
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: -50px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 110px;
+                height: 50px;
+                background-color: #ffcd6c;
+                border: 3px solid #b6661b;
+                border-bottom: none;
+                border-top-left-radius: 10px;
+                border-top-right-radius: 10px;
+                visibility: visible;
+                cursor: pointer;
+            }
+        }
+
+        .gameplay-item::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            width: 135px;
+            height: 50px;
+            background-color: #ffcd6c;
+            border: 3px solid #b6661b;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            border-bottom: none;
+            visibility: visible;
+            cursor: pointer;
+        }
+
+        .gameplay-clue::after {
+            content: "";
+            position: absolute;
+            top: -50px;
+            right: 10px;
+            width: 135px;
+            height: 50px;
+            background-color: #ffcd6c;
+            border: 3px solid #b6661b;
+            border-bottom: none;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            visibility: visible;
+            cursor: pointer;
+        } */
+    }
+}
