@@ -1,0 +1,62 @@
+.studentassessment-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .studentassessment-container {
+        height: 90%;
+        width: 95%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2em;
+
+        button[type="button"] {
+            cursor: pointer;
+            color: #fff;
+            background-color: #fc5776;
+            border-radius: 8px;
+            padding: 0.5em 1em;
+            border: none;
+            border-top: 4px solid #fff;
+            box-shadow: 0 6px 12px rgba(252, 87, 118, 0.4),
+                0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .cardtab {
+            width: 80%;
+            height: 90%;
+            align-self: center;
+            display: flex;
+        }
+    }
+}
+
+.studentassessment-content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    gap: 2em;
+    justify-content: center;
+    align-items: center;
+
+    .studentassessment-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        padding: 1.5em;
+        height: 100%;
+        background-color: var(--clr-violet_glass);
+        width: 40%;
+        border-radius: 10px;
+        color: #fff;
+    }
+
+    .studentassessment-graph {
+        border: 2px solid black;
+        width: 60%;
+        height: 100%;
+    }
+}
