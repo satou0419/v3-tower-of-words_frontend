@@ -1,7 +1,36 @@
+"use client";
+import React, { useEffect, useState, useRef } from "react";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
 import "./spelling.scss";
+import { useFloorStore } from "@/store/floorStore";
 
-export default function Spelling() {
+const Spelling = () => {
+    const { floors, getAllFloors } = useFloorStore();
+    const [uniqueTowerSections, setUniqueTowerSections] = useState<number[]>(
+        []
+    );
+    const activeFloorRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        // Fetch all floors when the component mounts
+        getAllFloors();
+    }, [getAllFloors]);
+
+    useEffect(() => {
+        // Extract unique tower sections from fetched floors
+        const sections = Array.from(
+            new Set(floors.map((floor) => floor.towerSection))
+        );
+        setUniqueTowerSections(sections);
+    }, [floors]);
+
+    useEffect(() => {
+        // Scroll to active floor when floors or uniqueTowerSections change
+        if (activeFloorRef.current) {
+            activeFloorRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [floors, uniqueTowerSections]);
+
     return (
         <main className="spelling-wrapper">
             <section className="spelling-container">
@@ -43,21 +72,34 @@ export default function Spelling() {
                     <section className="tower">
                         <section className="spelling-banner">
                             <section className="floor-container">
-                                <div className="floors">
-                                    <span className="locked">Floor 5</span>
-                                </div>
-                                <div className="floors">
-                                    <span className="locked">Floor 4</span>
-                                </div>
-                                <div className="floors">
-                                    <span className="locked">Floor 3</span>
-                                </div>
-                                <div className="floors active">
-                                    <span>Floor 2</span>
-                                </div>
-                                <div className="floors">
-                                    <span>Floor 1</span>
-                                </div>
+                                {floors
+                                    .slice()
+                                    .reverse()
+                                    .map((floor) => (
+                                        <div
+                                            key={floor.towerFloorID}
+                                            ref={
+                                                floor.towerFloorID === 3
+                                                    ? activeFloorRef
+                                                    : null
+                                            }
+                                            className={
+                                                floor.towerFloorID === 3
+                                                    ? "floors active"
+                                                    : "floors"
+                                            }
+                                        >
+                                            <span
+                                                className={
+                                                    floor.sectionFloor === 2
+                                                        ? ""
+                                                        : "locked"
+                                                }
+                                            >
+                                                Floor {floor.towerFloorID}
+                                            </span>
+                                        </div>
+                                    ))}
                             </section>
                         </section>
                     </section>
@@ -68,15 +110,15 @@ export default function Spelling() {
                         <h1>Progress:</h1>
 
                         <section className="section-list">
-                            <span>Section 1</span>
-                            <span>Section 2</span>
-                            <span>Section 3</span>
-                            <span>Section 4</span>
-                            <span>Section 5</span>
+                            {uniqueTowerSections.map((section) => (
+                                <span key={section}>Section {section}</span>
+                            ))}
                         </section>
                     </section>
                 </section>
             </section>
         </main>
     );
-}
+};
+
+export default Spelling;
