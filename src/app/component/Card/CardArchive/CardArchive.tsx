@@ -3,6 +3,7 @@ import "./cardarchive.scss";
 import CardWord from "../CardWord/CardWord";
 import CardInfo from "../CardInfo/CardInfo";
 import CardDetails from "../CardDetails/CardDetails";
+import Link from "next/link";
 
 interface CardArchiveProps {
     badgesCount: number;
@@ -33,12 +34,15 @@ const CardArchive: React.FC<CardArchiveProps> = ({
                             counter={badgesCount}
                             variant="alternate"
                             glow={true}
+                            link="/archive/badges"
                         />
+
                         <CardInfo
                             title="Words"
                             counter={wordsCount}
                             variant="alternate"
                             glow={true}
+                            link="/archive/word-vocabulary"
                         />
                     </section>
                 </section>
