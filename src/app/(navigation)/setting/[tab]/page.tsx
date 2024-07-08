@@ -1,3 +1,4 @@
+// Setting.tsx
 "use client";
 import Tab from "@/app/component/Tab/Tab";
 import React, { useEffect, useState } from "react";
@@ -6,11 +7,17 @@ import { InputLine } from "@/app/component/Input/Input";
 import { useAuthStore } from "@/store/authStore";
 import { useRouter, usePathname } from "next/navigation";
 import changePassword from "@/lib/auth-endpoint/changePassword";
+import useUserInfoStore from "@/store/userInfoStore";
+import getUserInfo from "@/lib/user-endpoint/getUserInfo";
+import updateUser from "@/lib/auth-endpoint/updateUser";
 
 export default function Setting() {
-    const { username } = useAuthStore((state) => ({
+    const { username } = useUserInfoStore((state) => ({
         username: state.username,
     }));
+
+    const { firstname, lastname, setFirstname, setLastname } =
+        useUserInfoStore();
 
     const router = useRouter();
     const pathname = usePathname();
@@ -25,14 +32,16 @@ export default function Setting() {
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
 
+    // Fetch user info when component mounts
     useEffect(() => {
-        const currentPathSegments = pathname.split("/");
-        const currentTab =
-            currentPathSegments.length > 2
-                ? currentPathSegments[2]
-                : "personal-information";
-        setActiveTab(currentTab);
-    }, [pathname]);
+        getUserInfo();
+    }, []);
+
+    // Set initial values for firstname and lastname fields
+    useEffect(() => {
+        setFirstname(firstname);
+        setLastname(lastname);
+    }, [firstname, lastname]);
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
@@ -58,13 +67,28 @@ export default function Setting() {
         }
     };
 
+    const handleSaveChanges = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        try {
+            await updateUser(firstname, lastname);
+            alert("User information updated successfully!");
+        } catch (err) {
+            console.error("Failed to update user information:", err);
+            setError("Failed to update user information. Please try again.");
+        }
+    };
+
     const tabData = [
         {
             title: "Personal Information",
             id: "personal-information",
             content: (
                 <section className="change-pass_wrapper">
-                    <form className="change-pass_form">
+                    <form
+                        className="change-pass_form"
+                        onSubmit={handleSaveChanges}
+                    >
                         <h1>ACCOUNT INFORMATION</h1>
                         <div className="input-group">
                             <InputLine
@@ -73,8 +97,18 @@ export default function Setting() {
                                 value={username}
                                 readOnly
                             />
-                            <InputLine type="text" placeholder="Firstname" />
-                            <InputLine type="text" placeholder="Lastname" />
+                            <InputLine
+                                type="text"
+                                placeholder="Firstname"
+                                value={firstname}
+                                onChange={(e) => setFirstname(e.target.value)}
+                            />
+                            <InputLine
+                                type="text"
+                                placeholder="Lastname"
+                                value={lastname}
+                                onChange={(e) => setLastname(e.target.value)}
+                            />
                         </div>
                         <button type="submit">Save Changes</button>
                     </form>
