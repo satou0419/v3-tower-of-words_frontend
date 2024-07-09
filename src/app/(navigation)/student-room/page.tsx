@@ -1,8 +1,27 @@
+"use client";
+import { useEffect } from "react";
+import { useRoomStore } from "@/store/roomStore";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./studentroom.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
+import viewStudentRoom from "@/lib/room-endpoint/viewStudentRoom";
 
 export default function StudentRoom() {
+    const { rooms, setRoom } = useRoomStore();
+
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                const roomData = await viewStudentRoom();
+                setRoom(roomData);
+            } catch (error) {
+                console.error("Failed to fetch rooms:", error);
+            }
+        };
+
+        fetchRooms();
+    }, [setRoom]);
+
     return (
         <main className="studentroom-wrapper">
             <section className="studentroom-container">
@@ -12,15 +31,17 @@ export default function StudentRoom() {
                 </section>
 
                 <div className="studentroom-room">
-                    <CardRoomGame
-                        bannerClass="room-banner"
-                        title="Room Name"
-                        description="Teacher Name"
-                        infoTitle="Game"
-                        counter={4}
-                        glow={false}
-                    />
-
+                    {rooms.map((room) => (
+                        <CardRoomGame
+                            key={room.roomID}
+                            bannerClass="room-banner"
+                            title={room.name}
+                            description={`Teacher ID: ${room.creatorID}`}
+                            infoTitle="Game"
+                            counter={room.members.length} // Assuming counter is the number of members
+                            glow={false}
+                        />
+                    ))}
                     <CardNew title="+ Join Room" link="join-room" />
                 </div>
             </section>

@@ -5,12 +5,13 @@ interface Room {
     creatorID: number;
     roomID: number;
     code: string;
-    isDeleted: boolean;
+    members: number[];
+    isDeleted?: boolean;
 }
 
 interface RoomState {
     rooms: Room[];
-    setRoom: (room: Room[]) => void;
+    setRoom: (rooms: Room[]) => void;
 }
 
 export const useRoomStore = create<RoomState>((set) => ({
