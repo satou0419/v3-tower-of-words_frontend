@@ -28,22 +28,24 @@ export default function CreateRoom() {
     };
 
     return (
-        <section className="createroom-card">
-            <form onSubmit={handleCreateRoom}>
-                <h1>Create Room</h1>
-                <InputLine
-                    type="text"
-                    placeholder="Enter Room Name"
-                    value={roomName}
-                    onChange={(e) => setRoomName(e.target.value)}
-                />
-                <div className="createroom-inputgroup">
-                    <button type="submit">Create</button>
-                    <button type="button" onClick={handleCancel}>
-                        Cancel
-                    </button>
-                </div>
-            </form>
+        <section className="createroom-wrapper">
+            <section className="createroom-card">
+                <form onSubmit={handleCreateRoom}>
+                    <h1>Create Room</h1>
+                    <InputLine
+                        type="text"
+                        placeholder="Enter Room Name"
+                        value={roomName}
+                        onChange={(e) => setRoomName(e.target.value)}
+                    />
+                    <div className="createroom-inputgroup">
+                        <button type="submit">Create</button>
+                        <button type="button" onClick={handleCancel}>
+                            Cancel
+                        </button>
+                    </div>
+                </form>
+            </section>
         </section>
     );
 }
