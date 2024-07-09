@@ -64,8 +64,13 @@
     }
 
     .cardshop-banner {
-        background-color: red;
         height: 60%;
         width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+            width: 80%;
+        }
     }
 }

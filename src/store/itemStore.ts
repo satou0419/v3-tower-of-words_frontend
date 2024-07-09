@@ -6,14 +6,15 @@ interface Item {
     imagePath: string;
     itemDescription: string;
     itemPrice: number;
+    quantity: number; // Add quantity property
 }
 
 interface ItemState {
-    items: Item[]; // Array of items
-    setItems: (items: Item[]) => void; // Setter function for items
+    items: Item[];
+    setItems: (items: Item[]) => void;
 }
 
 export const useItemStore = create<ItemState>((set) => ({
-    items: [], // Initial empty array
-    setItems: (items) => set({ items }), // Setter function to update items array
+    items: [],
+    setItems: (items) => set({ items }),
 }));

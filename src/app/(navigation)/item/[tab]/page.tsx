@@ -7,11 +7,19 @@ import { useRouter, usePathname } from "next/navigation";
 import Tab from "@/app/component/Tab/Tab";
 import CardInventory from "@/app/component/Card/CardInventory/CardInventory";
 import CardShop from "@/app/component/Card/CardShop/CardShop";
+import { useItemStore } from "@/store/itemStore";
+import getAllItems from "@/lib/item-endpoint/getAllItem";
 
 export default function Item() {
     const handleClick = () => {
         console.log("Click");
     };
+
+    const { items, setItems } = useItemStore();
+
+    useEffect(() => {
+        getAllItems().then((fetchedItems) => setItems(fetchedItems));
+    }, [setItems]);
 
     const router = useRouter();
     const pathname = usePathname();
@@ -19,7 +27,15 @@ export default function Item() {
 
     const initialTab = pathSegments.length > 2 ? pathSegments[2] : "inventory";
     const [activeTab, setActiveTab] = useState<string>(initialTab);
-    const [selectedItem, setSelectedItem] = useState<string | null>(null);
+    const [selectedItem, setSelectedItem] = useState<{
+        name: string | null;
+        description: string | null;
+        banner: string | null;
+    }>({
+        name: null,
+        description: null,
+        banner: null,
+    });
 
     useEffect(() => {
         const currentPathSegments = pathname.split("/");
@@ -35,8 +51,12 @@ export default function Item() {
         router.push(`/item/${tab}`);
     };
 
-    const handleItemClick = (title: string) => {
-        setSelectedItem(title);
+    const handleItemClick = (item: any) => {
+        setSelectedItem({
+            name: item.itemName,
+            description: item.itemDescription,
+            banner: `/assets/images/reward/${item.imagePath}`,
+        });
     };
 
     const tabData = [
@@ -47,39 +67,34 @@ export default function Item() {
                 <section className="inventory_wrapper">
                     <section className="inventory-item">
                         <section className="inventory-list">
-                            <CardInventory
-                                className={
-                                    selectedItem === "Health Kit"
-                                        ? "active"
-                                        : ""
-                                }
-                                imgSrc="#"
-                                title="Health Kit"
-                                description="Lorem ipsum"
-                                quantity={2}
-                                onClick={() => handleItemClick("Health Kit")}
-                            />
-                            <CardInventory
-                                className={
-                                    selectedItem === "Ammo Pack" ? "active" : ""
-                                }
-                                imgSrc="#"
-                                title="Ammo Pack"
-                                description="Dolor sit amet"
-                                quantity={5}
-                                onClick={() => handleItemClick("Ammo Pack")}
-                            />
+                            {items.map((item) => (
+                                <CardInventory
+                                    key={item.itemID}
+                                    className={
+                                        selectedItem.name === item.itemName
+                                            ? "active"
+                                            : ""
+                                    }
+                                    imgSrc={`/assets/images/reward/${item.imagePath}`}
+                                    title={item.itemName}
+                                    description={item.itemDescription}
+                                    quantity={item.quantity}
+                                    onClick={() => handleItemClick(item)}
+                                />
+                            ))}
                         </section>
                     </section>
                     <section className="inventory-item_detail">
                         <section className="inventory-item_detail-container">
                             <section className="inventory-item_detail-banner">
-                                <img src="#" />
+                                {selectedItem.banner && (
+                                    <img src={selectedItem.banner} />
+                                )}
                             </section>
 
                             <section className="inventory-item_detail-container-description">
-                                <h1>{selectedItem}</h1>
-                                <span>Lorem Ipsum</span>
+                                <h1>{selectedItem.name}</h1>
+                                <span>{selectedItem.description}</span>
                             </section>
                         </section>
                     </section>
@@ -92,12 +107,15 @@ export default function Item() {
             content: (
                 <section className="shop-wrapper">
                     <section className="shop-container">
-                        <CardShop
-                            imgSrc="#"
-                            title="Medkit"
-                            price={300}
-                            onClick={handleClick}
-                        />
+                        {items.map((item) => (
+                            <CardShop
+                                key={item.itemID}
+                                imgSrc={`/assets/images/reward/${item.imagePath}`}
+                                title={item.itemName}
+                                price={item.itemPrice}
+                                onClick={handleClick}
+                            />
+                        ))}
                     </section>
                 </section>
             ),

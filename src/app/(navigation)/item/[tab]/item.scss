@@ -59,11 +59,19 @@
     border: 5px solid var(--clr-violet);
     border-radius: 10px;
     margin-top: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    img {
+        width: 100%;
+    }
 }
 
 .inventory-item_detail-container-description {
     display: flex;
     flex-direction: column;
+    text-align: center;
     h1 {
         font-size: 4em;
     }

@@ -1,7 +1,6 @@
 // updateUser.ts
 import BASE_URL from "@/util/baseUrl";
 import { useAuthStore } from "@/store/authStore";
-import useUserInfoStore from "@/store/userInfoStore";
 
 const updateUser = async (firstname: string, lastname: string) => {
     const { userID } = useAuthStore.getState();

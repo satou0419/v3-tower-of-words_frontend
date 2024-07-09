@@ -34,6 +34,14 @@
         margin-left: 0.5em;
         flex-direction: column;
         border-radius: 10px;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        img {
+            position: absolute;
+            width: 100%;
+        }
     }
 
     .cardinventory-description {
