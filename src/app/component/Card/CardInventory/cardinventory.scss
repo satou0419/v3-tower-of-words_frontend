@@ -46,7 +46,6 @@
 
     .cardinventory-description {
         height: 80%;
-        border: 1px solid green;
         display: flex;
         flex-direction: column;
         gap: 0.5em;
@@ -74,4 +73,7 @@
         font-size: 2.5em;
         color: #d26500;
     }
+}
+.grayscale {
+    filter: grayscale(100%);
 }

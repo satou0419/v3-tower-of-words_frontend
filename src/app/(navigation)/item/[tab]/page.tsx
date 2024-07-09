@@ -10,6 +10,15 @@ import CardShop from "@/app/component/Card/CardShop/CardShop";
 import { useItemStore } from "@/store/itemStore";
 import getAllItems from "@/lib/item-endpoint/getAllItem";
 
+interface Item {
+    itemID: number;
+    itemName: string;
+    imagePath: string;
+    itemDescription: string;
+    itemPrice: number;
+    quantity: number;
+}
+
 export default function Item() {
     const handleClick = () => {
         console.log("Click");
@@ -18,7 +27,15 @@ export default function Item() {
     const { items, setItems } = useItemStore();
 
     useEffect(() => {
-        getAllItems().then((fetchedItems) => setItems(fetchedItems));
+        getAllItems().then((fetchedItems) => {
+            // Sort items so those with quantity 0 are at the bottom
+            const sortedItems = fetchedItems.sort((a: Item, b: Item) => {
+                if (a.quantity === 0 && b.quantity !== 0) return 1;
+                if (a.quantity !== 0 && b.quantity === 0) return -1;
+                return 0;
+            });
+            setItems(sortedItems);
+        });
     }, [setItems]);
 
     const router = useRouter();
@@ -51,7 +68,7 @@ export default function Item() {
         router.push(`/item/${tab}`);
     };
 
-    const handleItemClick = (item: any) => {
+    const handleItemClick = (item: Item) => {
         setSelectedItem({
             name: item.itemName,
             description: item.itemDescription,
@@ -70,11 +87,13 @@ export default function Item() {
                             {items.map((item) => (
                                 <CardInventory
                                     key={item.itemID}
-                                    className={
+                                    className={`${
                                         selectedItem.name === item.itemName
                                             ? "active"
                                             : ""
-                                    }
+                                    } ${
+                                        item.quantity === 0 ? "grayscale" : ""
+                                    }`}
                                     imgSrc={`/assets/images/reward/${item.imagePath}`}
                                     title={item.itemName}
                                     description={item.itemDescription}
@@ -88,7 +107,10 @@ export default function Item() {
                         <section className="inventory-item_detail-container">
                             <section className="inventory-item_detail-banner">
                                 {selectedItem.banner && (
-                                    <img src={selectedItem.banner} />
+                                    <img
+                                        src={selectedItem.banner}
+                                        alt={selectedItem.name || ""}
+                                    />
                                 )}
                             </section>
 
