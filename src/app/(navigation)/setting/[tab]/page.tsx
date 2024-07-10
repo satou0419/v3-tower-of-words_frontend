@@ -19,6 +19,15 @@ export default function Setting() {
     const { firstname, lastname, setFirstname, setLastname } =
         useUserInfoStore();
 
+    const [localFirstname, setLocalFirstname] = useState(firstname);
+    const [localLastname, setLocalLastname] = useState(lastname);
+
+    const [initialLocalFirstname, setInitialLocalFirstname] =
+        useState(firstname);
+    const [initialLocalLastname, setInitialLocalLastname] = useState(lastname);
+
+    const [isDirty, setIsDirty] = useState(false); // Track form dirty state
+
     const router = useRouter();
     const pathname = usePathname();
     const pathSegments = pathname.split("/");
@@ -32,15 +41,15 @@ export default function Setting() {
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
 
-    // Fetch user info when component mounts
     useEffect(() => {
         getUserInfo();
     }, []);
 
-    // Set initial values for firstname and lastname fields
     useEffect(() => {
-        setFirstname(firstname);
-        setLastname(lastname);
+        setLocalFirstname(firstname);
+        setLocalLastname(lastname);
+        setInitialLocalFirstname(firstname);
+        setInitialLocalLastname(lastname);
     }, [firstname, lastname]);
 
     const handleTabChange = (tab: string) => {
@@ -71,13 +80,31 @@ export default function Setting() {
         e.preventDefault();
 
         try {
-            await updateUser(firstname, lastname);
+            await updateUser(localFirstname, localLastname);
+            setFirstname(localFirstname); // Update the Zustand store only after successful save
+            setLastname(localLastname);
             alert("User information updated successfully!");
+            setIsDirty(false); // Reset dirty state after successful save
+            setInitialLocalFirstname(localFirstname); // Update initial values
+            setInitialLocalLastname(localLastname);
         } catch (err) {
             console.error("Failed to update user information:", err);
             setError("Failed to update user information. Please try again.");
         }
     };
+
+    // Check if there are changes from initial values
+    useEffect(() => {
+        setIsDirty(
+            localFirstname !== initialLocalFirstname ||
+                localLastname !== initialLocalLastname
+        );
+    }, [
+        localFirstname,
+        localLastname,
+        initialLocalFirstname,
+        initialLocalLastname,
+    ]);
 
     const tabData = [
         {
@@ -100,17 +127,23 @@ export default function Setting() {
                             <InputLine
                                 type="text"
                                 placeholder="Firstname"
-                                value={firstname}
-                                onChange={(e) => setFirstname(e.target.value)}
+                                value={localFirstname}
+                                onChange={(e) => {
+                                    setLocalFirstname(e.target.value);
+                                }}
                             />
                             <InputLine
                                 type="text"
                                 placeholder="Lastname"
-                                value={lastname}
-                                onChange={(e) => setLastname(e.target.value)}
+                                value={localLastname}
+                                onChange={(e) => {
+                                    setLocalLastname(e.target.value);
+                                }}
                             />
                         </div>
-                        <button type="submit">Save Changes</button>
+                        <button type="submit" disabled={!isDirty}>
+                            Save Changes
+                        </button>
                     </form>
                 </section>
             ),

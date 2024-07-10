@@ -19,6 +19,7 @@
     bottom: 0;
     z-index: -1;
 }
+
 .navigation img {
     width: 10em;
     align-self: center;
@@ -31,8 +32,8 @@
     height: auto;
     margin-left: auto;
     margin-right: 2em;
-    transition: width 0.5s ease; /* Smooth transition for width change */
     position: relative;
+    transition: width 0.5s ease;
 }
 
 .navigation-dropdown.open {
@@ -40,9 +41,8 @@
     height: auto;
     margin-left: auto;
     margin-right: 2em;
-    transition: all 0.5s ease; /* Smooth transition for width change */
-
     position: relative;
+    transition: all 0.5s ease;
 }
 
 .navigation-profile {
@@ -54,20 +54,57 @@
 }
 
 .navigation-dropdown_list {
-    height: 10px;
     width: 100%;
-    background-color: red;
 
+    background-color: red;
     position: absolute;
     margin-top: 1em;
-    transition: height 0.2s ease-in-out; /* Smooth transition for width change */
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out,
+        visibility 0.5s;
 }
 
 .navigation-dropdown_list.open {
-    width: 100%;
-    background-color: #fff;
-    height: 300px;
-
+    min-height: 30em;
+    background-color: wheat;
     position: absolute;
     margin-top: 1em;
+    opacity: 1;
+    visibility: visible;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    z-index: 20; /* Ensure dropdown list appears above overlay */
+}
+
+.dropdown-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    height: 100vh;
+}
+
+.dropdown-list a {
+    background-color: red;
+    border: 2px solid green;
+    width: 100%;
+
+    &:last-child {
+        margin-top: auto;
+    }
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10; /* Keep overlay behind dropdown list */
 }

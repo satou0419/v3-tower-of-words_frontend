@@ -5,6 +5,7 @@ import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./studentroom.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
 import viewStudentRoom from "@/lib/room-endpoint/viewStudentRoom";
+import Link from "next/link";
 
 export default function StudentRoom() {
     const { rooms, setRoom } = useRoomStore();
@@ -27,7 +28,7 @@ export default function StudentRoom() {
             <section className="studentroom-container">
                 <section className="studentroom-control">
                     <h1>Rooms</h1>
-                    <button>My Words</button>
+                    <Link href="/archive/word-vocabulary">My Words</Link>
                 </section>
 
                 <div className="studentroom-room">

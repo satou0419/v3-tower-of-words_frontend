@@ -3,8 +3,10 @@
 import CardMode from "@/app/component/Card/CardMode/CardMode";
 import "./dashboard.scss";
 import CardArchive from "@/app/component/Card/CardArchive/CardArchive";
+import useUserInfoStore from "@/store/userInfoStore";
 
 export default function Dashboard() {
+    const { userType } = useUserInfoStore.getState();
     return (
         <main className="dashboard-wrapper">
             <section className="dashboard-cardmode">
@@ -14,7 +16,7 @@ export default function Dashboard() {
                     progressValue={2}
                     modeTitle="Adventure"
                     modeDescription="This is a custom description for the adventure."
-                    link="#"
+                    link="/tower/spelling"
                 />
 
                 <CardMode
@@ -24,7 +26,7 @@ export default function Dashboard() {
                     progressValue={5}
                     modeTitle="Room"
                     modeDescription="This is a custom description for the room."
-                    link="#"
+                    link={`/${userType.toLowerCase()}-room`}
                 />
             </section>
             <CardArchive badgesCount={1} wordsCount={12} />
