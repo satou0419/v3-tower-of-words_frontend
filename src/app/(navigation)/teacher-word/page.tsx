@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
 import { InputBox, InputLine } from "@/app/component/Input/Input";
 import "./teacherword.scss";
+import withAuth from "@/app/withAuth";
 
 interface Word {
     word: string;
@@ -222,4 +223,4 @@ const TeacherWord = () => {
     );
 };
 
-export default TeacherWord;
+export default withAuth(TeacherWord, "student");
