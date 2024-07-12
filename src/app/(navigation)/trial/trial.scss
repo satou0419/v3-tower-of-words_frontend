@@ -1,0 +1,99 @@
+.trial-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: antiquewhite;
+
+    section {
+        background-color: aquamarine;
+        height: 20%;
+        width: 80%;
+        display: flex;
+        justify-content: space-between;
+
+        div {
+            height: 100%;
+            aspect-ratio: 1/1;
+            background-color: red;
+        }
+
+        .first-container {
+            height: 100%;
+            width: 205px;
+            display: flex;
+            border: 1px solid white;
+            align-items: center;
+            justify-content: flex-end;
+            position: relative;
+            animation: move-melee 1s forwards;
+
+            .idle {
+                background: url("/assets/images/sprite/range_character-cannon_idle_17.png");
+                height: 205px;
+                right: 0;
+                width: calc(205 * 17);
+                animation: idle calc(12s / 17) steps(17) infinite;
+                position: absolute;
+                bottom: 0;
+            }
+
+            .attack {
+                background: url("/assets/images/sprite/range_character-cannon_attack_22.png");
+                width: calc(4506px / 22);
+                height: 225px;
+                animation: attack calc(22s / 12) steps(22) infinite;
+                position: absolute;
+                bottom: 0;
+            }
+
+            .second-container {
+                border: 2px solid white;
+                width: auto;
+                .second {
+                    background-color: orange;
+                    height: 100%;
+                }
+            }
+        }
+    }
+
+    @keyframes move-melee {
+        0% {
+            width: 205px;
+        }
+        100% {
+            width: 100%; /* Gradually increase to 100% width */
+        }
+    }
+
+    @keyframes back-melee {
+        0% {
+            width: 100%; /* Start from 100% width */
+        }
+        100% {
+            width: 205px;
+        }
+    }
+
+    @keyframes idle {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: -3482px 0;
+        }
+    }
+
+    @keyframes attack {
+        0% {
+            background-position: 0 0;
+        }
+
+        100% {
+            background-position: -4506px 0;
+        }
+    }
+}
