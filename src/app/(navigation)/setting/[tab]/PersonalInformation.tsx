@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { InputLine } from "@/app/component/Input/Input";
 import useUserInfoStore from "@/store/userInfoStore";
 import updateUser from "@/lib/auth-endpoint/updateUser";
+import Modal from "@/app/component/Modal/Modal";
 
 const PersonalInformation = () => {
     const { username } = useUserInfoStore((state) => ({
@@ -19,6 +20,8 @@ const PersonalInformation = () => {
     const [initialLocalLastname, setInitialLocalLastname] = useState(lastname);
 
     const [isDirty, setIsDirty] = useState(false); // Track form dirty state
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     useEffect(() => {
         setLocalFirstname(firstname);
@@ -29,18 +32,23 @@ const PersonalInformation = () => {
 
     const handleSaveChanges = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsConfirmModalOpen(true); // Open the confirmation modal
+    };
 
+    const confirmUpdate = async () => {
         try {
             await updateUser(localFirstname, localLastname);
             setFirstname(localFirstname); // Update the Zustand store only after successful save
             setLastname(localLastname);
-            alert("User information updated successfully!");
+            setIsSuccessModalOpen(true); // Open the success modal upon successful save
             setIsDirty(false); // Reset dirty state after successful save
             setInitialLocalFirstname(localFirstname); // Update initial values
             setInitialLocalLastname(localLastname);
         } catch (err) {
             console.error("Failed to update user information:", err);
             // Handle error state
+        } finally {
+            setIsConfirmModalOpen(false); // Close the confirmation modal after handling update
         }
     };
 
@@ -89,6 +97,41 @@ const PersonalInformation = () => {
                     Save Changes
                 </button>
             </form>
+
+            {/* Confirmation Modal */}
+            <Modal
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                title="Confirm Update"
+                details="Are you sure you want to update your information?"
+                buttons={[
+                    <button key="confirm" onClick={confirmUpdate}>
+                        Confirm
+                    </button>,
+                    <button
+                        key="cancel"
+                        onClick={() => setIsConfirmModalOpen(false)}
+                    >
+                        Cancel
+                    </button>,
+                ]}
+            />
+
+            {/* Success Modal */}
+            <Modal
+                isOpen={isSuccessModalOpen}
+                onClose={() => setIsSuccessModalOpen(false)}
+                title="Update Successful"
+                details="User information updated successfully!"
+                buttons={[
+                    <button
+                        key="ok"
+                        onClick={() => setIsSuccessModalOpen(false)}
+                    >
+                        OK
+                    </button>,
+                ]}
+            />
         </section>
     );
 };

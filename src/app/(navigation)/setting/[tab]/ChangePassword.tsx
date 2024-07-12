@@ -1,12 +1,14 @@
 import React, { useState } from "react";
 import { InputLine } from "@/app/component/Input/Input";
 import changePassword from "@/lib/auth-endpoint/changePassword";
+import Modal from "@/app/component/Modal/Modal";
 
 const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
 
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -17,7 +19,7 @@ const ChangePassword = () => {
 
         try {
             await changePassword(currentPassword, newPassword);
-            alert("Password changed successfully!");
+            setIsSuccessModalOpen(true); // Open success modal upon successful change
             setCurrentPassword("");
             setNewPassword("");
             setConfirmNewPassword("");
@@ -54,6 +56,22 @@ const ChangePassword = () => {
                 </div>
                 <button type="submit">Save Changes</button>
             </form>
+
+            {/* Success Modal */}
+            <Modal
+                isOpen={isSuccessModalOpen}
+                onClose={() => setIsSuccessModalOpen(false)}
+                title="Password Changed"
+                details="Your password has been changed successfully!"
+                buttons={[
+                    <button
+                        key="ok"
+                        onClick={() => setIsSuccessModalOpen(false)}
+                    >
+                        OK
+                    </button>,
+                ]}
+            />
         </section>
     );
 };
