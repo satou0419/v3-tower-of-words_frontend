@@ -1,0 +1,233 @@
+.adventure-wrapper {
+    width: 100%;
+    height: 100vh;
+    background-color: antiquewhite;
+    display: flex;
+    flex-direction: column;
+}
+
+.adventure-platform {
+    height: 60%;
+    width: 100%;
+    background-color: bisque;
+    display: flex;
+    flex-direction: column;
+    background-image: url("/assets/images/background/bg-gameplay_small.webp");
+    background-size: contain;
+
+    align-items: center;
+    position: relative;
+    .platform-indicator {
+        margin-top: 10px;
+        width: 240px;
+        height: 35px;
+        background-image: url("/assets/images/background/bg-indicator_small.webp");
+        background-position: center;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+    }
+}
+
+.sprite-holder {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: absolute;
+    bottom: 0;
+}
+
+.character-container {
+    position: relative;
+    display: flex;
+    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+    width: 205px;
+    height: 250px;
+    // animation: expand-width 0.5s forwards, shrink-width 2s 4s forwards; /* Apply expand and shrink animations */
+}
+
+.enemy-container {
+    height: 250px;
+    aspect-ratio: 1/1;
+    background-color: red;
+    width: 205px;
+    animation: expand-width 0.8s forwards, shrink-width 2s 4s forwards; /* Apply expand and shrink animations */
+}
+
+.adventure-control {
+    flex-grow: 1;
+    display: flex;
+    position: relative;
+    align-items: flex-end;
+
+    img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+    .control-item {
+        flex: 1;
+        border: 2px solid white;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        border: 20px solid #662b9a;
+        background-color: #9a6dea;
+        padding-left: 20px;
+        height: 98%;
+
+        .item-box {
+            width: 30%;
+            aspect-ratio: 1/1;
+            background-color: beige;
+            border-radius: 20px;
+            border: 5px solid salmon;
+            position: relative;
+
+            span {
+                position: absolute;
+                bottom: 0px;
+                right: 0px;
+                border-radius: 10px;
+                padding: 0.2em 2em;
+                background-color: tomato;
+            }
+        }
+    }
+
+    .control-input {
+        flex: 1.5;
+
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 98%;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5em;
+            width: 80%;
+
+            button {
+                height: 4em;
+                width: 8em;
+            }
+
+            input {
+                height: 4em;
+                width: 80%;
+            }
+        }
+    }
+
+    .control-clue {
+        flex: 1;
+        border: 2px solid white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        border: 20px solid #662b9a;
+        background-color: #9a6dea;
+        height: 98%;
+        color: white;
+
+        h1 {
+            font-size: 1.5em;
+        }
+
+        span {
+            align-self: flex-start;
+        }
+
+        .clue-container {
+            width: 80%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .clue-pronunciation {
+            background-color: white;
+            width: 100%;
+            height: 2em;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0.5em 0;
+            color: #333;
+
+            span {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+
+        .clue-definition {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            flex: 1;
+            margin: 0.5em 0;
+            color: #333;
+            span {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+        }
+    }
+}
+@keyframes idle {
+    0% {
+        background-position: 0 -225px;
+    }
+
+    100% {
+        background-position: -3482px -225px; /* Adjust if necessary based on sprite sheet dimensions */
+    }
+}
+
+@keyframes attack {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: -4506px 0;
+    }
+}
+
+@keyframes expand-width {
+    0% {
+        width: 205px;
+    }
+
+    100% {
+        width: 100%;
+    }
+}
+
+@keyframes shrink-width {
+    0% {
+        width: 100%;
+    }
+
+    100% {
+        width: 205px;
+    }
+}

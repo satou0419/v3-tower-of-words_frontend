@@ -23,9 +23,7 @@ export default function Trial() {
                 <div className="first-container">
                     <div className={"idle"}></div>
                 </div>
-                <div className="second-container">
-                    <div className="bg-range_character_cannon_attack_22"></div>
-                </div>
+                <div className="second-container"></div>
             </section>
             <button onClick={handleHitAnimation}>Attack</button>
         </main>
