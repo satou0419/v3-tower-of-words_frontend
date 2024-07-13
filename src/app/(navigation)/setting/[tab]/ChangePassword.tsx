@@ -2,18 +2,21 @@ import React, { useState } from "react";
 import { InputLine } from "@/app/component/Input/Input";
 import changePassword from "@/lib/auth-endpoint/changePassword";
 import Modal from "@/app/component/Modal/Modal";
+import Toast from "@/app/component/Toast/Toast";
 
 const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
-    const [error, setError] = useState<string | null>(null);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [isErrorToastOpen, setIsErrorToastOpen] = useState(false);
+    const [toastMessage, setToastMessage] = useState(""); // State to hold toast message
 
     const handlePasswordChange = async (e: React.FormEvent) => {
         e.preventDefault();
         if (newPassword !== confirmNewPassword) {
-            setError("New passwords do not match.");
+            setToastMessage("New passwords do not match."); // Set toast message for password mismatch
+            setIsErrorToastOpen(true); // Display error toast
             return;
         }
 
@@ -23,35 +26,42 @@ const ChangePassword = () => {
             setCurrentPassword("");
             setNewPassword("");
             setConfirmNewPassword("");
-            setError(null);
         } catch (err) {
-            setError("Failed to change password. Please try again.");
+            setToastMessage("Failed to change password. Please try again."); // Set toast message for general error
+            setIsErrorToastOpen(true); // Display error toast
         }
+    };
+
+    const handleCloseErrorToast = () => {
+        setIsErrorToastOpen(false);
     };
 
     return (
         <section className="change-pass_wrapper">
             <form className="change-pass_form" onSubmit={handlePasswordChange}>
                 <h1>CHANGE PASSWORD</h1>
-                {error && <p className="error">{error}</p>}
                 <div className="input-group">
                     <InputLine
                         type="password"
                         placeholder="Current Password"
                         value={currentPassword}
                         onChange={(e) => setCurrentPassword(e.target.value)}
+                        required
+                        autoFocus
                     />
                     <InputLine
                         type="password"
                         placeholder="New Password"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
+                        required
                     />
                     <InputLine
                         type="password"
                         placeholder="Confirm New Password"
                         value={confirmNewPassword}
                         onChange={(e) => setConfirmNewPassword(e.target.value)}
+                        required
                     />
                 </div>
                 <button type="submit">Save Changes</button>
@@ -72,6 +82,15 @@ const ChangePassword = () => {
                     </button>,
                 ]}
             />
+
+            {/* Error Toast */}
+            {isErrorToastOpen && (
+                <Toast
+                    message={toastMessage}
+                    type="error"
+                    onClose={handleCloseErrorToast}
+                />
+            )}
         </section>
     );
 };

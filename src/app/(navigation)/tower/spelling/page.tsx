@@ -1,9 +1,13 @@
+// src/pages/spelling.tsx
+
 "use client";
 import React, { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/navigation";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
 import "./spelling.scss";
 import { useFloorStore } from "@/store/floorStore";
 import { RewardData } from "@/store/rewardStore";
+import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID";
 import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID";
 
 const Spelling = () => {
@@ -13,7 +17,9 @@ const Spelling = () => {
     );
     const [rewardData, setRewardData] = useState<RewardData | null>(null);
     const [activeFloorId, setActiveFloorId] = useState<number | null>(null);
+    const [enemyData, setEnemyData] = useState<any | null>(null); // Adjust this type as per your actual enemy data structure
     const activeFloorRef = useRef<HTMLDivElement>(null);
+    const navigation = useRouter();
 
     useEffect(() => {
         getAllFloors();
@@ -35,6 +41,7 @@ const Spelling = () => {
     useEffect(() => {
         if (activeFloorId) {
             fetchRewardData(activeFloorId);
+            fetchEnemyData(activeFloorId);
         }
     }, [activeFloorId]);
 
@@ -54,8 +61,27 @@ const Spelling = () => {
         }
     };
 
+    const fetchEnemyData = async (floorId: number) => {
+        try {
+            const data = await getEnemyByFloorID(floorId);
+            if (data && data.length > 0) {
+                setEnemyData(data[0]); // Assuming you only expect one enemy per floor
+            } else {
+                console.error("No enemy data found for floor ID:", floorId);
+            }
+        } catch (error) {
+            console.error("Error fetching enemy data:", error);
+        }
+    };
+
     const handleFloorClick = (floorId: number) => {
         setActiveFloorId(floorId);
+    };
+
+    const handleEnterClick = () => {
+        if (activeFloorId && enemyData) {
+            navigation.push(`/gameplay/adventure?floorId=${activeFloorId}`);
+        }
     };
 
     return (
@@ -147,7 +173,7 @@ const Spelling = () => {
                                 </section>
                             </section>
 
-                            <button>Enter</button>
+                            <button onClick={handleEnterClick}>Enter</button>
                         </CardWord>
                     </section>
                     <section className="tower">
