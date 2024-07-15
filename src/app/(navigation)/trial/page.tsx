@@ -1,31 +1,38 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import "./trial.scss";
+import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
+import useImageParse from "@/hook/useImageParse";
+import React, { useState } from "react";
 
-export default function Trial() {
-    const [isHit, setIsHit] = useState(false);
-
-    const [setDuration] = useState(22 / 12);
-
-    useEffect(() => {
-        console.log(setDuration);
-    });
-    const handleHitAnimation = () => {
-        setIsHit(true);
-        setTimeout(() => {
-            setIsHit(false);
-        }, setDuration * 1000); // Adjust timeout to match total animation duration
-    };
-
-    return (
-        <main className="trial-wrapper">
-            <section>
-                <div className="first-container">
-                    <div className={"idle"}></div>
-                </div>
-                <div className="second-container"></div>
-            </section>
-            <button onClick={handleHitAnimation}>Attack</button>
-        </main>
+const AnimationComponent: React.FC = () => {
+    const characterDetails = useImageParse("&range_cannon-a22-i17");
+    const characterAnimation = useAnimationKeyframes(
+        "idle",
+        characterDetails.idleFrame,
+        characterDetails.attackFrame
     );
-}
+    return (
+        <div
+            style={{
+                border: "2px solid white",
+                position: "absolute",
+                bottom: 0,
+                right: 0,
+                backgroundImage: `url("/assets/images/sprite/${characterDetails.name}.png")`,
+                width: `360px`, // Width of each frame in the sprite sheet
+                height: `360px`, // Adjust based on sprite sheet
+                animation: `idle-${characterDetails.name} 1s steps(17) infinite`,
+            }}
+        >
+            Animate me!
+            <style>
+                {`
+                ${characterAnimation}
+                `}
+            </style>
+            {characterAnimation}
+            {characterDetails.attackFrame}
+        </div>
+    );
+};
+
+export default AnimationComponent;

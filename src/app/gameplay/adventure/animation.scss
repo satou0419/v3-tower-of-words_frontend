@@ -1,0 +1,74 @@
+@keyframes idle-cannon {
+    0% {
+        background-position: 0 -360px;
+    }
+
+    100% {
+        background-position: -6120px -360px; //-width of the idle frame, height of the frame
+    }
+}
+
+@keyframes attack-cannon {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: -7920px 0;
+    }
+}
+
+@keyframes idle-spring {
+    0% {
+        background-position: 0 -360px;
+    }
+
+    100% {
+        background-position: -3960px -360px; /* Adjust if necessary based on sprite sheet dimensions */
+    }
+}
+
+@keyframes attack-spring {
+    0% {
+        background-position: 0 0;
+    }
+
+    100% {
+        background-position: -10080px 0;
+    }
+}
+@keyframes expand-width {
+    0% {
+        width: 360px;
+    }
+
+    100% {
+        width: 90%;
+    }
+}
+
+@keyframes shrink-width {
+    0% {
+        width: 90%;
+    }
+
+    100% {
+        width: 360pxpx;
+    }
+}
+
+.expand-width {
+    animation: expand-width 0.5s forwards;
+}
+
+.shrink-width {
+    animation: shrink-width 0.5s forwards;
+}
+
+.approach-enemy {
+    animation: approach-enemy 0.5s forwards;
+}
+
+.retreat-from-enemy {
+    animation: retreat-from-enemy 0.5s forwards;
+}
