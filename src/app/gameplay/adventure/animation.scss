@@ -1,42 +1,3 @@
-@keyframes idle-cannon {
-    0% {
-        background-position: 0 -360px;
-    }
-
-    100% {
-        background-position: -6120px -360px; //-width of the idle frame, height of the frame
-    }
-}
-
-@keyframes attack-cannon {
-    0% {
-        background-position: 0 0;
-    }
-
-    100% {
-        background-position: -7920px 0;
-    }
-}
-
-@keyframes idle-spring {
-    0% {
-        background-position: 0 -360px;
-    }
-
-    100% {
-        background-position: -3960px -360px; /* Adjust if necessary based on sprite sheet dimensions */
-    }
-}
-
-@keyframes attack-spring {
-    0% {
-        background-position: 0 0;
-    }
-
-    100% {
-        background-position: -10080px 0;
-    }
-}
 @keyframes expand-width {
     0% {
         width: 360px;
@@ -65,10 +26,38 @@
     animation: shrink-width 0.5s forwards;
 }
 
-.approach-enemy {
-    animation: approach-enemy 0.5s forwards;
+@keyframes blink {
+    0%,
+    20%,
+    60%,
+    100% {
+        filter: none;
+    }
+    10%,
+    50%,
+    90% {
+        filter: brightness(10);
+    }
 }
 
-.retreat-from-enemy {
-    animation: retreat-from-enemy 0.5s forwards;
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    75% {
+        transform: translateX(-5px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.hit {
+    animation: blink 0.5s ease-in-out, shake 0.5s ease-in-out;
 }

@@ -1,12 +1,11 @@
-// useAnimationKeyframes.ts
 import { useEffect, useState } from "react";
 
 const useAnimationKeyframes = (
     animationName: string,
     name: string,
-
     idleFrames: number,
-    attackFrames: number
+    attackFrames: number,
+    attackType?: string // Added attackType parameter
 ) => {
     const [keyframesCSS, setKeyframesCSS] = useState("");
 
@@ -22,7 +21,6 @@ const useAnimationKeyframes = (
                     0% {
                         background-position: 0 -${frameHeight}px;
                     }
-
                     100% {
                         background-position: -${
                             idleFrames * frameWidth
@@ -34,7 +32,6 @@ const useAnimationKeyframes = (
                     0% {
                         background-position: 0 0;
                     }
-
                     100% {
                         background-position: -${attackFrames * frameWidth}px 0;
                     }
@@ -43,11 +40,33 @@ const useAnimationKeyframes = (
 
             keyframes += `}`;
 
+            if (attackType === "melee") {
+                keyframes += `
+                    @keyframes expand-width-${name} {
+                        0% {
+                            width: 360px;
+                        }
+                        100% {
+                            width: 90%;
+                        }
+                    }
+
+                    @keyframes shrink-width-${name} {
+                        0% {
+                            width: 90%;
+                        }
+                        100% {
+                            width: 360px;
+                        }
+                    }
+                `;
+            }
+
             setKeyframesCSS(keyframes);
         };
 
         generateKeyframes();
-    }, [animationName, idleFrames, attackFrames, name]);
+    }, [animationName, idleFrames, attackFrames, name, attackType]);
 
     return keyframesCSS;
 };

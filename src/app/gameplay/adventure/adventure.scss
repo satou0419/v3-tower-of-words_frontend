@@ -1,4 +1,13 @@
-@import url(/animation.scss);
+.character-holder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 15em;
+
+    button {
+        padding: 2em;
+    }
+}
 .adventure-wrapper {
     width: 100%;
     height: 100vh;
@@ -80,7 +89,6 @@
     position: absolute;
     bottom: 0;
     background-color: #333;
-    position: relative;
 }
 
 .character-container {

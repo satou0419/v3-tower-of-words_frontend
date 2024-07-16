@@ -7,8 +7,11 @@ import Loading from "@/app/loading";
 import useImageParse from "@/hook/useImageParse";
 import useWord from "@/hook/useWord";
 import "./adventure.scss"; // Make sure your SCSS file is imported correctly
+import "./animation.scss";
 import Modal from "@/app/component/Modal/Modal";
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
+import withAuth from "@/app/withAuth";
+import Confetti from "react-confetti"; // Import Confetti
 
 const AdventureGameplay = () => {
     const searchParams = useSearchParams();
@@ -30,12 +33,36 @@ const AdventureGameplay = () => {
     );
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
+    const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
+
+    const [char, setChar] = useState("&melee_sword-a21-i19");
+    const [enem, setEnem] = useState("&melee_spring-a28-i11");
+    const [characterAttackType, setCharacterAttackType] = useState("");
+    const [enemyAttackType, setEnemyAttackType] = useState("");
+    const [enemyHit, setEnemyHit] = useState("");
+    const [characterHit, setCharacterHit] = useState("");
 
     useEffect(() => {
         if (floorId) {
             fetchEnemies(Number(floorId));
         }
     }, [floorId, fetchEnemies]);
+
+    const toSword = () => {
+        setChar("&melee_sword-a21-i19");
+    };
+
+    const toCannon = () => {
+        setChar("&range_cannon-a22-i17");
+    };
+
+    const toSpring = () => {
+        setEnem("&melee_spring-a28-i11");
+    };
+
+    const toCrab = () => {
+        setEnem("&melee_crab-a20-i20");
+    };
 
     useEffect(() => {
         if (enemies.length > 0) {
@@ -51,7 +78,7 @@ const AdventureGameplay = () => {
         }
     }, [enemies]);
 
-    const characterDetails = useImageParse("&range_cannon-a22-i17");
+    const characterDetails = useImageParse(char);
 
     useEffect(() => {
         if (characterDetails.name) {
@@ -62,7 +89,7 @@ const AdventureGameplay = () => {
     }, [characterDetails.name]);
 
     const currentEnemy = enemyData[currentEnemyIndex];
-    const enemyDetails = useImageParse(currentEnemy?.imagePath || "");
+    const enemyDetails = useImageParse(enem);
 
     useEffect(() => {
         if (enemyDetails.name) {
@@ -78,6 +105,7 @@ const AdventureGameplay = () => {
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value);
     };
+
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
         characterDetails.name,
@@ -91,6 +119,96 @@ const AdventureGameplay = () => {
         enemyDetails.idleFrame,
         enemyDetails.attackFrame
     );
+    const handleEnemyAttack = () => {
+        if (enemyDetails.attackType == "melee") {
+            setEnemyAttackType("expand-width");
+
+            setTimeout(() => {
+                setIsEnemyAttacking(true);
+            }, 500);
+
+            setTimeout(() => {
+                setIsEnemyAttacking(false);
+                setEnemyAttackType("shrink-width");
+                setCharacterHit("hit");
+                setCharacterAttackType("");
+
+                // Set character hit to "" after the hit duration
+                setTimeout(() => {
+                    setCharacterHit("");
+                }, 500); // 500ms is the duration of the hit
+            }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration
+        } else {
+            setIsEnemyAttacking(true);
+
+            setTimeout(() => {
+                setIsEnemyAttacking(false);
+                setCharacterHit("hit");
+
+                // Set character hit to "" after the hit duration
+                setTimeout(() => {
+                    setCharacterHit("");
+                }, 500); // 500ms is the duration of the hit
+            }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
+        }
+    };
+
+    const handleCharacterAttack = () => {
+        if (characterDetails.attackType == "melee") {
+            setCharacterAttackType("expand-width");
+
+            setTimeout(() => {
+                setIsCharacterAttacking(true);
+            }, 500);
+
+            setTimeout(() => {
+                setIsCharacterAttacking(false);
+                setCharacterAttackType("shrink-width");
+                setEnemyAttackType("");
+                setEnemyHit("hit");
+
+                // Set character hit to "" after the hit duration
+                setTimeout(() => {
+                    setEnemyHit("");
+                }, 500); // 500ms is the duration of the hit
+            }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration
+        } else {
+            setIsCharacterAttacking(true);
+
+            setTimeout(() => {
+                setIsCharacterAttacking(false);
+                setEnemyHit("hit");
+
+                // Set character hit to "" after the hit duration
+                setTimeout(() => {
+                    setEnemyHit("");
+                }, 500); // 500ms is the duration of the hit
+            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
+        }
+    };
+
+    const handleMissedAttack = () => {
+        if (characterDetails.attackType == "melee") {
+            setCharacterAttackType("expand-width");
+
+            setTimeout(() => {
+                setIsCharacterAttacking(true);
+            }, 500);
+
+            setTimeout(() => {
+                setIsCharacterAttacking(false);
+                setCharacterAttackType("shrink-width");
+                setEnemyAttackType("");
+            }, (enemyDetails.attackFrame / 12) * 1000);
+        } else {
+            setIsCharacterAttacking(true);
+
+            setTimeout(() => {
+                setIsCharacterAttacking(false);
+            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
+        }
+    };
+
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemyData[currentEnemyIndex];
@@ -99,7 +217,8 @@ const AdventureGameplay = () => {
         if (typedWord.toLowerCase() === currentWord) {
             // Correct word spelling
             setTypedWord("");
-            setIsCharacterAttacking(true); // Trigger attack animation after correct spelling
+
+            handleCharacterAttack();
 
             const updatedSpelledWords = { ...spelledWords };
             updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true;
@@ -116,7 +235,8 @@ const AdventureGameplay = () => {
                     ]);
 
                     if (currentEnemyIndex === enemyData.length - 1) {
-                        // alert("All enemies defeated!");
+                        // All enemies defeated, show confetti
+                        setShowConfetti(true);
                     } else {
                         setCurrentEnemyIndex(currentEnemyIndex + 1);
                         setCurrentWordIndex(0);
@@ -126,35 +246,22 @@ const AdventureGameplay = () => {
                 }
             }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
         } else {
-            // Incorrect word spelling
-            setTypedWord("");
-            setIsCharacterAttacking(true); // Trigger missed attack animation
-            setLives(lives - 1); // Decrement lives
-
+            handleMissedAttack();
             setTimeout(() => {
-                setIsCharacterAttacking(false);
-                setIsEnemyAttacking(true); // Trigger enemy attack animation
-
-                setTimeout(() => {
-                    setIsEnemyAttacking(false);
-                    if (lives - 1 === 0) {
-                        // alert("Game Over!");
-                    } else {
-                        // alert(
-                        //     `Incorrect word spelling. You have ${
-                        //         lives - 1
-                        //     } lives left.`
-                        // );
-                    }
-                }, (enemyDetails.attackFrame / 12) * 1000); // Adjust timing as needed
-            }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
+                handleEnemyAttack();
+            }, (characterDetails.attackFrame / 12) * 2000);
         }
     };
-
+    useEffect(() => {
+        console.log("Character Hit", characterHit);
+        console.log("Enemy Hit", enemyHit);
+    }, [characterHit, enemyHit]);
     useEffect(() => {
         // Play audio on word change
         if (word && word.playAudio) {
-            word.playAudio();
+            setTimeout(() => {
+                word.playAudio();
+            }, 1500);
         }
     }, [word]); // Trigger on word change
 
@@ -218,7 +325,9 @@ const AdventureGameplay = () => {
                                             ? "defeated"
                                             : ""
                                     }`}
-                                ></div>
+                                >
+                                    Name: {currentEnemy.name}
+                                </div>
                                 {enemy.words.map(
                                     (word: any, wordIndex: any) => (
                                         <React.Fragment key={wordIndex}>
@@ -239,9 +348,20 @@ const AdventureGameplay = () => {
                         ))}
                     </section>
                     <section className="sprite-holder">
-                        <section className="character-container">
+                        {/* <div className="character-holder">
+                            <button onClick={toSword}>Sword</button>
+                            <button onClick={toCannon}>Cannon</button>
+                        </div>
+                        <div className="character-holder">
+                            <button onClick={toSpring}>Spring</button>
+                            <button onClick={toCrab}>Crab</button>
+                        </div> */}
+
+                        <section
+                            className={` character-container ${characterAttackType} ${characterHit}`}
+                        >
                             <div
-                                className={`character-sprite ${
+                                className={` character-sprite ${
                                     isCharacterAttacking
                                         ? `attack-${characterDetails.name}`
                                         : `idle-${characterDetails.name}`
@@ -276,7 +396,9 @@ const AdventureGameplay = () => {
                                 </style>
                             </div>
                         </section>
-                        <section className="enemy-container">
+                        <section
+                            className={`enemy-container ${enemyAttackType} ${enemyHit}`}
+                        >
                             <div
                                 className={`enemy-sprite ${
                                     isEnemyAttacking
@@ -317,7 +439,6 @@ const AdventureGameplay = () => {
                     </section>
                 </section>
             )}
-
             {gameStarted && (
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
@@ -366,6 +487,8 @@ const AdventureGameplay = () => {
                     </section>
                 </section>
             )}
+            {showConfetti && <Confetti />}{" "}
+            {/* Show confetti when all enemies are defeated */}
         </main>
     );
 };
