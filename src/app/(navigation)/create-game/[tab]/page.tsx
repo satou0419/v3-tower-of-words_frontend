@@ -10,7 +10,11 @@ import useTabManagement from "@/hook/useTab";
 interface Enemy {
     id: number;
     imagePath: string;
-    word: string[];
+    words: SimulationWords[];
+}
+
+interface SimulationWords {
+    word: string;
 }
 
 interface Room {
@@ -69,8 +73,10 @@ export default function CreateGame() {
     }, [enemies, isClient]);
 
     useEffect(() => {
-        localStorage.setItem("settings", JSON.stringify(settings));
-    }, [settings]);
+        if (isClient) {
+            localStorage.setItem("settings", JSON.stringify(settings));
+        }
+    }, [settings, isClient]);
 
     useEffect(() => {
         setSettings((prevSettings) => ({
@@ -89,7 +95,7 @@ export default function CreateGame() {
         const newEnemy: Enemy = {
             id: enemies.length > 0 ? enemies[enemies.length - 1].id + 1 : 1,
             imagePath:"dafuq",
-            word:[]
+            words:[]
         };
 
         setEnemies([...enemies, newEnemy]);
