@@ -24,7 +24,9 @@
             height: 95%;
             width: 95%;
             border-radius: 10px;
-
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
             background: var(--linear-violet);
         }
     }
