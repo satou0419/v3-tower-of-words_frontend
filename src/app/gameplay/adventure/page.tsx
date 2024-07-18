@@ -5,13 +5,14 @@ import { InputBox } from "@/app/component/Input/Input";
 import { useEnemyStore } from "@/store/enemyStore";
 import Loading from "@/app/loading";
 import useImageParse from "@/hook/useImageParse";
-import useWord from "@/hook/useWord";
 import "./adventure.scss"; // Make sure your SCSS file is imported correctly
 import "./animation.scss";
 import Modal from "@/app/component/Modal/Modal";
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
-import withAuth from "@/app/withAuth";
 import Confetti from "react-confetti"; // Import Confetti
+import useMerriam from "@/hook/useMerriam";
+import getUserItems from "@/lib/item-endpoint/getUserItem";
+import { useItemStore } from "@/store/itemStore";
 
 const AdventureGameplay = () => {
     const searchParams = useSearchParams();
@@ -35,34 +36,26 @@ const AdventureGameplay = () => {
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
     const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
 
-    const [char, setChar] = useState("&melee_sword-a21-i19");
-    const [enem, setEnem] = useState("&melee_spring-a28-i11");
     const [characterAttackType, setCharacterAttackType] = useState("");
     const [enemyAttackType, setEnemyAttackType] = useState("");
     const [enemyHit, setEnemyHit] = useState("");
     const [characterHit, setCharacterHit] = useState("");
+    const [userItems, setUserItems] = useState<any[]>([]);
+    const setItems = useItemStore.getState().setItems;
+
+    useEffect(() => {
+        (async () => {
+            const items = await getUserItems();
+            setUserItems(items);
+            setItems(items);
+        })();
+    }, [setItems]);
 
     useEffect(() => {
         if (floorId) {
             fetchEnemies(Number(floorId));
         }
     }, [floorId, fetchEnemies]);
-
-    const toSword = () => {
-        setChar("&melee_sword-a21-i19");
-    };
-
-    const toCannon = () => {
-        setChar("&range_cannon-a22-i17");
-    };
-
-    const toSpring = () => {
-        setEnem("&melee_spring-a28-i11");
-    };
-
-    const toCrab = () => {
-        setEnem("&melee_crab-a20-i20");
-    };
 
     useEffect(() => {
         if (enemies.length > 0) {
@@ -78,7 +71,7 @@ const AdventureGameplay = () => {
         }
     }, [enemies]);
 
-    const characterDetails = useImageParse(char);
+    const characterDetails = useImageParse("&melee_sword-a21-i19");
 
     useEffect(() => {
         if (characterDetails.name) {
@@ -89,7 +82,9 @@ const AdventureGameplay = () => {
     }, [characterDetails.name]);
 
     const currentEnemy = enemyData[currentEnemyIndex];
-    const enemyDetails = useImageParse(enem);
+    const enemyDetails = useImageParse(
+        enemyData[currentEnemyIndex]?.imagePath || ""
+    );
 
     useEffect(() => {
         if (enemyDetails.name) {
@@ -100,7 +95,7 @@ const AdventureGameplay = () => {
     }, [enemyDetails.name]);
 
     const currentWord = currentEnemy?.words[currentWordIndex];
-    const word = useWord(currentWord); // Pass the currentWord to the custom hook
+    const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value);
@@ -119,25 +114,27 @@ const AdventureGameplay = () => {
         enemyDetails.idleFrame,
         enemyDetails.attackFrame
     );
+
     const handleEnemyAttack = () => {
         if (enemyDetails.attackType == "melee") {
             setEnemyAttackType("expand-width");
 
             setTimeout(() => {
                 setIsEnemyAttacking(true);
-            }, 500);
+                // playEnemyAttackSound(); // Play the attack sound when the enemy attacks
+            }, 800);
 
             setTimeout(() => {
                 setIsEnemyAttacking(false);
-                setEnemyAttackType("shrink-width");
                 setCharacterHit("hit");
                 setCharacterAttackType("");
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
+                    setEnemyAttackType("shrink-width");
                     setCharacterHit("");
                 }, 500); // 500ms is the duration of the hit
-            }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration
+            }, (enemyDetails.attackFrame / 12) * 1000 + 800); // Main enemy attack duration
         } else {
             setIsEnemyAttacking(true);
 
@@ -190,7 +187,6 @@ const AdventureGameplay = () => {
     const handleMissedAttack = () => {
         if (characterDetails.attackType == "melee") {
             setCharacterAttackType("expand-width");
-
             setTimeout(() => {
                 setIsCharacterAttacking(true);
             }, 500);
@@ -199,7 +195,7 @@ const AdventureGameplay = () => {
                 setIsCharacterAttacking(false);
                 setCharacterAttackType("shrink-width");
                 setEnemyAttackType("");
-            }, (enemyDetails.attackFrame / 12) * 1000);
+            }, (characterDetails.attackFrame / 12) * 1000);
         } else {
             setIsCharacterAttacking(true);
 
@@ -217,7 +213,6 @@ const AdventureGameplay = () => {
         if (typedWord.toLowerCase() === currentWord) {
             // Correct word spelling
             setTypedWord("");
-
             handleCharacterAttack();
 
             const updatedSpelledWords = { ...spelledWords };
@@ -234,13 +229,15 @@ const AdventureGameplay = () => {
                         currentEnemyIndex,
                     ]);
 
-                    if (currentEnemyIndex === enemyData.length - 1) {
-                        // All enemies defeated, show confetti
-                        setShowConfetti(true);
-                    } else {
-                        setCurrentEnemyIndex(currentEnemyIndex + 1);
-                        setCurrentWordIndex(0);
-                    }
+                    setTimeout(() => {
+                        if (currentEnemyIndex === enemyData.length - 1) {
+                            // All enemies defeated, show confetti
+                            setShowConfetti(true);
+                        } else {
+                            setCurrentEnemyIndex(currentEnemyIndex + 1);
+                            setCurrentWordIndex(0);
+                        }
+                    }, 500); // Add delay before switching to next enemy (adjust as needed)
                 } else {
                     setCurrentWordIndex(currentWordIndex + 1);
                 }
@@ -252,10 +249,12 @@ const AdventureGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 2000);
         }
     };
+
     useEffect(() => {
         console.log("Character Hit", characterHit);
         console.log("Enemy Hit", enemyHit);
     }, [characterHit, enemyHit]);
+
     useEffect(() => {
         // Play audio on word change
         if (word && word.playAudio) {
@@ -281,6 +280,26 @@ const AdventureGameplay = () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
     }, [word]); // Trigger on word change
+
+    const handleItemUse = (itemID: string) => {
+        const item = userItems.find((item) => item.itemID.itemID === itemID);
+        if (item && item.quantity > 0) {
+            // Implement item effect logic here
+            if (item.itemID.effectType === "heal") {
+                setLives((prevLives) =>
+                    Math.min(prevLives + item.itemID.effectValue, 5)
+                );
+            }
+
+            // Update item quantity
+            const updatedItems = userItems.map((userItem) =>
+                userItem.itemID.itemID === itemID
+                    ? { ...userItem, quantity: userItem.quantity - 1 }
+                    : userItem
+            );
+            setUserItems(updatedItems);
+        }
+    };
 
     const welcomeModalButtons = [
         <button
@@ -348,15 +367,6 @@ const AdventureGameplay = () => {
                         ))}
                     </section>
                     <section className="sprite-holder">
-                        {/* <div className="character-holder">
-                            <button onClick={toSword}>Sword</button>
-                            <button onClick={toCannon}>Cannon</button>
-                        </div>
-                        <div className="character-holder">
-                            <button onClick={toSpring}>Spring</button>
-                            <button onClick={toCrab}>Crab</button>
-                        </div> */}
-
                         <section
                             className={` character-container ${characterAttackType} ${characterHit}`}
                         >
@@ -442,17 +452,34 @@ const AdventureGameplay = () => {
             {gameStarted && (
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
-
                     <section className="control-item">
-                        <div className="item-box">
-                            <span>x</span>
-                        </div>
-                        <div className="item-box">
-                            <span>x</span>
-                        </div>
-                        <div className="item-box">
-                            <span>x</span>
-                        </div>
+                        {userItems.map((item) => (
+                            <div
+                                key={item.itemID.itemID}
+                                className="item-box"
+                                onClick={() =>
+                                    handleItemUse(item.itemID.itemID)
+                                }
+                            >
+                                <img
+                                    src={`/assets/images/reward/${item.itemID.imagePath}`}
+                                    alt={item.itemID.itemName}
+                                />
+                                <span>{item.quantity}x</span>
+                            </div>
+                        ))}
+                        {[...Array(3)].map((_, index) => (
+                            <div
+                                key={`empty-${index}`}
+                                className="item-box empty"
+                            >
+                                <img
+                                    src="/assets/images/reward/empty.png"
+                                    alt="Empty"
+                                />
+                                <span>0x</span>
+                            </div>
+                        ))}
                     </section>
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
