@@ -223,4 +223,4 @@ const TeacherWord = () => {
     );
 };
 
-export default withAuth(TeacherWord, "student");
+export default TeacherWord;

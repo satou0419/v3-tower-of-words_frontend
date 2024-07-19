@@ -5,13 +5,18 @@ import {
     useArchiveWordStore,
     fetchAndSetArchiveWords,
 } from "@/store/archiveWordStore";
-import dictionary from "@/lib/merriam-endpoint/dictionary";
+import useMerriam from "@/hook/useMerriam";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVolumeUp } from "@fortawesome/free-solid-svg-icons";
 
 const Words = () => {
     const { archiveWords } = useArchiveWordStore();
-    const [selectedWord, setSelectedWord] = useState<null | any>(null);
+    const [selectedWord, setSelectedWord] = useState<null | string>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredWords, setFilteredWords] = useState(archiveWords);
+
+    // Use the hook with the selectedWord to get Merriam data
+    const wordData = useMerriam(selectedWord || "");
 
     useEffect(() => {
         fetchAndSetArchiveWords();
@@ -25,21 +30,12 @@ const Words = () => {
         );
     }, [searchTerm, archiveWords]);
 
-    const handleWordClick = async (word: any) => {
-        const dictionaryData = await dictionary(word.word);
-        setSelectedWord({
-            ...word,
-            dictionaryData,
-        });
+    const handleWordClick = (word: string) => {
+        setSelectedWord(word);
     };
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
-    };
-
-    const playAudio = (audioUrl: string) => {
-        const audio = new Audio(audioUrl);
-        audio.play();
     };
 
     return (
@@ -55,12 +51,9 @@ const Words = () => {
                         {filteredWords.map((word) => (
                             <span
                                 key={word.word}
-                                onClick={() => handleWordClick(word)}
+                                onClick={() => handleWordClick(word.word)}
                                 className={
-                                    selectedWord &&
-                                    selectedWord.word === word.word
-                                        ? "active"
-                                        : ""
+                                    selectedWord === word.word ? "active" : ""
                                 }
                             >
                                 {word.word}
@@ -72,47 +65,39 @@ const Words = () => {
             <div className="wordarchive-spine"></div>
             <CardWord className="wordarchive-right">
                 <section className="right-container">
-                    {selectedWord ? (
+                    {wordData ? (
                         <>
                             <div className="word-control">
-                                <h1>{selectedWord.word}</h1>
-                                {selectedWord.dictionaryData && (
-                                    <>
-                                        <span className="pronunciation">
-                                            {
-                                                selectedWord.dictionaryData
-                                                    .phonetic
-                                            }
-                                        </span>
-                                        {selectedWord.dictionaryData.audio && (
-                                            <button
-                                                onClick={() =>
-                                                    playAudio(
-                                                        selectedWord
-                                                            .dictionaryData
-                                                            .audio
-                                                    )
-                                                }
-                                            >
-                                                Play Audio
-                                            </button>
-                                        )}
-                                    </>
+                                <h1>{wordData.word}</h1>
+                                {wordData.pronunciation && (
+                                    <span className="pronunciation">
+                                        {wordData.pronunciation}
+                                    </span>
+                                )}
+                                {wordData.audio && (
+                                    <FontAwesomeIcon
+                                        className="play-audio-icon"
+                                        icon={faVolumeUp}
+                                        onClick={() => wordData.playAudio()}
+                                    />
                                 )}
                             </div>
                             <div className="word-define">
-                                <span className="part-of-speech">
-                                    {
-                                        selectedWord.dictionaryData.meanings[0]
-                                            ?.partOfSpeech
-                                    }
-                                </span>
-                                <span className="definition">
-                                    {
-                                        selectedWord.dictionaryData.meanings[0]
-                                            ?.definitions[0]?.definition
-                                    }
-                                </span>
+                                {wordData.partOfSpeech && (
+                                    <span className="part-of-speech">
+                                        {wordData.partOfSpeech}
+                                    </span>
+                                )}
+                                {wordData.definition && (
+                                    <span className="definition">
+                                        {wordData.definition}
+                                    </span>
+                                )}
+                                {wordData.message && (
+                                    <div className="message">
+                                        {wordData.message}
+                                    </div>
+                                )}
                             </div>
                         </>
                     ) : (

@@ -176,3 +176,14 @@
         }
     }
 }
+
+.play-audio-icon {
+    color: #e4b049;
+    font-size: 24px;
+    transition: color 0.3s ease;
+    cursor: pointer;
+}
+
+.play-audio-icon:hover {
+    color: #f99417;
+}

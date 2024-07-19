@@ -7,7 +7,7 @@ interface Room {
 
 export const createRoom = async (room: Room) => {
     try {
-        const response = await fetch(`${BASE_URL}/room/insert`, {
+        const response = await fetch(`${BASE_URL}/room/create_room`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
