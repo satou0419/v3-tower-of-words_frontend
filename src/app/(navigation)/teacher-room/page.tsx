@@ -42,7 +42,7 @@ export default function TeacherRoom() {
                         />
                     ))}
 
-                    <CardNew title="+ Create Room" link="join-room" />
+                    <CardNew title="+ Create Room" link="create-room" />
                 </div>
             </section>
         </main>

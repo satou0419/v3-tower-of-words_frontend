@@ -13,6 +13,7 @@ import Confetti from "react-confetti"; // Import Confetti
 import useMerriam from "@/hook/useMerriam";
 import getUserItems from "@/lib/item-endpoint/getUserItem";
 import { useItemStore } from "@/store/itemStore";
+import useAddWord from "@/hook/useAddWord"; // Import the custom hook
 
 const AdventureGameplay = () => {
     const searchParams = useSearchParams();
@@ -42,6 +43,12 @@ const AdventureGameplay = () => {
     const [characterHit, setCharacterHit] = useState("");
     const [userItems, setUserItems] = useState<any[]>([]);
     const setItems = useItemStore.getState().setItems;
+
+    const {
+        addWord,
+        isLoading: isAddingWord,
+        error: addWordError,
+    } = useAddWord(); // Use the custom hook
 
     useEffect(() => {
         (async () => {
@@ -168,7 +175,7 @@ const AdventureGameplay = () => {
                 setTimeout(() => {
                     setEnemyHit("");
                 }, 500); // 500ms is the duration of the hit
-            }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration
+            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration
         } else {
             setIsCharacterAttacking(true);
 
@@ -205,7 +212,7 @@ const AdventureGameplay = () => {
         }
     };
 
-    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemyData[currentEnemyIndex];
         const currentWord = currentEnemy.words[currentWordIndex].toLowerCase();
@@ -218,6 +225,9 @@ const AdventureGameplay = () => {
             const updatedSpelledWords = { ...spelledWords };
             updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true;
             setSpelledWords(updatedSpelledWords);
+
+            // Archive the correctly spelled word
+            await addWord(currentWord);
 
             setTimeout(() => {
                 setIsCharacterAttacking(false);
