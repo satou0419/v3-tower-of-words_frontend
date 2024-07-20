@@ -1,3 +1,4 @@
+/* Navigation container styling */
 .navigation {
     width: 100%;
     min-height: 5ch;
@@ -9,8 +10,10 @@
     display: flex;
     align-items: center;
     gap: 2em;
+    justify-content: space-between;
 }
 
+/* Navigation logo styling */
 .navigation_logo {
     width: 100%;
     position: absolute;
@@ -24,87 +27,136 @@
     width: 10em;
     align-self: center;
     margin-top: 1em;
-    position: relative;
 }
 
-.navigation-dropdown {
-    width: 1%;
-    height: auto;
-    margin-left: auto;
+/* Drop-container styling */
+.drop-container {
+    height: 80%;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-right: 2em;
     position: relative;
-    transition: width 0.5s ease;
+    transition: width 0.5s ease-in-out; /* Smooth width transition */
+    z-index: 100;
 }
 
-.navigation-dropdown.open {
-    width: 10%;
-    height: auto;
-    margin-left: auto;
-    margin-right: 2em;
-    position: relative;
-    transition: all 0.5s ease;
-}
-
-.navigation-profile {
-    width: 2em;
-    height: 2em;
-    border-radius: 50%;
-    outline: 2px solid #fff;
-    cursor: pointer;
-}
-
-.navigation-dropdown_list {
-    width: 100%;
-
-    background-color: red;
-    position: absolute;
-    margin-top: 1em;
-    height: 100%;
-    opacity: 0;
-    visibility: hidden;
-    overflow: hidden;
-    transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out,
-        visibility 0.5s;
-}
-
-.navigation-dropdown_list.open {
-    min-height: 30em;
-    background-color: wheat;
-    position: absolute;
-    margin-top: 1em;
-    opacity: 1;
-    visibility: visible;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    flex-wrap: wrap;
-    z-index: 20; /* Ensure dropdown list appears above overlay */
-}
-
-.dropdown-list {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    height: 100vh;
-}
-
-.dropdown-list a {
-    background-color: red;
-    border: 2px solid green;
-    width: 100%;
-
-    &:last-child {
-        margin-top: auto;
+/* Keyframes for shrinking and expanding */
+@keyframes shrink {
+    from {
+        width: 10%;
+    }
+    to {
+        width: 2%;
     }
 }
 
+@keyframes expand {
+    from {
+        width: 5%;
+    }
+    to {
+        width: 10%;
+    }
+}
+
+/* Apply animation when .shrink class is added */
+.drop-container.shrink {
+    animation: shrink 0.5s forwards;
+}
+
+/* Apply animation when .expand class is added */
+.drop-container.expand {
+    animation: expand 0.5s forwards;
+}
+
+/* Drop-profile styling */
+.drop-profile {
+    width: 100%;
+    height: 100%;
+    background-color: #9b79da;
+    border-bottom: 2px solid #fff;
+    border-radius: 5px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    transition: background-color 0.5s ease-in-out; /* Smooth background color transition */
+}
+
+/* Profile styling */
+.profile {
+    height: 2.8em;
+    aspect-ratio: 1 / 1;
+    border-radius: 50%;
+    background-color: black;
+    border: 1px solid #fff;
+    position: absolute;
+    left: -15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2;
+    cursor: pointer;
+}
+
+/* Span inside drop-profile */
+.drop-profile span {
+    text-align: center;
+    color: #fff;
+}
+
+/* Drop-list styling */
+.drop-list {
+    position: absolute;
+    top: 98%; /* Positioned just below the .drop-profile */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #9b79da;
+    border: 2px solid #fff;
+    border-top: none;
+    box-shadow: var(--shadow-burst);
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    margin-top: 0; /* Removed extra margin to prevent upward expansion */
+}
+
+/* Span inside drop-list */
+.drop-list a {
+    padding: 0.5em;
+    width: 100%; /* Ensure spans fill the width of .drop-list */
+    text-align: center;
+    color: #fff;
+    cursor: pointer;
+}
+
+.drop-list a:hover {
+    background-color: #ffce6d;
+    color: #000;
+}
+
+/* Adjustments to the drop-profile when shrinking */
+.drop-container.shrink .drop-profile {
+    border: none;
+    background-color: transparent; /* Background color transition to transparent */
+    span {
+        display: none;
+    }
+}
+/* Overlay styling */
 .overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    z-index: 10; /* Keep overlay behind dropdown list */
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    z-index: 10; /* Ensure it's behind the dropdown list but above other content */
 }

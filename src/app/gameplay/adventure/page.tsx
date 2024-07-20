@@ -14,9 +14,18 @@ import useMerriam from "@/hook/useMerriam";
 import getUserItems from "@/lib/item-endpoint/getUserItem";
 import { useItemStore } from "@/store/itemStore";
 import useAddWord from "@/hook/useAddWord"; // Import the custom hook
+import useProgressEquippedStore from "@/store/progressEquippedStore";
+import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 
 const AdventureGameplay = () => {
     const searchParams = useSearchParams();
+    const userEquipped = useProgressEquippedStore(
+        (state) => state.progressEquipped
+    );
+
+    useEffect(() => {
+        getUserDetails();
+    }, []);
     const floorId = searchParams.get("floorId");
     const { enemies, fetchEnemies } = useEnemyStore();
     const [enemyData, setEnemyData] = useState<any[]>([]);
@@ -78,7 +87,7 @@ const AdventureGameplay = () => {
         }
     }, [enemies]);
 
-    const characterDetails = useImageParse("&melee_sword-a21-i19");
+    const characterDetails = useImageParse(userEquipped.equippedCharacter);
 
     useEffect(() => {
         if (characterDetails.name) {
