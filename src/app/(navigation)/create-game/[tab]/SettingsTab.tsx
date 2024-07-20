@@ -2,11 +2,16 @@
 import React, { useState, useEffect } from "react";
 import { InputBox } from "@/app/component/Input/Input";
 import Toggle from "@/app/component/Toggle/Toggle";
+import createGame from "@/lib/simulation-endpoint/createGame";
 
 interface Enemy {
     id: number;
     imagePath: string;
-    word: string[];
+    words: SimulationWords[];
+}
+
+interface SimulationWords {
+    word: string;
 }
 
 interface Room {
@@ -50,6 +55,12 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
         updateSettings({ [field]: value });
     };
 
+    const handleCreateGame = () => {
+        console.log("Creating game with settings:", settings);
+        createGame(settings);
+        localStorage.removeItem("enemies");
+        localStorage.removeItem("settings");
+    }
     console.log(settings)
 
     return (
@@ -133,6 +144,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                     <option>4</option>
                     <option>5</option>
                 </select>
+                <button onClick={handleCreateGame}> bots </button>
             </section>
         </main>
     );

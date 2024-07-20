@@ -2,13 +2,15 @@ import React, { useState } from "react";
 import Draggable from "react-draggable";
 import "./cardenemy.scss";
 
+interface SimulationWords {
+    word: string;
+}
+
 interface CardEnemyProps {
     enemy: {
         id: number;
         imagePath: string;
-        word: {
-            
-        };
+        words: SimulationWords[];
     };
     removeEnemy: (id: number) => void;
 }

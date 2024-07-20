@@ -1,12 +1,18 @@
 // WordsTab.tsx
-import React,{ useState } from "react";
+import React,{ useEffect, useState } from "react";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
 import CardEnemy from "@/app/component/Card/CardEnemy/CardEnemy";
+import { InputLine } from "@/app/component/Input/Input";
+import viewSimulationWords from "@/lib/simulation-endpoint/viewSimulationWords";
 
 interface Enemy {
     id: number;
     imagePath: string;
-    word: string[];
+    words: SimulationWords[];
+}
+
+interface SimulationWords {
+    word: string;
 }
 
 interface WordsTabProps {
@@ -16,11 +22,25 @@ interface WordsTabProps {
 }
 
 const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy }) => {
+    const [searchWords, setSearchWords] = useState();
+
+    useEffect (() => {
+        viewSimulationWords();
+        console.log(viewSimulationWords);
+    },[])
+
     return (
         <section className="myword-wrapper">
             <section className="myword-left_container">
                 <h1>My Words</h1>
-                <CardWord className="myword-left" />
+                <CardWord className="myword-left">
+                    <InputLine
+                        type="text"
+                        placeholder="Search"
+                        value={searchWords}
+                    />
+                    
+                </CardWord>
             </section>
             <section className="myword-right_container">
                 <section className="myword-right_heading">
