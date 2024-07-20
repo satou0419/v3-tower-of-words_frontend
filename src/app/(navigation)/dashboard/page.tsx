@@ -4,16 +4,26 @@ import CardMode from "@/app/component/Card/CardMode/CardMode";
 import "./dashboard.scss";
 import CardArchive from "@/app/component/Card/CardArchive/CardArchive";
 import useUserInfoStore from "@/store/userInfoStore";
+import useProgressDashboardStore from "@/store/progressDashboardStore";
+import { useEffect } from "react";
+import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 
 export default function Dashboard() {
     const { userType } = useUserInfoStore.getState();
+    const userDashboard = useProgressDashboardStore(
+        (state) => state.progressDashboard
+    );
+
+    useEffect(() => {
+        getUserDetails();
+    }, []);
     return (
         <main className="dashboard-wrapper">
             <section className="dashboard-cardmode">
                 <CardMode
                     bannerSrc="/assets/images/banner/banner-adventure_large.webp"
                     progressHeader="Floor Completed"
-                    progressValue={2}
+                    progressValue={userDashboard.floorCount}
                     modeTitle="Adventure"
                     modeDescription="This is a custom description for the adventure."
                     link="/tower/spelling"
@@ -29,7 +39,10 @@ export default function Dashboard() {
                     link={`/${userType.toLowerCase()}-room`}
                 />
             </section>
-            <CardArchive badgesCount={1} wordsCount={12} />
+            <CardArchive
+                badgesCount={userDashboard.achievementCount}
+                wordsCount={userDashboard.wordsCollected}
+            />
         </main>
     );
 }

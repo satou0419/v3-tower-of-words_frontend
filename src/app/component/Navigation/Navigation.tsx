@@ -5,9 +5,17 @@ import { getGreeting } from "@/util/greetings";
 import useUserInfoStore from "@/store/userInfoStore";
 import getUserInfo from "@/lib/user-endpoint/getUserInfo";
 import Link from "next/link";
+import useProgressDashboardStore from "@/store/progressDashboardStore";
+import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 
 const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
+    const userDashboard = useProgressDashboardStore(
+        (state) => state.progressDashboard
+    );
+    useEffect(() => {
+        getUserDetails();
+    }, [getUserDetails]);
     const [showContent, setShowContent] = useState(false);
     const { firstname, lastname, setFirstname, setLastname } =
         useUserInfoStore();
@@ -71,40 +79,32 @@ const Navigation = () => {
 
     return (
         <nav className="navigation">
-            <span>{greeting}</span>
-            <span>{firstname}</span>
-            <span>{lastname}</span>
-
-            <section className={`navigation-dropdown ${isOpen ? "open" : ""}`}>
-                <div
-                    ref={toggleRef}
-                    className="navigation-profile"
-                    onClick={toggleDropdown}
-                ></div>
-                <div
-                    ref={dropdownListRef}
-                    className={`navigation-dropdown_list ${
-                        isOpen ? "open" : ""
-                    }`}
-                >
-                    {showContent && (
-                        <div className="dropdown-list">
-                            <Link href="#">Adventure</Link>
-                            <Link href="#">Shop</Link>
-                            <Link href="/setting/personal-information">
-                                Setting
-                            </Link>
-
-                            <Link href="#">Logout</Link>
-                            {/* Add more elements here */}
-                        </div>
-                    )}
-                </div>
+            <section>
+                <span>Credits: {userDashboard.creditAmount}</span>
+                <span>{greeting}</span>
+                <span>{firstname}</span>
+                <span>{lastname}</span>
             </section>
-            {isOpen && <div className="overlay" />}
+
             <div className="navigation_logo">
                 <img src="/assets/images/logo/logo_simple.webp" alt="Logo" />
             </div>
+
+            <section className="drop-panel">
+                <section className="drop-list">
+                    <p>1</p>
+                    <p>2</p>
+                    <p>3</p>
+                    <p>4</p>
+                    <p>5</p>
+                    <p>6</p>
+                </section>
+            </section>
+
+            <section className="drop-user">
+                <span>Username</span>
+                <section className="drop-profile"></section>
+            </section>
         </nav>
     );
 };
