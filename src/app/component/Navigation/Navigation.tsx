@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import "./navigation.css";
+import { useRouter } from "next/navigation";
 import { getGreeting } from "@/util/greetings";
 import useUserInfoStore from "@/store/userInfoStore";
 import getUserInfo from "@/lib/user-endpoint/getUserInfo";
@@ -15,6 +16,7 @@ const Navigation = () => {
     const userDashboard = useProgressDashboardStore(
         (state) => state.progressDashboard
     );
+    const router = useRouter();
 
     useEffect(() => {
         getUserDetails();
@@ -39,6 +41,11 @@ const Navigation = () => {
             setIsShrinking(true); // Start shrinking animation
             setShowList(false);
         }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("auth-user");
+        router.push("/login");
     };
 
     const toggleRef = useRef<HTMLDivElement>(null);
@@ -122,7 +129,7 @@ const Navigation = () => {
                     ref={toggleRef}
                     onClick={toggleDropdown}
                 >
-                    <span>{username}</span>
+                    <Link href="/dashboard">{username}</Link>
                 </section>
                 <div className="profile">{getInitial(username)}</div>
                 {showList && (
@@ -135,7 +142,7 @@ const Navigation = () => {
                         <Link href="/setting/personal-information">
                             Settings
                         </Link>
-                        <Link href="#">Logout</Link>
+                        <a onClick={handleLogout}>Logout</a>
                     </section>
                 )}
             </section>

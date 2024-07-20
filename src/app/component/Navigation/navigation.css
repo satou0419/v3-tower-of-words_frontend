@@ -106,7 +106,7 @@
 }
 
 /* Span inside drop-profile */
-.drop-profile span {
+.drop-profile a {
     text-align: center;
     color: #fff;
 }
@@ -146,7 +146,7 @@
 .drop-container.shrink .drop-profile {
     border: none;
     background-color: transparent; /* Background color transition to transparent */
-    span {
+    a {
         display: none;
     }
 }
