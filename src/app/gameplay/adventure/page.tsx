@@ -90,6 +90,7 @@ const AdventureGameplay = () => {
                     false
                 );
             });
+            console.log("Enemies", enemies);
             setSpelledWords(initialSpelledWords);
         }
     }, [enemies]);
@@ -346,6 +347,12 @@ const AdventureGameplay = () => {
         }
     };
 
+    const extractEnemyName = (imagePath: string) => {
+        // Match the pattern of &attackType_name-a11-i12
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
+        return match ? match[1] : "unknown"; // Return the name or 'unknown' if not found
+    };
+
     const welcomeModalButtons = [
         <button
             key="start-game"
@@ -373,47 +380,54 @@ const AdventureGameplay = () => {
             />
             {gameStarted && (
                 <section className="adventure-platform">
-                    <div className="platform-indicator">
-                        Floor {floorId} {section}
-                        Clear {isClear}
-                    </div>
-                    <span>Word to Spell: {currentWord}</span>{" "}
-                    <span>{characterAnimation}</span>
-                    <span>{currentEnemy.imagePath}</span>
+                    <div className="platform-indicator">Floor {floorId}</div>
                     <section className="enemy-track">
-                        {enemyData.map((enemy, enemyIndex) => (
-                            <div key={enemyIndex} className="enemy-track-list">
-                                {enemyIndex > 0 && (
-                                    <div className="enemy-connector"></div>
-                                )}
+                        {enemyData.map((enemy, enemyIndex) => {
+                            // Extract the enemy name from imagePath
+                            const enemyName = extractEnemyName(enemy.imagePath);
+
+                            return (
                                 <div
-                                    className={`enemy-track-profile ${
-                                        defeatedEnemies.includes(enemyIndex)
-                                            ? "defeated"
-                                            : ""
-                                    }`}
+                                    key={enemyIndex}
+                                    className="enemy-track-list"
                                 >
-                                    Name: {currentEnemy.name}
+                                    {enemyIndex > 0 && (
+                                        <div className="enemy-connector"></div>
+                                    )}
+
+                                    <div
+                                        className={`enemy-track-profile ${
+                                            defeatedEnemies.includes(enemyIndex)
+                                                ? "defeated"
+                                                : ""
+                                        }`}
+                                    >
+                                        <img
+                                            src={`/assets/images/sprite/profile-${enemyName}.png`}
+                                            alt={enemyName}
+                                        />
+                                    </div>
+                                    {enemy.words.map(
+                                        (word: any, wordIndex: any) => (
+                                            <React.Fragment key={wordIndex}>
+                                                <div className="enemy-connector"></div>
+                                                <div
+                                                    className={`enemy-word ${
+                                                        spelledWords[
+                                                            enemyIndex
+                                                        ]?.[wordIndex]
+                                                            ? "spelled"
+                                                            : ""
+                                                    }`}
+                                                ></div>
+                                            </React.Fragment>
+                                        )
+                                    )}
                                 </div>
-                                {enemy.words.map(
-                                    (word: any, wordIndex: any) => (
-                                        <React.Fragment key={wordIndex}>
-                                            <div className="enemy-connector"></div>
-                                            <div
-                                                className={`enemy-word ${
-                                                    spelledWords[enemyIndex]?.[
-                                                        wordIndex
-                                                    ]
-                                                        ? "spelled"
-                                                        : ""
-                                                }`}
-                                            ></div>
-                                        </React.Fragment>
-                                    )
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </section>
+
                     <section className="sprite-holder">
                         <section
                             className={` character-container ${characterAttackType} ${characterHit}`}
@@ -425,7 +439,6 @@ const AdventureGameplay = () => {
                                         : `idle-${characterDetails.name}`
                                 }`}
                                 style={{
-                                    border: "2px solid white",
                                     position: "absolute",
                                     bottom: 0,
                                     right: 0,
@@ -467,7 +480,6 @@ const AdventureGameplay = () => {
                                     position: "absolute",
                                     bottom: 0,
                                     left: 0,
-                                    border: "2px solid white",
                                     backgroundImage: `url("/assets/images/sprite/${enemyDetails.name}.png")`,
                                     width: `360px`, // Width of each frame in the sprite sheet
                                     height: `360px`, // Adjust based on sprite sheet
@@ -491,7 +503,6 @@ const AdventureGameplay = () => {
         ${enemyAnimation}
         `}
                                 </style>
-                                {enemyAnimation}
                             </div>
                         </section>
                     </section>
