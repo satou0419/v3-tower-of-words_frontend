@@ -17,6 +17,7 @@ import useAddWord from "@/hook/useAddWord"; // Import the custom hook
 import useProgressEquippedStore from "@/store/progressEquippedStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 import useUpdateProgress from "@/hook/useUpdateProgress";
+import useRedeemReward from "@/hook/useRedeemReward";
 
 const AdventureGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true);
@@ -233,6 +234,7 @@ const AdventureGameplay = () => {
         }
     };
     const { updateProgress, isLoading, error, data } = useUpdateProgress();
+    const { redeemReward } = useRedeemReward();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -271,6 +273,7 @@ const AdventureGameplay = () => {
                             if (isClear === "false") {
                                 console.log("Now it is clear");
                                 updateProgress(nextFloorId, nextSection);
+                                redeemReward(floorId);
                             } else {
                                 console.log("It is cleared previously");
                             }
