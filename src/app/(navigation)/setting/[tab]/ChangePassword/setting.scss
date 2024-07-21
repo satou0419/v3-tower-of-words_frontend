@@ -1,0 +1,79 @@
+// setting.scss
+
+.change-pass_wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.change-pass_form {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    border-radius: 20px;
+    background-color: #9a6dea;
+    height: 60%;
+    width: 25%;
+    padding: 1em;
+
+    h1 {
+        color: #fff;
+        margin-bottom: 1em;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        gap: 1.5em;
+        align-items: center;
+        justify-content: center;
+    }
+
+    input {
+        color: #fff;
+        border-bottom: 2px solid #fff;
+        width: 80%;
+        font-size: 0.8em;
+        padding: 0.2em 0.5em;
+        background-color: transparent;
+        outline: none;
+    }
+
+    input::placeholder {
+        color: #fff;
+    }
+
+    button {
+        width: 100%; /* Full width button */
+        max-width: 10em; /* Max width to maintain button size */
+        min-height: 2.5em;
+        border: none;
+        background-color: #ffc658;
+        color: white;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        margin-top: 1em;
+
+        &:hover {
+            background-color: #ffaf40;
+        }
+
+        &:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+    }
+}
+
+.setting-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

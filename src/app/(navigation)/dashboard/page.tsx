@@ -8,6 +8,7 @@ import useProgressDashboardStore from "@/store/progressDashboardStore";
 import { useEffect } from "react";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 
+
 export default function Dashboard() {
     const { userType } = useUserInfoStore.getState();
     const userDashboard = useProgressDashboardStore(

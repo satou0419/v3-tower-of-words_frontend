@@ -1,9 +1,9 @@
 "use client";
 import Tab from "@/app/component/Tab/Tab";
 import "./archive.scss";
-import Words from "./Words";
+import Words from "./Word/Words";
 import useTabManagement from "@/hook/useTab";
-import Badges from "./Badges";
+import Badges from "./Badges/Badges";
 
 const Archive = () => {
     const { activeTab, handleTabChange } = useTabManagement(
