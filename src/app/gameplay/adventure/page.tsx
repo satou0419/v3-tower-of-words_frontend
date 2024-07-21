@@ -32,6 +32,7 @@ const AdventureGameplay = () => {
     const sectionParam = searchParams.get("section");
     const nextSectionParam = searchParams.get("nextSection");
     const nextFloorIdParam = searchParams.get("nextFloorId");
+    const gameTypeParam = searchParams.get("gameType");
 
     const isClear = searchParams.get("clear");
     //#endRegion
@@ -41,6 +42,8 @@ const AdventureGameplay = () => {
     const section = sectionParam ? parseInt(sectionParam, 10) : NaN;
     const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN;
     const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN;
+    const gameType = gameTypeParam ? parseInt(gameTypeParam, 10) : NaN;
+
     //#endRegion
 
     const { enemies, fetchEnemies } = useEnemyStore();
@@ -244,7 +247,13 @@ const AdventureGameplay = () => {
         const currentEnemy = enemyData[currentEnemyIndex];
         const currentWord = currentEnemy.words[currentWordIndex].toLowerCase();
 
-        if (typedWord.toLowerCase() === currentWord) {
+        //this is if gameType is 1  if (typedWord.toLowerCase() === currentWord)
+        //this is if gameType is 2   if (rangeValue == word?.syllable)
+
+        if (
+            typedWord.toLowerCase() === currentWord ||
+            rangeValue == word?.syllable
+        ) {
             // Correct word spelling
             setTypedWord("");
             handleCharacterAttack();
@@ -304,31 +313,35 @@ const AdventureGameplay = () => {
         console.log("Enemy Hit", enemyHit);
     }, [characterHit, enemyHit]);
 
-    useEffect(() => {
-        // Play audio on word change
-        if (word && word.playAudio) {
-            setTimeout(() => {
-                word.playAudio();
-            }, 1000);
-        }
-    }, [word]); // Trigger on word change
+    //Play only the audio in gameType 1
 
-    useEffect(() => {
-        // Handle key down event for shift key to play audio
-        const handleKeyDown = (event: KeyboardEvent) => {
-            if (event.key === "Shift") {
-                if (word && word.playAudio) {
+    if (gameType === 1) {
+        useEffect(() => {
+            // Play audio on word change
+            if (word && word.playAudio) {
+                setTimeout(() => {
                     word.playAudio();
-                }
+                }, 1000);
             }
-        };
+        }, [word]); // Trigger on word change
 
-        window.addEventListener("keydown", handleKeyDown);
+        useEffect(() => {
+            // Handle key down event for shift key to play audio
+            const handleKeyDown = (event: KeyboardEvent) => {
+                if (event.key === "Shift") {
+                    if (word && word.playAudio) {
+                        word.playAudio();
+                    }
+                }
+            };
 
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [word]); // Trigger on word change
+            window.addEventListener("keydown", handleKeyDown);
+
+            return () => {
+                window.removeEventListener("keydown", handleKeyDown);
+            };
+        }, [word]); // Trigger on word change
+    }
 
     const handleItemUse = (itemID: string) => {
         const item = userItems.find((item) => item.itemID.itemID === itemID);
@@ -349,6 +362,16 @@ const AdventureGameplay = () => {
             setUserItems(updatedItems);
         }
     };
+
+    const [rangeValue, setRangeValue] = useState(0);
+
+    const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRangeValue(Number(event.target.value));
+    };
+
+    useEffect(() => {
+        console.log("Range Value", rangeValue);
+    }, [rangeValue]);
 
     const extractEnemyName = (imagePath: string) => {
         // Match the pattern of &attackType_name-a11-i12
@@ -545,17 +568,43 @@ const AdventureGameplay = () => {
                     </section>
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
-                            <button type="button" onClick={word?.playAudio}>
-                                🔉
-                            </button>
-                            <InputBox
-                                type="text"
-                                value={typedWord}
-                                onChange={handleInputChange}
-                                placeholder="Type the word..."
-                                required
-                            />
-                            <button type="submit">Submit</button>
+                            {gameType === 2 ? (
+                                <>
+                                    <p className="syllable-word">
+                                        {currentWord}
+                                    </p>
+                                    <input
+                                        className="syllable-range"
+                                        type="range"
+                                        min="1"
+                                        max="10"
+                                        value={rangeValue}
+                                        onChange={handleRangeChange}
+                                    />
+                                    <span className="range-value">
+                                        {rangeValue}
+                                    </span>
+                                    <button type="submit">Go!</button>
+                                </>
+                            ) : (
+                                <>
+                                    {/* Gametype 1 */}
+                                    <button
+                                        type="button"
+                                        onClick={word?.playAudio}
+                                    >
+                                        🔉
+                                    </button>
+                                    <InputBox
+                                        type="text"
+                                        value={typedWord}
+                                        onChange={handleInputChange}
+                                        placeholder="Type the word..."
+                                        required
+                                    />
+                                    <button type="submit">Submit</button>
+                                </>
+                            )}
                         </form>
                     </section>
                     <section className="control-clue">

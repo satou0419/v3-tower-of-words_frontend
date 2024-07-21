@@ -17,7 +17,7 @@
 }
 
 .adventure-platform {
-    height: 65%;
+    height: 60%;
     width: 100%;
     background-color: bisque;
     display: flex;
@@ -158,27 +158,114 @@
         }
     }
 
+    //GameType 2 - Syllable
+    .control-input {
+        .syllable-word {
+            width: 60%;
+            height: 1.8em;
+            background-color: #bda4d4;
+            border: 5px solid #4a2053;
+            border-radius: 10px;
+            color: #4a2053;
+            text-align: center;
+            margin-top: 0.5em;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+        }
+
+        .range-value {
+            font-size: 1.5em;
+        }
+
+        /* Range slider base styles */
+        /* Range slider base styles */
+        .syllable-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(
+                43deg,
+                #4158d0 0%,
+                #c850c0 46%,
+                #ffcc70 100%
+            );
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            position: relative; /* Ensure the pseudo-elements are positioned correctly */
+            margin: 20px 0;
+        }
+
+        /* Range slider thumb styles */
+        .syllable-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 30px;
+            background-color: #4c00ff;
+            background-image: linear-gradient(160deg, #4900f5 0%, #80d0c7 100%);
+            cursor: pointer;
+            border-radius: 3px; /* Make the thumb slightly rounded */
+            position: relative; /* Ensure the thumb is above the lines */
+            z-index: 1; /* Ensure the thumb is above the lines */
+        }
+
+        /* Ticks container */
+        .syllable-range::before {
+            content: "";
+
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 20px; /* Adjust to match the track height */
+            transform: translateY(-50%);
+            background: repeating-linear-gradient(
+                to right,
+                black 0,
+                black 2px,
+                transparent 2px,
+                transparent calc((100% - 2px) / 9)
+            );
+            z-index: 0; /* Ensure the ticks are below the thumb */
+            pointer-events: none; /* Make sure it does not interfere with the slider */
+        }
+    }
+
     .control-input {
         flex: 1.5;
 
-        background-color: white;
+        background-color: #fff;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 98%;
+        height: 100%;
 
         form {
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5em;
+            justify-content: center;
+            gap: 0.8em;
             width: 80%;
+            height: 80%;
             position: relative;
             z-index: 1;
 
             button {
-                height: 4em;
-                width: 8em;
+                padding: 0.2em 1.3em;
+                border: none;
+                outline: none;
+                box-shadow: var(--shadow-burst);
+                border-radius: 10px;
+                background-color: #ffc658;
+                color: #333;
+                font-size: 2em;
+                font-weight: bold;
             }
 
             input {

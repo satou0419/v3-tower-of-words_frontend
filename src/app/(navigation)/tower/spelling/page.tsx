@@ -75,10 +75,17 @@ const Spelling = () => {
         }
     };
 
-    const handleFloorClick = (floorId: number, section: number) => {
+    const [activeGameType, setActiveGameType] = useState<number | null>(null);
+
+    const handleFloorClick = (
+        floorId: number,
+        section: number,
+        gameType: number
+    ) => {
         if (floorId <= userProgress.floorIDProgress) {
             setActiveFloorId(floorId);
             setActiveSection(section);
+            setActiveGameType(gameType); // Set the active game type
         }
     };
 
@@ -106,7 +113,7 @@ const Spelling = () => {
             const { nextFloorId, nextSection } = getNextFloorAndSection();
             const isCleared = activeFloorId < userProgress.floorIDProgress;
             navigation.push(
-                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}`
+                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
             );
         }
     };
@@ -219,7 +226,8 @@ const Spelling = () => {
                                             onClick={() =>
                                                 handleFloorClick(
                                                     floor.towerFloorID,
-                                                    floor.towerSection
+                                                    floor.towerSection,
+                                                    floor.gameType // Pass gameType here
                                                 )
                                             }
                                             className={
