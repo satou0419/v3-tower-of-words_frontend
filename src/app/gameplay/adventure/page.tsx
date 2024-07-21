@@ -18,6 +18,7 @@ import useProgressEquippedStore from "@/store/progressEquippedStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 import useUpdateProgress from "@/hook/useUpdateProgress";
 import useRedeemReward from "@/hook/useRedeemReward";
+import useFloorIncrement from "@/hook/useFloorIncrement";
 
 const AdventureGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true);
@@ -236,6 +237,7 @@ const AdventureGameplay = () => {
     };
     const { updateProgress, isLoading, error, data } = useUpdateProgress();
     const { redeemReward } = useRedeemReward();
+    const { incrementFloor } = useFloorIncrement();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -275,6 +277,7 @@ const AdventureGameplay = () => {
                                 console.log("Now it is clear");
                                 updateProgress(nextFloorId, nextSection);
                                 redeemReward(floorId);
+                                incrementFloor();
                             } else {
                                 console.log("It is cleared previously");
                             }
@@ -565,7 +568,6 @@ const AdventureGameplay = () => {
                             </div>
 
                             <span>Definition</span>
-
                             <div className="clue-definition">
                                 <span>{word?.definition}</span>
                             </div>
