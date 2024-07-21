@@ -16,40 +16,46 @@ import { useItemStore } from "@/store/itemStore";
 import useAddWord from "@/hook/useAddWord"; // Import the custom hook
 import useProgressEquippedStore from "@/store/progressEquippedStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
+import useUpdateProgress from "@/hook/useUpdateProgress";
 
 const AdventureGameplay = () => {
-    const searchParams = useSearchParams();
-    const userEquipped = useProgressEquippedStore(
-        (state) => state.progressEquipped
-    );
+    const [loading, setLoading] = useState<boolean>(true);
 
-    useEffect(() => {
-        getUserDetails();
-    }, []);
-    const floorId = searchParams.get("floorId");
+    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
+    const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
+
+    //#region Extracts data from URL
+    const searchParams = useSearchParams();
+    const floorIdParam = searchParams.get("floorId");
+    const sectionParam = searchParams.get("section");
+    const nextSectionParam = searchParams.get("nextSection");
+    const nextFloorIdParam = searchParams.get("nextFloorId");
+
+    const isClear = searchParams.get("clear");
+    //#endRegion
+
+    // Convert parameters to numbers with fallback to NaN if conversion fails
+    const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN;
+    const section = sectionParam ? parseInt(sectionParam, 10) : NaN;
+    const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN;
+    const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN;
+    //#endRegion
+
     const { enemies, fetchEnemies } = useEnemyStore();
     const [enemyData, setEnemyData] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [typedWord, setTypedWord] = useState<string>("");
-    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
-    const [isCharacterAttacking, setIsCharacterAttacking] =
-        useState<boolean>(false);
-    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false);
+
     const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
     const [lives, setLives] = useState<number>(5);
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
     );
-    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
-    const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
     const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
 
-    const [characterAttackType, setCharacterAttackType] = useState("");
-    const [enemyAttackType, setEnemyAttackType] = useState("");
-    const [enemyHit, setEnemyHit] = useState("");
-    const [characterHit, setCharacterHit] = useState("");
+    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
+
     const [userItems, setUserItems] = useState<any[]>([]);
     const setItems = useItemStore.getState().setItems;
 
@@ -57,7 +63,7 @@ const AdventureGameplay = () => {
         addWord,
         isLoading: isAddingWord,
         error: addWordError,
-    } = useAddWord(); // Use the custom hook
+    } = useAddWord();
 
     useEffect(() => {
         (async () => {
@@ -87,7 +93,25 @@ const AdventureGameplay = () => {
         }
     }, [enemies]);
 
+    const [isCharacterAttacking, setIsCharacterAttacking] =
+        useState<boolean>(false);
+    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false);
+    const [characterAttackType, setCharacterAttackType] = useState("");
+    const [enemyAttackType, setEnemyAttackType] = useState("");
+    const [enemyHit, setEnemyHit] = useState("");
+    const [characterHit, setCharacterHit] = useState("");
+
+    const userEquipped = useProgressEquippedStore(
+        (state) => state.progressEquipped
+    );
+
+    useEffect(() => {
+        getUserDetails();
+    }, []);
     const characterDetails = useImageParse(userEquipped.equippedCharacter);
+    const enemyDetails = useImageParse(
+        enemyData[currentEnemyIndex]?.imagePath || ""
+    );
 
     useEffect(() => {
         if (characterDetails.name) {
@@ -96,26 +120,6 @@ const AdventureGameplay = () => {
             characterImage.onload = () => setImagesLoaded(true);
         }
     }, [characterDetails.name]);
-
-    const currentEnemy = enemyData[currentEnemyIndex];
-    const enemyDetails = useImageParse(
-        enemyData[currentEnemyIndex]?.imagePath || ""
-    );
-
-    useEffect(() => {
-        if (enemyDetails.name) {
-            const enemyImage = new Image();
-            enemyImage.src = `/assets/images/sprite/${enemyDetails.name}.png`;
-            enemyImage.onload = () => setImagesLoaded(true);
-        }
-    }, [enemyDetails.name]);
-
-    const currentWord = currentEnemy?.words[currentWordIndex];
-    const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTypedWord(event.target.value);
-    };
 
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
@@ -130,6 +134,14 @@ const AdventureGameplay = () => {
         enemyDetails.idleFrame,
         enemyDetails.attackFrame
     );
+
+    const currentEnemy = enemyData[currentEnemyIndex];
+    const currentWord = currentEnemy?.words[currentWordIndex];
+    const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTypedWord(event.target.value);
+    };
 
     const handleEnemyAttack = () => {
         if (enemyDetails.attackType == "melee") {
@@ -220,6 +232,7 @@ const AdventureGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
         }
     };
+    const { updateProgress, isLoading, error, data } = useUpdateProgress();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -236,7 +249,10 @@ const AdventureGameplay = () => {
             setSpelledWords(updatedSpelledWords);
 
             // Archive the correctly spelled word
-            await addWord(currentWord);
+
+            if (isClear === "false") {
+                await addWord(currentWord);
+            }
 
             setTimeout(() => {
                 setIsCharacterAttacking(false);
@@ -251,6 +267,13 @@ const AdventureGameplay = () => {
                     setTimeout(() => {
                         if (currentEnemyIndex === enemyData.length - 1) {
                             // All enemies defeated, show confetti
+
+                            if (isClear === "false") {
+                                console.log("Now it is clear");
+                                updateProgress(nextFloorId, nextSection);
+                            } else {
+                                console.log("It is cleared previously");
+                            }
                             setShowConfetti(true);
                         } else {
                             setCurrentEnemyIndex(currentEnemyIndex + 1);
@@ -279,7 +302,7 @@ const AdventureGameplay = () => {
         if (word && word.playAudio) {
             setTimeout(() => {
                 word.playAudio();
-            }, 1500);
+            }, 1000);
         }
     }, [word]); // Trigger on word change
 
@@ -347,7 +370,10 @@ const AdventureGameplay = () => {
             />
             {gameStarted && (
                 <section className="adventure-platform">
-                    <div className="platform-indicator">Floor {floorId}</div>
+                    <div className="platform-indicator">
+                        Floor {floorId} {section}
+                        Clear {isClear}
+                    </div>
                     <span>Word to Spell: {currentWord}</span>{" "}
                     <span>{characterAnimation}</span>
                     <span>{currentEnemy.imagePath}</span>
@@ -533,8 +559,7 @@ const AdventureGameplay = () => {
                     </section>
                 </section>
             )}
-            {showConfetti && <Confetti />}{" "}
-            {/* Show confetti when all enemies are defeated */}
+            {showConfetti && <Confetti />}
         </main>
     );
 };

@@ -1,5 +1,3 @@
-// src/pages/spelling.tsx
-
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -19,6 +17,7 @@ const Spelling = () => {
     );
     const [rewardData, setRewardData] = useState<RewardData | null>(null);
     const [activeFloorId, setActiveFloorId] = useState<number | null>(null);
+    const [activeSection, setActiveSection] = useState<number | null>(null);
     const [enemyData, setEnemyData] = useState<any | null>(null); // Adjust this type as per your actual enemy data structure
     const activeFloorRef = useRef<HTMLDivElement>(null);
     const navigation = useRouter();
@@ -76,15 +75,39 @@ const Spelling = () => {
         }
     };
 
-    const handleFloorClick = (floorId: number) => {
+    const handleFloorClick = (floorId: number, section: number) => {
         if (floorId <= userProgress.floorIDProgress) {
             setActiveFloorId(floorId);
+            setActiveSection(section);
         }
     };
 
+    const getNextFloorAndSection = () => {
+        // Find the next floor and its section based on the current user progress
+        const currentFloorIndex = floors.findIndex(
+            (floor) => floor.towerFloorID === userProgress.floorIDProgress
+        );
+        if (
+            currentFloorIndex === -1 ||
+            currentFloorIndex === floors.length - 1
+        ) {
+            return { nextFloorId: null, nextSection: null };
+        }
+
+        const nextFloor = floors[currentFloorIndex + 1];
+        return {
+            nextFloorId: nextFloor.towerFloorID,
+            nextSection: nextFloor.towerSection,
+        };
+    };
+
     const handleEnterClick = () => {
-        if (activeFloorId && enemyData) {
-            navigation.push(`/gameplay/adventure?floorId=${activeFloorId}`);
+        if (activeFloorId && activeSection && enemyData) {
+            const { nextFloorId, nextSection } = getNextFloorAndSection();
+            const isCleared = activeFloorId < userProgress.floorIDProgress;
+            navigation.push(
+                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}`
+            );
         }
     };
 
@@ -112,7 +135,7 @@ const Spelling = () => {
                                                     <span>
                                                         {
                                                             rewardData.adventureRewardCredit
-                                                        }
+                                                        }{" "}
                                                         x
                                                     </span>
                                                 </>
@@ -139,7 +162,7 @@ const Spelling = () => {
                                                             rewardData
                                                                 .rewardItemOne
                                                                 .rewardItemQuantity
-                                                        }
+                                                        }{" "}
                                                         x
                                                     </span>
                                                 </>
@@ -166,7 +189,7 @@ const Spelling = () => {
                                                             rewardData
                                                                 .rewardItemTwo
                                                                 .rewardItemQuantity
-                                                        }
+                                                        }{" "}
                                                         x
                                                     </span>
                                                 </>
@@ -195,7 +218,8 @@ const Spelling = () => {
                                             }
                                             onClick={() =>
                                                 handleFloorClick(
-                                                    floor.towerFloorID
+                                                    floor.towerFloorID,
+                                                    floor.towerSection
                                                 )
                                             }
                                             className={
