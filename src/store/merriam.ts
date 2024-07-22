@@ -9,6 +9,7 @@ export interface MerriamData {
     partOfSpeech: string | null;
     message: string | null;
     exists: boolean;
+    syllable: number;
     playAudio: () => void;
 }
 
@@ -42,16 +43,23 @@ const useMerriamStore = create<MerriamState>((set) => ({
                 definition: null,
                 partOfSpeech: null,
                 message: null,
+                syllable: 1, // Default to 1 syllable
                 playAudio: () => {}, // Default no-op function
             };
 
             if (!cxsExists) {
+                const pronunciation = data[0]?.hwi?.prs[0]?.mw || null;
+                const syllable = pronunciation
+                    ? (pronunciation.match(/-/g)?.length || 0) + 1
+                    : 1;
+
                 result = {
                     ...result,
                     partOfSpeech: data[0]?.fl,
-                    pronunciation: data[0]?.hwi?.prs[0]?.mw,
+                    pronunciation,
                     audio: data[0]?.hwi?.prs[0]?.sound?.audio,
                     definition: data[0]?.shortdef?.[0],
+                    syllable,
                     playAudio: () => {
                         if (data[0]?.hwi?.prs[0]?.sound?.audio) {
                             const audioUrl = `https://media.merriam-webster.com/audio/prons/en/us/mp3/${data[0].hwi.prs[0].sound.audio.charAt(

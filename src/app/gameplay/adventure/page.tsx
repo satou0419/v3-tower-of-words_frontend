@@ -11,61 +11,151 @@ import Modal from "@/app/component/Modal/Modal";
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
 import Confetti from "react-confetti"; // Import Confetti
 import useMerriam from "@/hook/useMerriam";
-import getUserItems from "@/lib/item-endpoint/getUserItem";
-import { useItemStore } from "@/store/itemStore";
 import useAddWord from "@/hook/useAddWord"; // Import the custom hook
 import useProgressEquippedStore from "@/store/progressEquippedStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
+import useUpdateProgress from "@/hook/useUpdateProgress";
+import useRedeemReward from "@/hook/useRedeemReward";
+import useFloorIncrement from "@/hook/useFloorIncrement";
+import getUserItems from "@/lib/item-endpoint/getUserItem";
+import useItem from "@/hook/useItem";
+import { useGameplayStore } from "@/store/gameplayStore";
+
+interface Item {
+    itemID: number;
+    name: string;
+    imagePath: string;
+    description: string;
+    price: number;
+}
+
+interface UserItem {
+    userItemID: number;
+    quantity: number;
+    userID: number;
+    itemID: Item;
+}
 
 const AdventureGameplay = () => {
-    const searchParams = useSearchParams();
-    const userEquipped = useProgressEquippedStore(
-        (state) => state.progressEquipped
-    );
+    const [loading, setLoading] = useState<boolean>(true);
+    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
+    const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
+    const [lockedPronunciation, setLockedPronunciation] = useState("locked");
+
+    const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
+
+    //#region  Item Logic
+
+    const [userItems, setUserItems] = useState<UserItem[]>([]);
+    const [showConfirmationModal, setShowConfirmationModal] =
+        useState<boolean>(false);
+    const [itemToUse, setItemToUse] = useState<{
+        id: number;
+        name: string;
+    } | null>(null);
 
     useEffect(() => {
-        getUserDetails();
+        const fetchUserItems = async () => {
+            const items = await getUserItems();
+            setUserItems(items);
+        };
+
+        fetchUserItems();
     }, []);
-    const floorId = searchParams.get("floorId");
+
+    const { useItemFunction } = useItem();
+
+    const handleUseItem = (itemID: number, itemName: string) => {
+        // Set the item to use and show the confirmation modal
+        setItemToUse({ id: itemID, name: itemName });
+        setShowConfirmationModal(true);
+    };
+
+    const confirmUseItem = async () => {
+        if (itemToUse) {
+            const { id, name } = itemToUse;
+            try {
+                await useItemFunction(id);
+                console.log(name);
+                switch (name) {
+                    case "Bandage":
+                        addLives(1);
+                        break;
+                    case "Medical Kit":
+                        addLives(3);
+                        break;
+                    case "Unusual Battery":
+                        setLockedPronunciation("");
+                        break;
+                }
+                // Fetch updated user items after successful use
+                const updatedItems = await getUserItems();
+                setUserItems(updatedItems);
+            } catch (error) {
+                console.error("Failed to use item:", error);
+            } finally {
+                // Close the confirmation modal after processing
+                setShowConfirmationModal(false);
+                setItemToUse(null);
+            }
+        }
+    };
+
+    const cancelUseItem = () => {
+        // Close the confirmation modal without using the item
+        setShowConfirmationModal(false);
+        setItemToUse(null);
+    };
+    //#endregion
+
+    //#region Extracts data from URL
+    const searchParams = useSearchParams();
+    const floorIdParam = searchParams.get("floorId");
+    const sectionParam = searchParams.get("section");
+    const nextSectionParam = searchParams.get("nextSection");
+    const nextFloorIdParam = searchParams.get("nextFloorId");
+    const gameType = searchParams.get("gameType");
+
+    const isClear = searchParams.get("clear");
+
+    // Convert parameters to numbers with fallback to NaN if conversion fails
+    const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN;
+    const section = sectionParam ? parseInt(sectionParam, 10) : NaN;
+    const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN;
+    const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN;
+
+    //#endRegion
+
+    const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
+
+    // Handler for restarting the game
+    const handleGameOverRestart = () => {
+        // Logic to restart the game
+        console.log("Restarting game...");
+        setShowGameOverModal(false);
+        window.location.reload();
+
+        // Add additional logic here to reset the game state
+    };
+
     const { enemies, fetchEnemies } = useEnemyStore();
     const [enemyData, setEnemyData] = useState<any[]>([]);
-    const [loading, setLoading] = useState<boolean>(true);
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [typedWord, setTypedWord] = useState<string>("");
-    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
-    const [isCharacterAttacking, setIsCharacterAttacking] =
-        useState<boolean>(false);
-    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false);
+
     const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
-    const [lives, setLives] = useState<number>(5);
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
     );
-    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
-    const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
     const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
-
-    const [characterAttackType, setCharacterAttackType] = useState("");
-    const [enemyAttackType, setEnemyAttackType] = useState("");
-    const [enemyHit, setEnemyHit] = useState("");
-    const [characterHit, setCharacterHit] = useState("");
-    const [userItems, setUserItems] = useState<any[]>([]);
-    const setItems = useItemStore.getState().setItems;
+    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
 
     const {
         addWord,
         isLoading: isAddingWord,
         error: addWordError,
-    } = useAddWord(); // Use the custom hook
-
-    useEffect(() => {
-        (async () => {
-            const items = await getUserItems();
-            setUserItems(items);
-            setItems(items);
-        })();
-    }, [setItems]);
+    } = useAddWord();
 
     useEffect(() => {
         if (floorId) {
@@ -87,7 +177,25 @@ const AdventureGameplay = () => {
         }
     }, [enemies]);
 
+    const [isCharacterAttacking, setIsCharacterAttacking] =
+        useState<boolean>(false);
+    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false);
+    const [characterAttackType, setCharacterAttackType] = useState("");
+    const [enemyAttackType, setEnemyAttackType] = useState("");
+    const [enemyHit, setEnemyHit] = useState("");
+    const [characterHit, setCharacterHit] = useState("");
+
+    const userEquipped = useProgressEquippedStore(
+        (state) => state.progressEquipped
+    );
+
+    useEffect(() => {
+        getUserDetails();
+    }, []);
     const characterDetails = useImageParse(userEquipped.equippedCharacter);
+    const enemyDetails = useImageParse(
+        enemyData[currentEnemyIndex]?.imagePath || ""
+    );
 
     useEffect(() => {
         if (characterDetails.name) {
@@ -96,26 +204,6 @@ const AdventureGameplay = () => {
             characterImage.onload = () => setImagesLoaded(true);
         }
     }, [characterDetails.name]);
-
-    const currentEnemy = enemyData[currentEnemyIndex];
-    const enemyDetails = useImageParse(
-        enemyData[currentEnemyIndex]?.imagePath || ""
-    );
-
-    useEffect(() => {
-        if (enemyDetails.name) {
-            const enemyImage = new Image();
-            enemyImage.src = `/assets/images/sprite/${enemyDetails.name}.png`;
-            enemyImage.onload = () => setImagesLoaded(true);
-        }
-    }, [enemyDetails.name]);
-
-    const currentWord = currentEnemy?.words[currentWordIndex];
-    const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
-
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTypedWord(event.target.value);
-    };
 
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
@@ -131,6 +219,14 @@ const AdventureGameplay = () => {
         enemyDetails.attackFrame
     );
 
+    const currentEnemy = enemyData[currentEnemyIndex];
+    const currentWord = currentEnemy?.words[currentWordIndex];
+    const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setTypedWord(event.target.value);
+    };
+
     const handleEnemyAttack = () => {
         if (enemyDetails.attackType == "melee") {
             setEnemyAttackType("expand-width");
@@ -143,7 +239,15 @@ const AdventureGameplay = () => {
             setTimeout(() => {
                 setIsEnemyAttacking(false);
                 setCharacterHit("hit");
+                subtractLives(1); // Subtract 1 from lives on incorrect input
+
                 setCharacterAttackType("");
+
+                setTimeout(() => {
+                    if (lives === 1) {
+                        setShowGameOverModal(true);
+                    }
+                }, 500);
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
@@ -220,13 +324,22 @@ const AdventureGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
         }
     };
+    const { updateProgress, isLoading, error, data } = useUpdateProgress();
+    const { redeemReward } = useRedeemReward();
+    const { incrementFloor } = useFloorIncrement();
 
+    const { lives, subtractLives, addLives } = useGameplayStore();
+    // Other state and hooks...
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemyData[currentEnemyIndex];
         const currentWord = currentEnemy.words[currentWordIndex].toLowerCase();
 
-        if (typedWord.toLowerCase() === currentWord) {
+        // Handle the game logic for correct answers
+        if (
+            typedWord.toLowerCase() === currentWord ||
+            rangeValue === word?.syllable
+        ) {
             // Correct word spelling
             setTypedWord("");
             handleCharacterAttack();
@@ -236,7 +349,9 @@ const AdventureGameplay = () => {
             setSpelledWords(updatedSpelledWords);
 
             // Archive the correctly spelled word
-            await addWord(currentWord);
+            if (isClear === "false") {
+                await addWord(currentWord);
+            }
 
             setTimeout(() => {
                 setIsCharacterAttacking(false);
@@ -251,17 +366,30 @@ const AdventureGameplay = () => {
                     setTimeout(() => {
                         if (currentEnemyIndex === enemyData.length - 1) {
                             // All enemies defeated, show confetti
+                            if (isClear === "false") {
+                                console.log("Now it is clear");
+                                updateProgress(nextFloorId, nextSection);
+                                redeemReward(floorId);
+                                incrementFloor();
+                            } else {
+                                console.log("It is cleared previously");
+                            }
                             setShowConfetti(true);
+                            setShowConquerFloorModal(true); // Show the conquering floor modal
                         } else {
                             setCurrentEnemyIndex(currentEnemyIndex + 1);
                             setCurrentWordIndex(0);
+                            setLockedPronunciation("locked");
                         }
                     }, 500); // Add delay before switching to next enemy (adjust as needed)
                 } else {
                     setCurrentWordIndex(currentWordIndex + 1);
+                    setLockedPronunciation("locked");
                 }
             }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
         } else {
+            // Check if lives have reached 0
+
             handleMissedAttack();
             setTimeout(() => {
                 handleEnemyAttack();
@@ -269,21 +397,22 @@ const AdventureGameplay = () => {
         }
     };
 
-    useEffect(() => {
-        console.log("Character Hit", characterHit);
-        console.log("Enemy Hit", enemyHit);
-    }, [characterHit, enemyHit]);
+    //Play only the audio in gameType 1
 
     useEffect(() => {
-        // Play audio on word change
-        if (word && word.playAudio) {
-            setTimeout(() => {
+        if (gameStarted && word && word.playAudio) {
+            // Play audio on word change
+            const timer = setTimeout(() => {
                 word.playAudio();
-            }, 1500);
+            }, 1000);
+
+            return () => clearTimeout(timer); // Clear the timeout if the component unmounts or word changes
         }
-    }, [word]); // Trigger on word change
+    }, [gameStarted, word]); // Trigger on gameStarted or word change
 
     useEffect(() => {
+        if (!gameStarted) return; // Do nothing if the game hasn't started
+
         // Handle key down event for shift key to play audio
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Shift") {
@@ -298,26 +427,18 @@ const AdventureGameplay = () => {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, [word]); // Trigger on word change
+    }, [gameStarted, word]); // Trigger on gameStarted or word change
 
-    const handleItemUse = (itemID: string) => {
-        const item = userItems.find((item) => item.itemID.itemID === itemID);
-        if (item && item.quantity > 0) {
-            // Implement item effect logic here
-            if (item.itemID.effectType === "heal") {
-                setLives((prevLives) =>
-                    Math.min(prevLives + item.itemID.effectValue, 5)
-                );
-            }
+    const [rangeValue, setRangeValue] = useState(0);
 
-            // Update item quantity
-            const updatedItems = userItems.map((userItem) =>
-                userItem.itemID.itemID === itemID
-                    ? { ...userItem, quantity: userItem.quantity - 1 }
-                    : userItem
-            );
-            setUserItems(updatedItems);
-        }
+    const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setRangeValue(Number(event.target.value));
+    };
+
+    const extractEnemyName = (imagePath: string) => {
+        // Match the pattern of &attackType_name-a11-i12
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
+        return match ? match[1] : "unknown"; // Return the name or 'unknown' if not found
     };
 
     const welcomeModalButtons = [
@@ -338,6 +459,7 @@ const AdventureGameplay = () => {
 
     return (
         <main className="adventure-wrapper">
+            {/* Welcome Modal */}
             <Modal
                 isOpen={showWelcomeModal}
                 onClose={() => setShowWelcomeModal(false)}
@@ -345,64 +467,77 @@ const AdventureGameplay = () => {
                 details="Defeat all the enemies to win!"
                 buttons={welcomeModalButtons}
             />
+
+            {/* Game Content */}
             {gameStarted && (
                 <section className="adventure-platform">
                     <div className="platform-indicator">Floor {floorId}</div>
-                    <span>Word to Spell: {currentWord}</span>{" "}
-                    <span>{characterAnimation}</span>
-                    <span>{currentEnemy.imagePath}</span>
+                    <p>Lives: {lives}</p>
+
                     <section className="enemy-track">
-                        {enemyData.map((enemy, enemyIndex) => (
-                            <div key={enemyIndex} className="enemy-track-list">
-                                {enemyIndex > 0 && (
-                                    <div className="enemy-connector"></div>
-                                )}
+                        {enemyData.map((enemy, enemyIndex) => {
+                            const enemyName = extractEnemyName(enemy.imagePath);
+
+                            return (
                                 <div
-                                    className={`enemy-track-profile ${
-                                        defeatedEnemies.includes(enemyIndex)
-                                            ? "defeated"
-                                            : ""
-                                    }`}
+                                    key={enemyIndex}
+                                    className="enemy-track-list"
                                 >
-                                    Name: {currentEnemy.name}
+                                    {enemyIndex > 0 && (
+                                        <div className="enemy-connector"></div>
+                                    )}
+
+                                    <div
+                                        className={`enemy-track-profile ${
+                                            defeatedEnemies.includes(enemyIndex)
+                                                ? "defeated"
+                                                : ""
+                                        }`}
+                                    >
+                                        <img
+                                            src={`/assets/images/sprite/profile-${enemyName}.png`}
+                                            alt={enemyName}
+                                        />
+                                    </div>
+                                    {enemy.words.map(
+                                        (word: any, wordIndex: any) => (
+                                            <React.Fragment key={wordIndex}>
+                                                <div className="enemy-connector"></div>
+                                                <div
+                                                    className={`enemy-word ${
+                                                        spelledWords[
+                                                            enemyIndex
+                                                        ]?.[wordIndex]
+                                                            ? "spelled"
+                                                            : ""
+                                                    }`}
+                                                ></div>
+                                            </React.Fragment>
+                                        )
+                                    )}
                                 </div>
-                                {enemy.words.map(
-                                    (word: any, wordIndex: any) => (
-                                        <React.Fragment key={wordIndex}>
-                                            <div className="enemy-connector"></div>
-                                            <div
-                                                className={`enemy-word ${
-                                                    spelledWords[enemyIndex]?.[
-                                                        wordIndex
-                                                    ]
-                                                        ? "spelled"
-                                                        : ""
-                                                }`}
-                                            ></div>
-                                        </React.Fragment>
-                                    )
-                                )}
-                            </div>
-                        ))}
+                            );
+                        })}
                     </section>
+
                     <section className="sprite-holder">
+                        {/* Character Sprite */}
                         <section
-                            className={` character-container ${characterAttackType} ${characterHit}`}
+                            className={`character-container ${characterAttackType} ${characterHit}`}
                         >
                             <div
-                                className={` character-sprite ${
+                                className={`character-sprite ${
                                     isCharacterAttacking
                                         ? `attack-${characterDetails.name}`
                                         : `idle-${characterDetails.name}`
                                 }`}
                                 style={{
-                                    border: "2px solid white",
                                     position: "absolute",
                                     bottom: 0,
                                     right: 0,
                                     backgroundImage: `url("/assets/images/sprite/${characterDetails.name}.png")`,
-                                    width: `360px`, // Width of each frame in the sprite sheet
-                                    height: `360px`, // Adjust based on sprite sheet
+                                    width: `360px`,
+                                    height: `360px`,
                                     animation: `${
                                         isCharacterAttacking
                                             ? `attack-${characterDetails.name}`
@@ -420,11 +555,13 @@ const AdventureGameplay = () => {
                             >
                                 <style>
                                     {`
-                ${characterAnimation}
-                `}
+                    ${characterAnimation}
+                    `}
                                 </style>
                             </div>
                         </section>
+
+                        {/* Enemy Sprite */}
                         <section
                             className={`enemy-container ${enemyAttackType} ${enemyHit}`}
                         >
@@ -438,10 +575,9 @@ const AdventureGameplay = () => {
                                     position: "absolute",
                                     bottom: 0,
                                     left: 0,
-                                    border: "2px solid white",
                                     backgroundImage: `url("/assets/images/sprite/${enemyDetails.name}.png")`,
-                                    width: `360px`, // Width of each frame in the sprite sheet
-                                    height: `360px`, // Adjust based on sprite sheet
+                                    width: `360px`,
+                                    height: `360px`,
                                     animation: `${
                                         isEnemyAttacking
                                             ? `attack-${enemyDetails.name}`
@@ -459,73 +595,113 @@ const AdventureGameplay = () => {
                             >
                                 <style>
                                     {`
-        ${enemyAnimation}
-        `}
+            ${enemyAnimation}
+            `}
                                 </style>
-                                {enemyAnimation}
                             </div>
                         </section>
                     </section>
                 </section>
             )}
+
+            {/* Confirmation Modal */}
             {gameStarted && (
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
+                    <Modal
+                        isOpen={showConfirmationModal}
+                        onClose={cancelUseItem}
+                        title="Confirm Item Use"
+                        details={`Are you sure you want to use ${itemToUse?.name}?`}
+                        buttons={[
+                            <button key="confirm" onClick={confirmUseItem}>
+                                Yes, Use Item
+                            </button>,
+                            <button key="cancel" onClick={cancelUseItem}>
+                                Cancel
+                            </button>,
+                        ]}
+                    />
+
+                    {/* Render items */}
                     <section className="control-item">
-                        {userItems.map((item) => (
-                            <div
-                                key={item.itemID.itemID}
-                                className="item-box"
-                                onClick={() =>
-                                    handleItemUse(item.itemID.itemID)
-                                }
-                            >
-                                <img
-                                    src={`/assets/images/reward/${item.itemID.imagePath}`}
-                                    alt={item.itemID.itemName}
-                                />
-                                <span>{item.quantity}x</span>
-                            </div>
-                        ))}
-                        {[...Array(3)].map((_, index) => (
-                            <div
-                                key={`empty-${index}`}
-                                className="item-box empty"
-                            >
-                                <img
-                                    src="/assets/images/reward/empty.png"
-                                    alt="Empty"
-                                />
-                                <span>0x</span>
-                            </div>
-                        ))}
+                        {userItems.length > 0 ? (
+                            userItems.map((userItem) => (
+                                <div
+                                    key={userItem.userItemID}
+                                    className="item-box"
+                                    onClick={() =>
+                                        handleUseItem(
+                                            userItem.itemID.itemID,
+                                            userItem.itemID.name
+                                        )
+                                    }
+                                >
+                                    <img
+                                        src={`/assets/images/reward/${userItem.itemID.imagePath}`}
+                                        alt={userItem.itemID.name}
+                                    />
+                                    <span>{userItem.quantity}x</span>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No items available</p>
+                        )}
                     </section>
+
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
-                            <button type="button" onClick={word?.playAudio}>
-                                🔉
-                            </button>
-                            <InputBox
-                                type="text"
-                                value={typedWord}
-                                onChange={handleInputChange}
-                                placeholder="Type the word..."
-                                required
-                            />
-                            <button type="submit">Submit</button>
+                            {gameType === "syllable" ? (
+                                <>
+                                    <p className="syllable-word">
+                                        {currentWord}
+                                    </p>
+                                    <input
+                                        className="syllable-range"
+                                        type="range"
+                                        min="1"
+                                        max="10"
+                                        value={rangeValue}
+                                        onChange={handleRangeChange}
+                                    />
+                                    <span className="range-value">
+                                        {rangeValue}
+                                    </span>
+                                    <button type="submit">Go!</button>
+                                </>
+                            ) : (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={word?.playAudio}
+                                    >
+                                        🔉
+                                    </button>
+                                    <InputBox
+                                        type="text"
+                                        value={typedWord}
+                                        onChange={handleInputChange}
+                                        placeholder="Type the word..."
+                                        required
+                                    />
+                                    <button type="submit">Go!</button>
+                                </>
+                            )}
                         </form>
                     </section>
+
                     <section className="control-clue">
                         <h1>Word's Info</h1>
 
                         <section className="clue-container">
                             <span>Pronunciation</span>
-                            <div className="clue-pronunciation">
-                                <span>{word?.pronunciation}</span>
+                            <div className="clue-pronunciation ">
+                                <span className={`${lockedPronunciation}`}>
+                                    {word?.pronunciation}
+                                </span>
                             </div>
 
                             <span>Definition</span>
-
                             <div className="clue-definition">
                                 <span>{word?.definition}</span>
                             </div>
@@ -533,8 +709,46 @@ const AdventureGameplay = () => {
                     </section>
                 </section>
             )}
-            {showConfetti && <Confetti />}{" "}
-            {/* Show confetti when all enemies are defeated */}
+
+            {/* Game Over Modal */}
+            <Modal
+                isOpen={showGameOverModal}
+                onClose={() => setShowGameOverModal(false)}
+                title="Game Over"
+                details="Unfortunately, you have run out of lives. Would you like to restart the game?"
+                buttons={[
+                    <button key="restart" onClick={handleGameOverRestart}>
+                        Restart Game
+                    </button>,
+                    <button
+                        key="exit"
+                        onClick={() =>
+                            (window.location.href = "/tower/spelling")
+                        }
+                    >
+                        Exit to Main Menu
+                    </button>,
+                ]}
+            />
+
+            {showConfetti && <Confetti />}
+
+            <Modal
+                isOpen={showConquerFloorModal}
+                onClose={() => setShowConquerFloorModal(false)}
+                title="Floor Conquered!"
+                details="Congratulations! You've conquered this floor. Would you like to proceed to the next floor or return to the main menu?"
+                buttons={[
+                    <button
+                        key="menu"
+                        onClick={() =>
+                            (window.location.href = "/tower/spelling")
+                        }
+                    >
+                        Return to Main Menu
+                    </button>,
+                ]}
+            />
         </main>
     );
 };

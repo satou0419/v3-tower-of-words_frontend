@@ -24,7 +24,7 @@ const getUserInfo = async () => {
 
         const data = await response.json();
 
-        setUserDetailsID(data.data.userDetailsID);
+        setUserDetailsID(data.data.userDetailsId);
         setUsername(data.data.username);
         setFirstname(data.data.firstname);
         setLastname(data.data.lastname);

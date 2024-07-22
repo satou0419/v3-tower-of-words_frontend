@@ -1,10 +1,11 @@
+"use client";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./game.scss";
 import useUserInfoStore from "@/store/userInfoStore";
 
-const handleCardClick = async () => {
+const handleCardClick = () => {
     try {
-        
+        console.log("click");
     } catch (error) {
         console.error("Failed to fetch simulations for the room:", error);
     }
@@ -28,7 +29,7 @@ export default function Game() {
                         infoTitle="Score"
                         counter={4}
                         glow={false}
-                        link = {`/${userType.toLowerCase()}-room/game`}
+                        link={`/${userType.toLowerCase()}-room/game`}
                         onClick={() => handleCardClick()}
                     />
                 </div>
