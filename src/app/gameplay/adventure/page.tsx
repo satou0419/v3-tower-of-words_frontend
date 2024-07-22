@@ -11,8 +11,6 @@ import Modal from "@/app/component/Modal/Modal";
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
 import Confetti from "react-confetti"; // Import Confetti
 import useMerriam from "@/hook/useMerriam";
-import getUserItems from "@/lib/item-endpoint/getUserItem";
-import { useItemStore } from "@/store/itemStore";
 import useAddWord from "@/hook/useAddWord"; // Import the custom hook
 import useProgressEquippedStore from "@/store/progressEquippedStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
@@ -22,7 +20,6 @@ import useFloorIncrement from "@/hook/useFloorIncrement";
 
 const AdventureGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true);
-
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
 
@@ -32,7 +29,7 @@ const AdventureGameplay = () => {
     const sectionParam = searchParams.get("section");
     const nextSectionParam = searchParams.get("nextSection");
     const nextFloorIdParam = searchParams.get("nextFloorId");
-    const gameTypeParam = searchParams.get("gameType");
+    const gameType = searchParams.get("gameType");
 
     const isClear = searchParams.get("clear");
     //#endRegion
@@ -42,7 +39,6 @@ const AdventureGameplay = () => {
     const section = sectionParam ? parseInt(sectionParam, 10) : NaN;
     const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN;
     const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN;
-    const gameType = gameTypeParam ? parseInt(gameTypeParam, 10) : NaN;
 
     //#endRegion
 
@@ -61,22 +57,11 @@ const AdventureGameplay = () => {
 
     const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
 
-    const [userItems, setUserItems] = useState<any[]>([]);
-    const setItems = useItemStore.getState().setItems;
-
     const {
         addWord,
         isLoading: isAddingWord,
         error: addWordError,
     } = useAddWord();
-
-    useEffect(() => {
-        (async () => {
-            const items = await getUserItems();
-            setUserItems(items);
-            setItems(items);
-        })();
-    }, [setItems]);
 
     useEffect(() => {
         if (floorId) {
@@ -94,7 +79,6 @@ const AdventureGameplay = () => {
                     false
                 );
             });
-            console.log("Enemies", enemies);
             setSpelledWords(initialSpelledWords);
         }
     }, [enemies]);
@@ -308,14 +292,9 @@ const AdventureGameplay = () => {
         }
     };
 
-    useEffect(() => {
-        console.log("Character Hit", characterHit);
-        console.log("Enemy Hit", enemyHit);
-    }, [characterHit, enemyHit]);
-
     //Play only the audio in gameType 1
 
-    if (gameType === 1) {
+    if (gameType === "syllable") {
         useEffect(() => {
             // Play audio on word change
             if (word && word.playAudio) {
@@ -343,35 +322,11 @@ const AdventureGameplay = () => {
         }, [word]); // Trigger on word change
     }
 
-    const handleItemUse = (itemID: string) => {
-        const item = userItems.find((item) => item.itemID.itemID === itemID);
-        if (item && item.quantity > 0) {
-            // Implement item effect logic here
-            if (item.itemID.effectType === "heal") {
-                setLives((prevLives) =>
-                    Math.min(prevLives + item.itemID.effectValue, 5)
-                );
-            }
-
-            // Update item quantity
-            const updatedItems = userItems.map((userItem) =>
-                userItem.itemID.itemID === itemID
-                    ? { ...userItem, quantity: userItem.quantity - 1 }
-                    : userItem
-            );
-            setUserItems(updatedItems);
-        }
-    };
-
     const [rangeValue, setRangeValue] = useState(0);
 
     const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRangeValue(Number(event.target.value));
     };
-
-    useEffect(() => {
-        console.log("Range Value", rangeValue);
-    }, [rangeValue]);
 
     const extractEnemyName = (imagePath: string) => {
         // Match the pattern of &attackType_name-a11-i12
@@ -538,37 +493,14 @@ const AdventureGameplay = () => {
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
                     <section className="control-item">
-                        {userItems.map((item) => (
-                            <div
-                                key={item.itemID.itemID}
-                                className="item-box"
-                                onClick={() =>
-                                    handleItemUse(item.itemID.itemID)
-                                }
-                            >
-                                <img
-                                    src={`/assets/images/reward/${item.itemID.imagePath}`}
-                                    alt={item.itemID.itemName}
-                                />
-                                <span>{item.quantity}x</span>
-                            </div>
-                        ))}
-                        {[...Array(3)].map((_, index) => (
-                            <div
-                                key={`empty-${index}`}
-                                className="item-box empty"
-                            >
-                                <img
-                                    src="/assets/images/reward/empty.png"
-                                    alt="Empty"
-                                />
-                                <span>0x</span>
-                            </div>
-                        ))}
+                        <div className="item-box">
+                            <img src={`/assets/images/reward/imagePath`} />
+                            <span>2x</span>
+                        </div>
                     </section>
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
-                            {gameType === 2 ? (
+                            {gameType === "spelling" ? (
                                 <>
                                     <p className="syllable-word">
                                         {currentWord}
