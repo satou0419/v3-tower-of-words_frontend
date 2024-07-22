@@ -42,6 +42,8 @@ const AdventureGameplay = () => {
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
     const [lockedPronunciation, setLockedPronunciation] = useState("locked");
 
+    const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
+
     //#region  Item Logic
 
     const [userItems, setUserItems] = useState<UserItem[]>([]);
@@ -124,6 +126,18 @@ const AdventureGameplay = () => {
     const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN;
 
     //#endRegion
+
+    const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
+
+    // Handler for restarting the game
+    const handleGameOverRestart = () => {
+        // Logic to restart the game
+        console.log("Restarting game...");
+        setShowGameOverModal(false);
+        window.location.reload();
+
+        // Add additional logic here to reset the game state
+    };
 
     const { enemies, fetchEnemies } = useEnemyStore();
     const [enemyData, setEnemyData] = useState<any[]>([]);
@@ -309,7 +323,6 @@ const AdventureGameplay = () => {
 
     const { lives, subtractLives, addLives } = useGameplayStore();
     // Other state and hooks...
-
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemyData[currentEnemyIndex];
@@ -318,7 +331,7 @@ const AdventureGameplay = () => {
         // Handle the game logic for correct answers
         if (
             typedWord.toLowerCase() === currentWord ||
-            rangeValue == word?.syllable
+            rangeValue === word?.syllable
         ) {
             // Correct word spelling
             setTypedWord("");
@@ -355,6 +368,7 @@ const AdventureGameplay = () => {
                                 console.log("It is cleared previously");
                             }
                             setShowConfetti(true);
+                            setShowConquerFloorModal(true); // Show the conquering floor modal
                         } else {
                             setCurrentEnemyIndex(currentEnemyIndex + 1);
                             setCurrentWordIndex(0);
@@ -369,10 +383,16 @@ const AdventureGameplay = () => {
         } else {
             // Incorrect word spelling
             subtractLives(1); // Subtract 1 from lives on incorrect input
-            handleMissedAttack();
-            setTimeout(() => {
-                handleEnemyAttack();
-            }, (characterDetails.attackFrame / 12) * 2000);
+
+            // Check if lives have reached 0
+            if (lives - 1 <= 0) {
+                setShowGameOverModal(true);
+            } else {
+                handleMissedAttack();
+                setTimeout(() => {
+                    handleEnemyAttack();
+                }, (characterDetails.attackFrame / 12) * 2000);
+            }
         }
     };
 
@@ -438,6 +458,7 @@ const AdventureGameplay = () => {
 
     return (
         <main className="adventure-wrapper">
+            {/* Welcome Modal */}
             <Modal
                 isOpen={showWelcomeModal}
                 onClose={() => setShowWelcomeModal(false)}
@@ -445,6 +466,8 @@ const AdventureGameplay = () => {
                 details="Defeat all the enemies to win!"
                 buttons={welcomeModalButtons}
             />
+
+            {/* Game Content */}
             {gameStarted && (
                 <section className="adventure-platform">
                     <div className="platform-indicator">Floor {floorId}</div>
@@ -452,7 +475,6 @@ const AdventureGameplay = () => {
 
                     <section className="enemy-track">
                         {enemyData.map((enemy, enemyIndex) => {
-                            // Extract the enemy name from imagePath
                             const enemyName = extractEnemyName(enemy.imagePath);
 
                             return (
@@ -498,11 +520,12 @@ const AdventureGameplay = () => {
                     </section>
 
                     <section className="sprite-holder">
+                        {/* Character Sprite */}
                         <section
-                            className={` character-container ${characterAttackType} ${characterHit}`}
+                            className={`character-container ${characterAttackType} ${characterHit}`}
                         >
                             <div
-                                className={` character-sprite ${
+                                className={`character-sprite ${
                                     isCharacterAttacking
                                         ? `attack-${characterDetails.name}`
                                         : `idle-${characterDetails.name}`
@@ -512,8 +535,8 @@ const AdventureGameplay = () => {
                                     bottom: 0,
                                     right: 0,
                                     backgroundImage: `url("/assets/images/sprite/${characterDetails.name}.png")`,
-                                    width: `360px`, // Width of each frame in the sprite sheet
-                                    height: `360px`, // Adjust based on sprite sheet
+                                    width: `360px`,
+                                    height: `360px`,
                                     animation: `${
                                         isCharacterAttacking
                                             ? `attack-${characterDetails.name}`
@@ -531,11 +554,13 @@ const AdventureGameplay = () => {
                             >
                                 <style>
                                     {`
-                ${characterAnimation}
-                `}
+                    ${characterAnimation}
+                    `}
                                 </style>
                             </div>
                         </section>
+
+                        {/* Enemy Sprite */}
                         <section
                             className={`enemy-container ${enemyAttackType} ${enemyHit}`}
                         >
@@ -550,8 +575,8 @@ const AdventureGameplay = () => {
                                     bottom: 0,
                                     left: 0,
                                     backgroundImage: `url("/assets/images/sprite/${enemyDetails.name}.png")`,
-                                    width: `360px`, // Width of each frame in the sprite sheet
-                                    height: `360px`, // Adjust based on sprite sheet
+                                    width: `360px`,
+                                    height: `360px`,
                                     animation: `${
                                         isEnemyAttacking
                                             ? `attack-${enemyDetails.name}`
@@ -569,14 +594,16 @@ const AdventureGameplay = () => {
                             >
                                 <style>
                                     {`
-        ${enemyAnimation}
-        `}
+            ${enemyAnimation}
+            `}
                                 </style>
                             </div>
                         </section>
                     </section>
                 </section>
             )}
+
+            {/* Confirmation Modal */}
             {gameStarted && (
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
@@ -596,7 +623,6 @@ const AdventureGameplay = () => {
                     />
 
                     {/* Render items */}
-
                     <section className="control-item">
                         {userItems.length > 0 ? (
                             userItems.map((userItem) => (
@@ -621,6 +647,7 @@ const AdventureGameplay = () => {
                             <p>No items available</p>
                         )}
                     </section>
+
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
                             {gameType === "syllable" ? (
@@ -643,7 +670,6 @@ const AdventureGameplay = () => {
                                 </>
                             ) : (
                                 <>
-                                    {/* Gametype 1 */}
                                     <button
                                         type="button"
                                         onClick={word?.playAudio}
@@ -662,6 +688,7 @@ const AdventureGameplay = () => {
                             )}
                         </form>
                     </section>
+
                     <section className="control-clue">
                         <h1>Word's Info</h1>
 
@@ -681,7 +708,46 @@ const AdventureGameplay = () => {
                     </section>
                 </section>
             )}
+
+            {/* Game Over Modal */}
+            <Modal
+                isOpen={showGameOverModal}
+                onClose={() => setShowGameOverModal(false)}
+                title="Game Over"
+                details="Unfortunately, you have run out of lives. Would you like to restart the game?"
+                buttons={[
+                    <button key="restart" onClick={handleGameOverRestart}>
+                        Restart Game
+                    </button>,
+                    <button
+                        key="exit"
+                        onClick={() =>
+                            (window.location.href = "/tower/spelling")
+                        }
+                    >
+                        Exit to Main Menu
+                    </button>,
+                ]}
+            />
+
             {showConfetti && <Confetti />}
+
+            <Modal
+                isOpen={showConquerFloorModal}
+                onClose={() => setShowConquerFloorModal(false)}
+                title="Floor Conquered!"
+                details="Congratulations! You've conquered this floor. Would you like to proceed to the next floor or return to the main menu?"
+                buttons={[
+                    <button
+                        key="menu"
+                        onClick={() =>
+                            (window.location.href = "/tower/spelling")
+                        }
+                    >
+                        Return to Main Menu
+                    </button>,
+                ]}
+            />
         </main>
     );
 };
