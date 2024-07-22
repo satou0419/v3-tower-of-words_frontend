@@ -4,32 +4,15 @@ import "./teacherroom.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
 import { useRoomStore } from "@/store/roomStore";
 import { useSimulationStore } from "@/store/simulationStore";
-import { useEffect } from "react";
-import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";
 import useUserInfoStore from "@/store/userInfoStore";
 import { useRouter } from "next/navigation";
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations"
 
 export default function TeacherRoom() {
-    const { rooms, setRoom, setCurrentRoom } = useRoomStore();
+    const { rooms, setCurrentRoom } = useRoomStore();
     const { simulations , setSimulation } = useSimulationStore();
     const { userType } = useUserInfoStore.getState();
     const router = useRouter();
-
-    useEffect(() => {
-        const fetchRooms = async () => {
-            try {
-                const roomData = await viewCreatedRoom();
-                setRoom(roomData);
-                console.log(roomData)
-            } catch (error) {
-                console.error("Failed to fetch rooms:", error);
-                setRoom([]);
-            }
-        };
-
-        fetchRooms();
-    }, [setRoom]);
 
     const handleCardClick = async (room: any) => {
         try {

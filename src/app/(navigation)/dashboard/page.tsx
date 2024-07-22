@@ -7,8 +7,12 @@ import useUserInfoStore from "@/store/userInfoStore";
 import useProgressDashboardStore from "@/store/progressDashboardStore";
 import { useEffect } from "react";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
+import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";
+import { useRoomStore } from "@/store/roomStore";
+import viewStudentRoom from "@/lib/room-endpoint/viewStudentRoom";
 
 export default function Dashboard() {
+    const { rooms, setRoom } = useRoomStore();
     const { userType } = useUserInfoStore.getState();
     const userDashboard = useProgressDashboardStore(
         (state) => state.progressDashboard
@@ -17,6 +21,36 @@ export default function Dashboard() {
     useEffect(() => {
         getUserDetails();
     }, []);
+
+    if (userType.toLowerCase() == "teacher"){
+        useEffect(() => {
+            const fetchRooms = async () => {
+                try {
+                    const roomData = await viewCreatedRoom();
+                    setRoom(roomData);
+                    console.log(roomData)
+                } catch (error) {
+                    console.error("Failed to fetch rooms:", error);
+                    setRoom([]);
+                }
+            };
+            fetchRooms();
+        }, [setRoom]);
+    } else {
+        useEffect(() => {
+            const fetchRooms = async () => {
+                try {
+                    const roomData = await viewStudentRoom();
+                    setRoom(roomData);
+                } catch (error) {
+                    console.error("Failed to fetch rooms:", error);
+                }
+            };
+    
+            fetchRooms();
+        }, [setRoom]);
+    }
+
     return (
         <main className="dashboard-wrapper">
             <section className="dashboard-cardmode">
@@ -33,7 +67,7 @@ export default function Dashboard() {
                     className="cardmode-simulation"
                     bannerSrc="/assets/images/banner/banner-simulation_large.webp"
                     progressHeader="Room"
-                    progressValue={5}
+                    progressValue={rooms.length}
                     modeTitle="Room"
                     modeDescription="This is a custom description for the room."
                     link={`/${userType.toLowerCase()}-room`}
