@@ -6,9 +6,11 @@ import "./studentroom.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
 import viewStudentRoom from "@/lib/room-endpoint/viewStudentRoom";
 import Link from "next/link";
+import useUserInfoStore from "@/store/userInfoStore";
 
 export default function StudentRoom() {
     const { rooms, setRoom } = useRoomStore();
+    const { userType } = useUserInfoStore.getState();
 
     useEffect(() => {
         const fetchRooms = async () => {
@@ -22,6 +24,14 @@ export default function StudentRoom() {
 
         fetchRooms();
     }, [setRoom]);
+
+    const handleCardClick = async (room: any) => {
+        try {
+
+        } catch (error) {
+            console.error("Failed to fetch simulations for the room:", error);
+        }
+    };
 
     return (
         <main className="studentroom-wrapper">
@@ -41,6 +51,8 @@ export default function StudentRoom() {
                             infoTitle="Game"
                             counter={room.members.length} // Assuming counter is the number of members
                             glow={false}
+                            link = {`/${userType.toLowerCase()}-room/game`}
+                            onClick={() => handleCardClick(room)}
                         />
                     ))}
                     <CardNew title="+ Join Room" link="join-room" />
