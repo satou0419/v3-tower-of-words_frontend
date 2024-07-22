@@ -10,7 +10,7 @@ import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations"
 
 export default function TeacherRoom() {
     const { rooms, setCurrentRoom } = useRoomStore();
-    const { simulations , setSimulation } = useSimulationStore();
+    const { setSimulation } = useSimulationStore();
     const { userType } = useUserInfoStore.getState();
     const router = useRouter();
 
