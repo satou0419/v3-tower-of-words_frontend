@@ -117,7 +117,6 @@ const AdventureGameplay = () => {
     const gameType = searchParams.get("gameType");
 
     const isClear = searchParams.get("clear");
-    //#endRegion
 
     // Convert parameters to numbers with fallback to NaN if conversion fails
     const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN;
@@ -240,7 +239,15 @@ const AdventureGameplay = () => {
             setTimeout(() => {
                 setIsEnemyAttacking(false);
                 setCharacterHit("hit");
+                subtractLives(1); // Subtract 1 from lives on incorrect input
+
                 setCharacterAttackType("");
+
+                setTimeout(() => {
+                    if (lives === 1) {
+                        setShowGameOverModal(true);
+                    }
+                }, 500);
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
@@ -381,18 +388,12 @@ const AdventureGameplay = () => {
                 }
             }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
         } else {
-            // Incorrect word spelling
-            subtractLives(1); // Subtract 1 from lives on incorrect input
-
             // Check if lives have reached 0
-            if (lives - 1 <= 0) {
-                setShowGameOverModal(true);
-            } else {
-                handleMissedAttack();
-                setTimeout(() => {
-                    handleEnemyAttack();
-                }, (characterDetails.attackFrame / 12) * 2000);
-            }
+
+            handleMissedAttack();
+            setTimeout(() => {
+                handleEnemyAttack();
+            }, (characterDetails.attackFrame / 12) * 2000);
         }
     };
 
