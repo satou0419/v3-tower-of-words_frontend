@@ -138,22 +138,33 @@
         background-color: #9a6dea;
         padding-left: 20px;
         height: 98%;
-
+        flex-wrap: wrap;
+        gap: 0.5em;
+        overflow: auto;
         .item-box {
-            width: 30%;
+            width: 8em;
             aspect-ratio: 1/1;
-            background-color: beige;
+            background-color: #4a2053;
             border-radius: 20px;
-            border: 5px solid salmon;
             position: relative;
 
-            span {
+            img {
                 position: absolute;
-                bottom: 0px;
-                right: 0px;
+                height: auto;
+                width: 80%;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            span {
+                padding: 5px 8px;
                 border-radius: 10px;
-                padding: 0.2em 2em;
-                background-color: tomato;
+                background-color: #ffc658;
+                color: #d26500;
             }
         }
     }
@@ -269,8 +280,10 @@
             }
 
             input {
-                height: 4em;
+                height: 2em;
                 width: 80%;
+                text-align: center;
+                font-size: 1.5em;
             }
         }
     }
@@ -317,9 +330,25 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                position: relative;
             }
         }
 
+        .locked {
+            color: #fff;
+            &::after {
+                content: "";
+                display: block;
+                width: 1em;
+                height: 1em;
+                background-image: url("/assets/images/icon/ic-locked.png");
+                background-size: cover;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
         .clue-definition {
             background-color: white;
             display: flex;

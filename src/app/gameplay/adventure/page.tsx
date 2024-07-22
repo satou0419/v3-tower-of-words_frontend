@@ -17,11 +17,67 @@ import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 import useUpdateProgress from "@/hook/useUpdateProgress";
 import useRedeemReward from "@/hook/useRedeemReward";
 import useFloorIncrement from "@/hook/useFloorIncrement";
+import getUserItems from "@/lib/item-endpoint/getUserItem";
+import useItem from "@/hook/useItem";
+import { useGameplayStore } from "@/store/gameplayStore";
+
+interface Item {
+    itemID: number;
+    name: string;
+    imagePath: string;
+    description: string;
+    price: number;
+}
+
+interface UserItem {
+    userItemID: number;
+    quantity: number;
+    userID: number;
+    itemID: Item;
+}
 
 const AdventureGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
+    const [lockedPronunciation, setLockedPronunciation] = useState("locked");
+
+    //#region  Item Logic
+    const [userItems, setUserItems] = useState<UserItem[]>([]);
+    useEffect(() => {
+        const fetchUserItems = async () => {
+            const items = await getUserItems();
+            setUserItems(items);
+        };
+
+        fetchUserItems();
+    }, []);
+
+    const { useItemFunction } = useItem();
+
+    const handleUseItem = async (itemID: number, itemName: string) => {
+        try {
+            await useItemFunction(itemID);
+            console.log(itemName);
+            switch (itemName) {
+                case "Bandage":
+                    addLives(1);
+                    break;
+                case "Medical Kit":
+                    addLives(3);
+                    break;
+                case "Unusual Battery":
+                    setLockedPronunciation("");
+                    break;
+            }
+            // Fetch updated user items after successful use
+            const updatedItems = await getUserItems();
+            setUserItems(updatedItems);
+        } catch (error) {
+            console.error("Failed to use item:", error);
+        }
+    };
+    //#endregion
 
     //#region Extracts data from URL
     const searchParams = useSearchParams();
@@ -49,12 +105,10 @@ const AdventureGameplay = () => {
     const [typedWord, setTypedWord] = useState<string>("");
 
     const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
-    const [lives, setLives] = useState<number>(5);
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
     );
     const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
-
     const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
 
     const {
@@ -226,14 +280,15 @@ const AdventureGameplay = () => {
     const { redeemReward } = useRedeemReward();
     const { incrementFloor } = useFloorIncrement();
 
+    const { lives, subtractLives, addLives } = useGameplayStore();
+    // Other state and hooks...
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemyData[currentEnemyIndex];
         const currentWord = currentEnemy.words[currentWordIndex].toLowerCase();
 
-        //this is if gameType is 1  if (typedWord.toLowerCase() === currentWord)
-        //this is if gameType is 2   if (rangeValue == word?.syllable)
-
+        // Handle the game logic for correct answers
         if (
             typedWord.toLowerCase() === currentWord ||
             rangeValue == word?.syllable
@@ -247,7 +302,6 @@ const AdventureGameplay = () => {
             setSpelledWords(updatedSpelledWords);
 
             // Archive the correctly spelled word
-
             if (isClear === "false") {
                 await addWord(currentWord);
             }
@@ -265,7 +319,6 @@ const AdventureGameplay = () => {
                     setTimeout(() => {
                         if (currentEnemyIndex === enemyData.length - 1) {
                             // All enemies defeated, show confetti
-
                             if (isClear === "false") {
                                 console.log("Now it is clear");
                                 updateProgress(nextFloorId, nextSection);
@@ -278,13 +331,17 @@ const AdventureGameplay = () => {
                         } else {
                             setCurrentEnemyIndex(currentEnemyIndex + 1);
                             setCurrentWordIndex(0);
+                            setLockedPronunciation("locked");
                         }
                     }, 500); // Add delay before switching to next enemy (adjust as needed)
                 } else {
                     setCurrentWordIndex(currentWordIndex + 1);
+                    setLockedPronunciation("locked");
                 }
             }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
         } else {
+            // Incorrect word spelling
+            subtractLives(1); // Subtract 1 from lives on incorrect input
             handleMissedAttack();
             setTimeout(() => {
                 handleEnemyAttack();
@@ -294,33 +351,35 @@ const AdventureGameplay = () => {
 
     //Play only the audio in gameType 1
 
-    if (gameType === "syllable") {
-        useEffect(() => {
+    useEffect(() => {
+        if (gameStarted && word && word.playAudio) {
             // Play audio on word change
-            if (word && word.playAudio) {
-                setTimeout(() => {
+            const timer = setTimeout(() => {
+                word.playAudio();
+            }, 1000);
+
+            return () => clearTimeout(timer); // Clear the timeout if the component unmounts or word changes
+        }
+    }, [gameStarted, word]); // Trigger on gameStarted or word change
+
+    useEffect(() => {
+        if (!gameStarted) return; // Do nothing if the game hasn't started
+
+        // Handle key down event for shift key to play audio
+        const handleKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Shift") {
+                if (word && word.playAudio) {
                     word.playAudio();
-                }, 1000);
-            }
-        }, [word]); // Trigger on word change
-
-        useEffect(() => {
-            // Handle key down event for shift key to play audio
-            const handleKeyDown = (event: KeyboardEvent) => {
-                if (event.key === "Shift") {
-                    if (word && word.playAudio) {
-                        word.playAudio();
-                    }
                 }
-            };
+            }
+        };
 
-            window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown);
 
-            return () => {
-                window.removeEventListener("keydown", handleKeyDown);
-            };
-        }, [word]); // Trigger on word change
-    }
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [gameStarted, word]); // Trigger on gameStarted or word change
 
     const [rangeValue, setRangeValue] = useState(0);
 
@@ -362,6 +421,8 @@ const AdventureGameplay = () => {
             {gameStarted && (
                 <section className="adventure-platform">
                     <div className="platform-indicator">Floor {floorId}</div>
+                    <p>Lives: {lives}</p>
+
                     <section className="enemy-track">
                         {enemyData.map((enemy, enemyIndex) => {
                             // Extract the enemy name from imagePath
@@ -493,14 +554,32 @@ const AdventureGameplay = () => {
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
                     <section className="control-item">
-                        <div className="item-box">
-                            <img src={`/assets/images/reward/imagePath`} />
-                            <span>2x</span>
-                        </div>
+                        {userItems.length > 0 ? (
+                            userItems.map((userItem) => (
+                                <div
+                                    key={userItem.userItemID}
+                                    className="item-box"
+                                    onClick={() =>
+                                        handleUseItem(
+                                            userItem.itemID.itemID,
+                                            userItem.itemID.name
+                                        )
+                                    }
+                                >
+                                    <img
+                                        src={`/assets/images/reward/${userItem.itemID.imagePath}`}
+                                        alt={userItem.itemID.name}
+                                    />
+                                    <span>{userItem.quantity}x</span>
+                                </div>
+                            ))
+                        ) : (
+                            <p>No items available</p>
+                        )}
                     </section>
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
-                            {gameType === "spelling" ? (
+                            {gameType === "syllable" ? (
                                 <>
                                     <p className="syllable-word">
                                         {currentWord}
@@ -534,7 +613,7 @@ const AdventureGameplay = () => {
                                         placeholder="Type the word..."
                                         required
                                     />
-                                    <button type="submit">Submit</button>
+                                    <button type="submit">Go!</button>
                                 </>
                             )}
                         </form>
@@ -544,8 +623,10 @@ const AdventureGameplay = () => {
 
                         <section className="clue-container">
                             <span>Pronunciation</span>
-                            <div className="clue-pronunciation">
-                                <span>{word?.pronunciation}</span>
+                            <div className="clue-pronunciation ">
+                                <span className={`${lockedPronunciation}`}>
+                                    {word?.pronunciation}
+                                </span>
                             </div>
 
                             <span>Definition</span>

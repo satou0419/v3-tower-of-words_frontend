@@ -21,9 +21,10 @@ const useItem = () => {
             }
 
             const data = await response.json();
+            console.log("Item used successfully:", data);
             return data;
         } catch (error) {
-            console.error(error);
+            console.error("Error using item:", error);
             throw error;
         }
     };
