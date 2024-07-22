@@ -43,7 +43,15 @@ const AdventureGameplay = () => {
     const [lockedPronunciation, setLockedPronunciation] = useState("locked");
 
     //#region  Item Logic
+
     const [userItems, setUserItems] = useState<UserItem[]>([]);
+    const [showConfirmationModal, setShowConfirmationModal] =
+        useState<boolean>(false);
+    const [itemToUse, setItemToUse] = useState<{
+        id: number;
+        name: string;
+    } | null>(null);
+
     useEffect(() => {
         const fetchUserItems = async () => {
             const items = await getUserItems();
@@ -55,27 +63,46 @@ const AdventureGameplay = () => {
 
     const { useItemFunction } = useItem();
 
-    const handleUseItem = async (itemID: number, itemName: string) => {
-        try {
-            await useItemFunction(itemID);
-            console.log(itemName);
-            switch (itemName) {
-                case "Bandage":
-                    addLives(1);
-                    break;
-                case "Medical Kit":
-                    addLives(3);
-                    break;
-                case "Unusual Battery":
-                    setLockedPronunciation("");
-                    break;
+    const handleUseItem = (itemID: number, itemName: string) => {
+        // Set the item to use and show the confirmation modal
+        setItemToUse({ id: itemID, name: itemName });
+        setShowConfirmationModal(true);
+    };
+
+    const confirmUseItem = async () => {
+        if (itemToUse) {
+            const { id, name } = itemToUse;
+            try {
+                await useItemFunction(id);
+                console.log(name);
+                switch (name) {
+                    case "Bandage":
+                        addLives(1);
+                        break;
+                    case "Medical Kit":
+                        addLives(3);
+                        break;
+                    case "Unusual Battery":
+                        setLockedPronunciation("");
+                        break;
+                }
+                // Fetch updated user items after successful use
+                const updatedItems = await getUserItems();
+                setUserItems(updatedItems);
+            } catch (error) {
+                console.error("Failed to use item:", error);
+            } finally {
+                // Close the confirmation modal after processing
+                setShowConfirmationModal(false);
+                setItemToUse(null);
             }
-            // Fetch updated user items after successful use
-            const updatedItems = await getUserItems();
-            setUserItems(updatedItems);
-        } catch (error) {
-            console.error("Failed to use item:", error);
         }
+    };
+
+    const cancelUseItem = () => {
+        // Close the confirmation modal without using the item
+        setShowConfirmationModal(false);
+        setItemToUse(null);
     };
     //#endregion
 
@@ -553,6 +580,23 @@ const AdventureGameplay = () => {
             {gameStarted && (
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
+                    <Modal
+                        isOpen={showConfirmationModal}
+                        onClose={cancelUseItem}
+                        title="Confirm Item Use"
+                        details={`Are you sure you want to use ${itemToUse?.name}?`}
+                        buttons={[
+                            <button key="confirm" onClick={confirmUseItem}>
+                                Yes, Use Item
+                            </button>,
+                            <button key="cancel" onClick={cancelUseItem}>
+                                Cancel
+                            </button>,
+                        ]}
+                    />
+
+                    {/* Render items */}
+
                     <section className="control-item">
                         {userItems.length > 0 ? (
                             userItems.map((userItem) => (
