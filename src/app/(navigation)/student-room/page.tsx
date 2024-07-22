@@ -26,11 +26,11 @@ export default function StudentRoom() {
     }, [setRoom]);
 
     const handleCardClick = async (room: any) => {
-        try {
+        // try {
 
-        } catch (error) {
-            console.error("Failed to fetch simulations for the room:", error);
-        }
+        // } catch (error) {
+        //     console.error("Failed to fetch simulations for the room:", error);
+        // }
     };
 
     return (
