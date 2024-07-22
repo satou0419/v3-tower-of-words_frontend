@@ -38,31 +38,33 @@ interface SimulationDetails {
 export default function CreateGame() {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
     const [room, setRoom] = useState<Room>({roomID: 1});
-    const [settings, setSettings] = useState<SimulationDetails>(() => {
-        const savedSettings = localStorage.getItem("settings");
-        return savedSettings
-            ? JSON.parse(savedSettings)
-            : {
-                roomID: { roomID: 1 },
-                simulationType: "Spelling",
-                name: "",
-                deadline: "",
-                attackInterval: 20,
-                studentLife: 6,
-                numberOfAttempt: 1,
-                items: true,
-                description: true,
-                pronunciation: true,
-                enemy: [],
-            };
+    const [settings, setSettings] = useState<SimulationDetails>({
+        roomID: { roomID: 1 },
+        simulationType: "Spelling",
+        name: "",
+        deadline: "",
+        attackInterval: 20,
+        studentLife: 6,
+        numberOfAttempt: 1,
+        items: true,
+        description: true,
+        pronunciation: true,
+        enemy: [],
     });
     const [isClient, setIsClient] = useState(false);
 
     useEffect(() => {
         setIsClient(true);
-        const storedEnemies = localStorage.getItem("enemies");
-        if (storedEnemies) {
-            setEnemies(JSON.parse(storedEnemies));
+        if (typeof window !== "undefined") {
+            const savedSettings = localStorage.getItem("settings");
+            if (savedSettings) {
+                setSettings(JSON.parse(savedSettings));
+            }
+
+            const storedEnemies = localStorage.getItem("enemies");
+            if (storedEnemies) {
+                setEnemies(JSON.parse(storedEnemies));
+            }
         }
     }, []);
 
@@ -79,11 +81,13 @@ export default function CreateGame() {
     }, [settings, isClient]);
 
     useEffect(() => {
-        setSettings((prevSettings) => ({
-            ...prevSettings,
-            roomID: room,
-            enemy: enemies,
-        }));
+        if (isClient) {
+            setSettings((prevSettings) => ({
+                ...prevSettings,
+                roomID: room,
+                enemy: enemies,
+            }));
+        }
     }, [room, enemies]);
 
     const { activeTab, handleTabChange } = useTabManagement(
@@ -94,7 +98,7 @@ export default function CreateGame() {
     const addEnemy = () => {
         const newEnemy: Enemy = {
             id: enemies.length > 0 ? enemies[enemies.length - 1].id + 1 : 1,
-            imagePath:"dafuq",
+            imagePath:"------",// TO BE CHANGE 
             words:[]
         };
 
@@ -111,8 +115,6 @@ export default function CreateGame() {
             ...updatedSettings,
         }));
     };
-
-    console.log(enemies)
 
     const tabData = [
         {

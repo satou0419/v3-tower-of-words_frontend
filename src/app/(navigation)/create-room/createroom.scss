@@ -96,3 +96,27 @@
         }
     }
 }
+
+.error-message {
+    position: absolute;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5em;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cardroomcode-popup {
+    position: absolute;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 0.5em;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

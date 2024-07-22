@@ -4,7 +4,6 @@ import BASE_URL from "@/util/baseUrl";
 interface RoomData {
     roomID: number;
     code: string;
-    isDeleted: boolean;
 }
 
 export const viewRoom = async (roomID: number): Promise<RoomData> => {
