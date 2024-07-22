@@ -27,7 +27,6 @@ export default function StudentRoom() {
 
     const handleCardClick = async (room: any) => {
         try {
-
         } catch (error) {
             console.error("Failed to fetch simulations for the room:", error);
         }
@@ -51,7 +50,7 @@ export default function StudentRoom() {
                             infoTitle="Game"
                             counter={room.members.length} // Assuming counter is the number of members
                             glow={false}
-                            link = {`/${userType.toLowerCase()}-room/game`}
+                            link={`/${userType.toLowerCase()}-room/game`}
                             onClick={() => handleCardClick(room)}
                         />
                     ))}

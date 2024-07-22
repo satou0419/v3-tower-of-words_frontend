@@ -13,7 +13,7 @@ interface CardRoomGameProps {
     counter: number;
     glow: boolean;
     link: string;
-    onClick?: () => void;
+    onClick: () => void;
 }
 
 const CardRoomGame: React.FC<CardRoomGameProps> = ({
