@@ -20,13 +20,16 @@
     display: flex;
     flex-direction: column;
     bottom: 0;
-    z-index: -1;
+    z-index: 9;
 }
 
 .navigation img {
     width: 10em;
     align-self: center;
     margin-top: 1em;
+    cursor: pointer;
+    position: relative;
+    z-index: 200;
 }
 
 /* Drop-container styling */
@@ -106,7 +109,7 @@
 }
 
 /* Span inside drop-profile */
-.drop-profile a {
+.drop-profile span {
     text-align: center;
     color: #fff;
 }
@@ -129,7 +132,8 @@
 }
 
 /* Span inside drop-list */
-.drop-list a {
+.drop-list a,
+.drop-list span {
     padding: 0.5em;
     width: 100%; /* Ensure spans fill the width of .drop-list */
     text-align: center;
@@ -146,7 +150,8 @@
 .drop-container.shrink .drop-profile {
     border: none;
     background-color: transparent; /* Background color transition to transparent */
-    a {
+    a,
+    span {
         display: none;
     }
 }

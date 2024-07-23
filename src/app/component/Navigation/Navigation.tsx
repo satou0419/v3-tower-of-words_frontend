@@ -112,9 +112,9 @@ const Navigation = () => {
                 <span>{firstname}</span>
                 <span>{lastname}</span>
             </section>
-            <div className="navigation_logo">
+            <Link href="/dashboard" className="navigation_logo">
                 <img src="/assets/images/logo/logo_simple.webp" alt="Logo" />
-            </div>
+            </Link>
             <section
                 className={`drop-container ${
                     isShrinking ? "shrink" : "expand"
@@ -126,18 +126,14 @@ const Navigation = () => {
                     className={`drop-profile ${
                         isShrinking ? "shrink" : "expand"
                     }`}
-                    ref={toggleRef}
-                    onClick={toggleDropdown}
+                    // ref={toggleRef}
+                    // onClick={toggleDropdown}
                 >
-                    <Link href="/dashboard">{username}</Link>
+                    <span>{username}</span>
                 </section>
                 <div className="profile">{getInitial(username)}</div>
                 {showList && (
-                    <section
-                        className="drop-list"
-                        ref={toggleRef}
-                        onClick={toggleDropdown}
-                    >
+                    <section className="drop-list">
                         <Link href="/item/inventory">Inventory</Link>
                         <Link href="/setting/personal-information">
                             Settings
