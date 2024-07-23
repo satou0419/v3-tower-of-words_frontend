@@ -4,7 +4,7 @@ import BASE_URL from "@/util/baseUrl";
 const useAddWordBank = () => {
     const { userID } = useAuthStore.getState();
 
-    const addWordBank = async (word: string) => {
+    const addWordBank = async (word: string, silentIndex: string) => {
         try {
             const response = await fetch(
                 `${BASE_URL}/simulation_words/insert`,
@@ -16,6 +16,7 @@ const useAddWordBank = () => {
                     body: JSON.stringify({
                         creatorID: userID,
                         word: word,
+                        silentIndex: silentIndex,
                     }),
                 }
             );
