@@ -4,16 +4,38 @@ import CardTab from "@/app/component/Card/CardTab/CardTab";
 import "./roominformation.scss";
 import CardUser from "@/app/component/Card/CardUser/CardUser";
 import CardSetting from "@/app/component/Card/CardSetting/CardSetting";
+import useUsernameToID from "@/hook/useUsernameToID";
+import { useState } from "react";
 
 export default function RoomInformation() {
+    const [username, setUsername] = useState<string>("");
+    const { usernameToID } = useUsernameToID();
+
     const handleDelete = () => {
         console.log("Delete button clicked");
+        // Handle delete action
     };
 
-    const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSaveAddStudent = async (
+        event: React.FormEvent<HTMLFormElement>
+    ) => {
         event.preventDefault();
-        console.log("Form submitted");
+        if (username.trim()) {
+            try {
+                const response = await usernameToID(username);
+                console.log("User ID fetched for", username, ":", response);
+            } catch (error) {
+                console.error("Error fetching user ID:", error);
+            }
+        } else {
+            console.log("No username provided");
+        }
     };
+
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setUsername(event.target.value);
+    };
+
     const users = [
         { username: "Rey Dante", time: "10:00 AM", score: 85 },
         { username: "Rey Mar", time: "10:05 AM", score: 90 },
@@ -28,7 +50,15 @@ export default function RoomInformation() {
         { type: "datetime-local", placeholder: "Update Time" },
     ];
 
-    const inputAddStudent = [{ type: "text", placeholder: "Add Student" }];
+    const inputAddStudent = [
+        {
+            type: "text",
+            placeholder: "Add Student",
+            value: username,
+            onChange: handleInputChange,
+        },
+    ];
+
     return (
         <main className="roominformation-wrapper">
             <section className="roominformation-container">
@@ -57,7 +87,7 @@ export default function RoomInformation() {
                             deleteButtonLabel="Delete"
                             saveButtonLabel="Save"
                             onDelete={handleDelete}
-                            onSave={handleSave}
+                            onSave={handleDelete}
                             className="custom-cardsetting"
                         />
 
@@ -67,7 +97,7 @@ export default function RoomInformation() {
                             deleteButtonLabel="Delete"
                             saveButtonLabel="Save"
                             onDelete={handleDelete}
-                            onSave={handleSave}
+                            onSave={handleSaveAddStudent}
                             className="custom-cardsetting"
                         />
                     </section>
