@@ -21,6 +21,20 @@ import getUserItems from "@/lib/item-endpoint/getUserItem";
 import useItem from "@/hook/useItem";
 import { useGameplayStore } from "@/store/gameplayStore";
 import ConfettiWrapper from "@/app/component/Confetti/Confetti";
+import useSimulationDetails from "@/hook/useSimulationDetails";
+
+interface SimulationWordsArray {
+    simulationWordsID: number;
+    creatorID: number;
+    word: string;
+    silentIndex: string;
+}
+
+interface SimulationEnemy {
+    simulationEnemyID: number;
+    imagePath: string;
+    words: SimulationWordsArray[];
+}
 
 interface Item {
     itemID: number;
@@ -37,17 +51,17 @@ interface UserItem {
     itemID: Item;
 }
 
-const AdventureGameplay = () => {
+const SimulationGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true);
+
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
     const [isPronunciationLocked, setIsPronunciationLocked] = useState(true);
-    const [isDefinitionLocked, setIsDefinitionLocked] = useState(true);
+    const [isDefinitionLocked, setIsDefinitionLocked] = useState(false);
     const [isItemLocked] = useState(true);
 
-    const lockedPronunciation = isPronunciationLocked ? "locked" : "";
+    const lockedPronunciation = isPronunciationLocked ? "" : "";
     const lockedDefinition = isDefinitionLocked ? "locked" : "";
-
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
 
     //#region  Item Logic
@@ -114,24 +128,6 @@ const AdventureGameplay = () => {
     };
     //#endregion
 
-    //#region Extracts data from URL
-    const searchParams = useSearchParams();
-    const floorIdParam = searchParams.get("floorId");
-    const sectionParam = searchParams.get("section");
-    const nextSectionParam = searchParams.get("nextSection");
-    const nextFloorIdParam = searchParams.get("nextFloorId");
-    const gameType = searchParams.get("gameType");
-
-    const isClear = searchParams.get("clear");
-
-    // Convert parameters to numbers with fallback to NaN if conversion fails
-    const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN;
-    const section = sectionParam ? parseInt(sectionParam, 10) : NaN;
-    const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN;
-    const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN;
-
-    //#endRegion
-
     const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
 
     // Handler for restarting the game
@@ -144,8 +140,14 @@ const AdventureGameplay = () => {
         // Add additional logic here to reset the game state
     };
 
-    const { enemies, fetchEnemies } = useEnemyStore();
-    const [enemyData, setEnemyData] = useState<any[]>([]);
+    const simulationDetails = useSimulationDetails(4);
+
+    const [enemies, setEnemies] = useState<SimulationEnemy[]>([]);
+
+    useEffect(() => {
+        setEnemies(simulationDetails.simulationDetails?.enemy || []);
+    }, [gameStarted]);
+
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [typedWord, setTypedWord] = useState<string>("");
@@ -157,22 +159,8 @@ const AdventureGameplay = () => {
     const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
     const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
 
-    const {
-        addWord,
-        isLoading: isAddingWord,
-        error: addWordError,
-    } = useAddWord();
-
-    useEffect(() => {
-        if (floorId) {
-            fetchEnemies(Number(floorId));
-        }
-    }, [floorId, fetchEnemies]);
-
     useEffect(() => {
         if (enemies.length > 0) {
-            setEnemyData(enemies);
-            setLoading(false);
             const initialSpelledWords: Record<number, boolean[]> = {};
             enemies.forEach((enemy, index) => {
                 initialSpelledWords[index] = new Array(enemy.words.length).fill(
@@ -180,7 +168,8 @@ const AdventureGameplay = () => {
                 );
             });
             setSpelledWords(initialSpelledWords);
-            console.log("Enemy Data", enemyData);
+            console.log("Enemies", enemies);
+            console.log("Initial", initialSpelledWords);
         }
     }, [enemies]);
 
@@ -201,7 +190,7 @@ const AdventureGameplay = () => {
     }, []);
     const characterDetails = useImageParse(userEquipped.equippedCharacter);
     const enemyDetails = useImageParse(
-        enemyData[currentEnemyIndex]?.imagePath || ""
+        enemies[currentEnemyIndex]?.imagePath || ""
     );
 
     useEffect(() => {
@@ -226,8 +215,8 @@ const AdventureGameplay = () => {
         enemyDetails.attackFrame
     );
 
-    const currentEnemy = enemyData[currentEnemyIndex];
-    const currentWord = currentEnemy?.words[currentWordIndex];
+    const currentEnemy = enemies[currentEnemyIndex];
+    const currentWord = currentEnemy?.words[currentWordIndex].word;
     const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -339,8 +328,9 @@ const AdventureGameplay = () => {
     // Other state and hooks...
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        const currentEnemy = enemyData[currentEnemyIndex];
-        const currentWord = currentEnemy.words[currentWordIndex].toLowerCase();
+        const currentEnemy = enemies[currentEnemyIndex];
+        const currentWord =
+            currentEnemy.words[currentWordIndex].word.toLowerCase();
         // Handle the game logic for correct answers
         if (
             typedWord.toLowerCase() === currentWord ||
@@ -354,11 +344,6 @@ const AdventureGameplay = () => {
             updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true;
             setSpelledWords(updatedSpelledWords);
 
-            // Archive the correctly spelled word
-            if (isClear === "false") {
-                await addWord(currentWord);
-            }
-
             setTimeout(() => {
                 setIsCharacterAttacking(false);
 
@@ -370,16 +355,9 @@ const AdventureGameplay = () => {
                     ]);
 
                     setTimeout(() => {
-                        if (currentEnemyIndex === enemyData.length - 1) {
+                        if (currentEnemyIndex === enemies.length - 1) {
                             // All enemies defeated, show confetti
-                            if (isClear === "false") {
-                                console.log("Now it is clear");
-                                updateProgress(nextFloorId, nextSection);
-                                redeemReward(floorId);
-                                incrementFloor();
-                            } else {
-                                console.log("It is cleared previously");
-                            }
+
                             setShowConfetti(true);
                             setShowConquerFloorModal(true); // Show the conquering floor modal
                         } else {
@@ -459,10 +437,6 @@ const AdventureGameplay = () => {
         </button>,
     ];
 
-    if (!floorId || loading || !imagesLoaded) {
-        return <Loading />;
-    }
-
     return (
         <main className="adventure-wrapper">
             {/* Welcome Modal */}
@@ -477,11 +451,13 @@ const AdventureGameplay = () => {
             {/* Game Content */}
             {gameStarted && (
                 <section className="adventure-platform">
-                    <div className="platform-indicator">Floor {floorId}</div>
+                    <div className="platform-indicator">
+                        {simulationDetails.simulationDetails?.name}
+                    </div>
                     <p>Lives: {lives}</p>
 
                     <section className="enemy-track">
-                        {enemyData.map((enemy, enemyIndex) => {
+                        {enemies.map((enemy, enemyIndex) => {
                             const enemyName = extractEnemyName(enemy.imagePath);
 
                             return (
@@ -674,7 +650,8 @@ const AdventureGameplay = () => {
 
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
-                            {gameType === "syllable" ? (
+                            {simulationDetails.simulationDetails
+                                ?.simulationType === "Syllable" ? (
                                 <>
                                     <p className="syllable-word">
                                         {currentWord}
@@ -778,4 +755,4 @@ const AdventureGameplay = () => {
     );
 };
 
-export default AdventureGameplay;
+export default SimulationGameplay;

@@ -1,0 +1,413 @@
+.character-holder {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-left: 15em;
+
+    button {
+        padding: 2em;
+    }
+}
+.adventure-wrapper {
+    width: 100%;
+    height: 100vh;
+    background-color: antiquewhite;
+    display: flex;
+    flex-direction: column;
+}
+
+.adventure-platform {
+    height: 60%;
+    width: 100%;
+    background-color: bisque;
+    display: flex;
+    flex-direction: column;
+    background-image: url("/assets/images/background/bg-gameplay_small.webp");
+    background-size: contain;
+
+    align-items: center;
+    position: relative;
+    .platform-indicator {
+        margin-top: 10px;
+        width: 240px;
+        height: 35px;
+        background-image: url("/assets/images/background/bg-indicator_small.webp");
+        background-position: center;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+    }
+}
+
+.enemy-track {
+    height: 20%;
+    width: 80%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .enemy-track-list {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .enemy-track-profile {
+            height: 2em;
+            aspect-ratio: 1/1;
+            background-color: #9a6dea;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+
+            img {
+                border-radius: 50%;
+            }
+        }
+        .defeated {
+            background-color: gray;
+        }
+        .enemy-connector {
+            width: 0.8em;
+            height: 0.3em;
+            background-color: #333;
+        }
+
+        .enemy-word {
+            height: 0.8em;
+            aspect-ratio: 1/1;
+            border-radius: 50%;
+            background-color: #fff;
+        }
+
+        .spelled {
+            background-color: green;
+        }
+    }
+}
+.sprite-holder {
+    width: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    position: absolute;
+    bottom: 0;
+}
+
+.character-container {
+    position: absolute;
+    display: flex;
+    justify-content: flex-end;
+    justify-content: center;
+    align-items: center;
+    width: 360px;
+    height: 360px;
+    left: 0;
+    // animation: expand-width 0.5s forwards, shrink-width 2s 4s forwards; /* Apply expand and shrink animations */
+}
+
+.enemy-container {
+    position: relative;
+    align-items: center;
+    height: 360px;
+    width: 360px;
+
+    // animation: expand-width 0.8s forwards, shrink-width 2s 4s forwards; /* Apply expand and shrink animations */
+}
+
+.adventure-control {
+    flex-grow: 1;
+    display: flex;
+    position: relative;
+    align-items: flex-end;
+
+    img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        z-index: 99;
+    }
+
+    .control-item {
+        flex: 1;
+        border: 2px solid white;
+        display: flex;
+        justify-content: space-evenly;
+        align-items: center;
+        border: 20px solid #662b9a;
+        background-color: #9a6dea;
+        padding-left: 20px;
+        height: 98%;
+        flex-wrap: wrap;
+        gap: 0.5em;
+        overflow: auto;
+
+        .item-box {
+            width: 8em;
+            aspect-ratio: 1/1;
+            background-color: #4a2053;
+            border-radius: 20px;
+            position: relative;
+
+            img {
+                position: absolute;
+                height: auto;
+                width: 80%;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-end;
+            span {
+                padding: 5px 8px;
+                border-radius: 10px;
+                background-color: #ffc658;
+                color: #d26500;
+            }
+        }
+    }
+
+    .img-unlocked {
+        display: none;
+    }
+    .item-locked {
+        position: relative;
+        z-index: 2;
+        overflow: hidden;
+        .img-locked {
+            position: absolute;
+            z-index: 999;
+            height: 100%;
+            background-size: cover;
+            position: absolute;
+            filter: grayscale(100%);
+        }
+        .item-box {
+            filter: grayscale(100%);
+
+            img {
+                z-index: 9;
+            }
+        }
+    }
+
+    //GameType 2 - Syllable
+    .control-input {
+        .syllable-word {
+            width: 60%;
+            height: 1.8em;
+            background-color: #bda4d4;
+            border: 5px solid #4a2053;
+            border-radius: 10px;
+            color: #4a2053;
+            text-align: center;
+            margin-top: 0.5em;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2em;
+        }
+
+        .range-value {
+            font-size: 1.5em;
+        }
+
+        /* Range slider base styles */
+        /* Range slider base styles */
+        .syllable-range {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(
+                43deg,
+                #4158d0 0%,
+                #c850c0 46%,
+                #ffcc70 100%
+            );
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+            position: relative; /* Ensure the pseudo-elements are positioned correctly */
+            margin: 20px 0;
+        }
+
+        /* Range slider thumb styles */
+        .syllable-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 15px;
+            height: 30px;
+            background-color: #4c00ff;
+            background-image: linear-gradient(160deg, #4900f5 0%, #80d0c7 100%);
+            cursor: pointer;
+            border-radius: 3px; /* Make the thumb slightly rounded */
+            position: relative; /* Ensure the thumb is above the lines */
+            z-index: 1; /* Ensure the thumb is above the lines */
+        }
+
+        /* Ticks container */
+        .syllable-range::before {
+            content: "";
+
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 20px; /* Adjust to match the track height */
+            transform: translateY(-50%);
+            background: repeating-linear-gradient(
+                to right,
+                black 0,
+                black 2px,
+                transparent 2px,
+                transparent calc((100% - 2px) / 9)
+            );
+            z-index: 0; /* Ensure the ticks are below the thumb */
+            pointer-events: none; /* Make sure it does not interfere with the slider */
+        }
+    }
+
+    .control-input {
+        flex: 1.5;
+
+        background-color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8em;
+            width: 80%;
+            height: 80%;
+            position: relative;
+            z-index: 1000;
+
+            button {
+                padding: 0.2em 1.3em;
+                border: none;
+                outline: none;
+                box-shadow: var(--shadow-burst);
+                border-radius: 10px;
+                background-color: #ffc658;
+                color: #333;
+                font-size: 2em;
+                font-weight: bold;
+            }
+
+            input {
+                height: 2em;
+                width: 80%;
+                text-align: center;
+                font-size: 1.5em;
+            }
+        }
+    }
+
+    .control-clue {
+        flex: 1;
+        border: 2px solid white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
+        border: 20px solid #662b9a;
+        background-color: #9a6dea;
+        height: 98%;
+        color: white;
+
+        h1 {
+            font-size: 1.5em;
+        }
+
+        span {
+            align-self: flex-start;
+        }
+
+        .clue-container {
+            width: 80%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        .clue-pronunciation {
+            background-color: white;
+            width: 100%;
+            height: 2em;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0.5em 0;
+            color: #333;
+
+            span {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+        }
+
+        .locked {
+            color: #fff;
+            &::after {
+                content: "";
+                display: block;
+                width: 1em;
+                height: 1em;
+                background-image: url("/assets/images/icon/ic-locked.png");
+                background-size: cover;
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+        .clue-definition {
+            background-color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            flex: 1;
+            margin: 0.5em 0;
+            color: #333;
+            span {
+                height: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                position: relative;
+            }
+
+            .locked {
+                color: #fff;
+                &::after {
+                    content: "";
+                    display: block;
+                    width: 1em;
+                    height: 1em;
+                    background-image: url("/assets/images/icon/ic-locked.png");
+                    background-size: cover;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translateY(-50%);
+                    transform: translateX(-50%);
+                }
+            }
+        }
+    }
+}
