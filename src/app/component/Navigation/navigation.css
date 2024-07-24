@@ -30,6 +30,7 @@
     cursor: pointer;
     position: relative;
     z-index: 200;
+    cursor: pointer;
 }
 
 /* Drop-container styling */

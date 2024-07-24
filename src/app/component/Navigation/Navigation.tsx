@@ -18,6 +18,10 @@ const Navigation = () => {
     );
     const router = useRouter();
 
+    const toDashboard = () => {
+        router.push("/dashboard");
+    };
+
     useEffect(() => {
         getUserDetails();
     }, [getUserDetails]);
@@ -112,9 +116,13 @@ const Navigation = () => {
                 <span>{firstname}</span>
                 <span>{lastname}</span>
             </section>
-            <Link href="/dashboard" className="navigation_logo">
-                <img src="/assets/images/logo/logo_simple.webp" alt="Logo" />
-            </Link>
+            <div className="navigation_logo">
+                <img
+                    src="/assets/images/logo/logo_simple.webp"
+                    alt="Logo"
+                    onClick={toDashboard}
+                />
+            </div>
             <section
                 className={`drop-container ${
                     isShrinking ? "shrink" : "expand"

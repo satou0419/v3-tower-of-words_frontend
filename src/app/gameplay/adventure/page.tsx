@@ -65,6 +65,7 @@ const AdventureGameplay = () => {
     }, []);
 
     const { useItemFunction } = useItem();
+    const [isItemLocked] = useState(false);
 
     const handleUseItem = (itemID: number, itemName: string) => {
         // Set the item to use and show the confirmation modal
@@ -335,7 +336,6 @@ const AdventureGameplay = () => {
         event.preventDefault();
         const currentEnemy = enemyData[currentEnemyIndex];
         const currentWord = currentEnemy.words[currentWordIndex].toLowerCase();
-
         // Handle the game logic for correct answers
         if (
             typedWord.toLowerCase() === currentWord ||
@@ -625,7 +625,24 @@ const AdventureGameplay = () => {
                     />
 
                     {/* Render items */}
-                    <section className="control-item">
+
+                    <section
+                        className={`control-item ${
+                            isItemLocked ? "item-locked" : "item-unlocked"
+                        }`}
+                    >
+                        <img
+                            className={
+                                isItemLocked ? "img-locked" : "img-unlocked"
+                            }
+                            src={
+                                isItemLocked
+                                    ? "/assets/images/background/bg-item-locked.png"
+                                    : "/assets/images/background/bg-item-unlocked.png"
+                            }
+                            alt={isItemLocked ? "Locked" : "Unlocked"}
+                        />
+
                         {userItems.length > 0 ? (
                             userItems.map((userItem) => (
                                 <div
