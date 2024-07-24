@@ -121,6 +121,7 @@ const AdventureGameplay = () => {
     const nextSectionParam = searchParams.get("nextSection");
     const nextFloorIdParam = searchParams.get("nextFloorId");
     const gameType = searchParams.get("gameType");
+    const roomID = useSearchParams.get("roomID");
 
     const isClear = searchParams.get("clear");
 

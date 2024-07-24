@@ -12,7 +12,7 @@ interface CardRoomGameProps {
     infoTitle: string;
     counter: number;
     glow: boolean;
-    link: string;
+    link?: string;
     onClick: () => void;
 }
 
