@@ -41,7 +41,12 @@ const AdventureGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true);
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
-    const [lockedPronunciation, setLockedPronunciation] = useState("locked");
+    const [isPronunciationLocked, setIsPronunciationLocked] = useState(true);
+    const [isDefinitionLocked, setIsDefinitionLocked] = useState(true);
+    const [isItemLocked] = useState(true);
+
+    const lockedPronunciation = isPronunciationLocked ? "locked" : "";
+    const lockedDefinition = isDefinitionLocked ? "locked" : "";
 
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
 
@@ -65,7 +70,6 @@ const AdventureGameplay = () => {
     }, []);
 
     const { useItemFunction } = useItem();
-    const [isItemLocked] = useState(false);
 
     const handleUseItem = (itemID: number, itemName: string) => {
         // Set the item to use and show the confirmation modal
@@ -87,7 +91,7 @@ const AdventureGameplay = () => {
                         addLives(3);
                         break;
                     case "Unusual Battery":
-                        setLockedPronunciation("");
+                        setIsPronunciationLocked(false);
                         break;
                 }
                 // Fetch updated user items after successful use
@@ -380,12 +384,12 @@ const AdventureGameplay = () => {
                         } else {
                             setCurrentEnemyIndex(currentEnemyIndex + 1);
                             setCurrentWordIndex(0);
-                            setLockedPronunciation("locked");
+                            setIsPronunciationLocked(true);
                         }
                     }, 500); // Add delay before switching to next enemy (adjust as needed)
                 } else {
                     setCurrentWordIndex(currentWordIndex + 1);
-                    setLockedPronunciation("locked");
+                    setIsPronunciationLocked(true);
                 }
             }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
         } else {
@@ -721,7 +725,9 @@ const AdventureGameplay = () => {
 
                             <span>Definition</span>
                             <div className="clue-definition">
-                                <span>{word?.definition}</span>
+                                <span className={`${lockedDefinition}`}>
+                                    {word?.definition}
+                                </span>
                             </div>
                         </section>
                     </section>

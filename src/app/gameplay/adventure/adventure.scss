@@ -389,6 +389,24 @@
                 display: flex;
                 justify-content: center;
                 align-items: center;
+                position: relative;
+            }
+
+            .locked {
+                color: #fff;
+                &::after {
+                    content: "";
+                    display: block;
+                    width: 1em;
+                    height: 1em;
+                    background-image: url("/assets/images/icon/ic-locked.png");
+                    background-size: cover;
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translateY(-50%);
+                    transform: translateX(-50%);
+                }
             }
         }
     }
