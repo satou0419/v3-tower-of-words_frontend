@@ -1,5 +1,4 @@
 import "./modal.scss";
-
 import React, { ReactNode } from "react";
 
 interface ModalProps {
@@ -8,8 +7,8 @@ interface ModalProps {
     icon?: ReactNode;
     buttons: ReactNode[];
     isOpen: boolean;
-    onClose: () => void;
     children?: ReactNode;
+    className?: string; // Add className prop
 }
 
 const Modal: React.FC<ModalProps> = ({
@@ -18,14 +17,14 @@ const Modal: React.FC<ModalProps> = ({
     icon,
     buttons,
     isOpen,
-    onClose,
     children,
+    className = "", // Default to empty string if not provided
 }) => {
     if (!isOpen) return null;
 
     return (
-        <div className="modal-overlay">
-            <div className="modal-content">
+        <div className={`modal-overlay ${className}`}>
+            <div className={`modal-content ${className}`}>
                 <div className="modal-header">
                     {icon && <div className="icon">{icon}</div>}
                     <h2>{title}</h2>
@@ -43,9 +42,6 @@ const Modal: React.FC<ModalProps> = ({
                         </div>
                     ))}
                 </div>
-                <button className="close-button" onClick={onClose}>
-                    Close
-                </button>
             </div>
         </div>
     );

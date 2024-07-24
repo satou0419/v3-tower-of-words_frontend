@@ -9,7 +9,7 @@ import "./adventure.scss"; // Make sure your SCSS file is imported correctly
 import "./animation.scss";
 import Modal from "@/app/component/Modal/Modal";
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
-import Confetti from "react-confetti"; // Import Confetti
+import "./modals.scss";
 import useMerriam from "@/hook/useMerriam";
 import useAddWord from "@/hook/useAddWord"; // Import the custom hook
 import useProgressEquippedStore from "@/store/progressEquippedStore";
@@ -20,6 +20,7 @@ import useFloorIncrement from "@/hook/useFloorIncrement";
 import getUserItems from "@/lib/item-endpoint/getUserItem";
 import useItem from "@/hook/useItem";
 import { useGameplayStore } from "@/store/gameplayStore";
+import ConfettiWrapper from "@/app/component/Confetti/Confetti";
 
 interface Item {
     itemID: number;
@@ -461,8 +462,8 @@ const AdventureGameplay = () => {
         <main className="adventure-wrapper">
             {/* Welcome Modal */}
             <Modal
+                className="welcome-modal"
                 isOpen={showWelcomeModal}
-                onClose={() => setShowWelcomeModal(false)}
                 title="Welcome to Adventure Game"
                 details="Defeat all the enemies to win!"
                 buttons={welcomeModalButtons}
@@ -609,8 +610,8 @@ const AdventureGameplay = () => {
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
                     <Modal
+                        className="confirmation-modal"
                         isOpen={showConfirmationModal}
-                        onClose={cancelUseItem}
                         title="Confirm Item Use"
                         details={`Are you sure you want to use ${itemToUse?.name}?`}
                         buttons={[
@@ -712,8 +713,8 @@ const AdventureGameplay = () => {
 
             {/* Game Over Modal */}
             <Modal
+                className="game-over-modal"
                 isOpen={showGameOverModal}
-                onClose={() => setShowGameOverModal(false)}
                 title="Game Over"
                 details="Unfortunately, you have run out of lives. Would you like to restart the game?"
                 buttons={[
@@ -731,11 +732,11 @@ const AdventureGameplay = () => {
                 ]}
             />
 
-            {showConfetti && <Confetti />}
+            <ConfettiWrapper showConfetti={showConfetti} />
 
             <Modal
+                className="conquer-floor-modal"
                 isOpen={showConquerFloorModal}
-                onClose={() => setShowConquerFloorModal(false)}
                 title="Floor Conquered!"
                 details="Congratulations! You've conquered this floor. Would you like to proceed to the next floor or return to the main menu?"
                 buttons={[
