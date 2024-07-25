@@ -12,6 +12,7 @@ interface Enemy {
 }
 
 interface SimulationWords {
+    simulationWordsID: number;
     word: string;
 }
 
@@ -19,27 +20,68 @@ interface WordsTabProps {
     enemies: Enemy[];
     addEnemy: () => void;
     removeEnemy: (id: number) => void;
+    updateEnemyWords: (id: number, updatedWords: SimulationWords[]) => void;
+    updateEnemyImagePath: (id: number, imagePath: string) => void;
 }
 
-const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy }) => {
-    const [searchWords, setSearchWords] = useState();
+const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy, updateEnemyWords, updateEnemyImagePath }) => {
+    const [searchWords, setSearchWords] = useState("");
+    const [simulationWords, setSimulationWords] = useState<SimulationWords[]>([]);
 
-    useEffect (() => {
-        viewSimulationWords();
-        console.log(viewSimulationWords);
-    },[])
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const data = await viewSimulationWords();
+                setSimulationWords(data || []);
+            } catch (error) {
+                console.error("Error fetching simulation words:", error);
+                setSimulationWords([]);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    function handleOnDrag(e: React.DragEvent, word: string) {
+        e.dataTransfer.setData("word", word);
+    }
+
+    function handleDragOver(e: React.DragEvent) {
+        e.preventDefault();
+    }
+
+
+    console.log(enemies);
 
     return (
         <section className="myword-wrapper">
             <section className="myword-left_container">
                 <h1>My Words</h1>
                 <CardWord className="myword-left">
-                    <InputLine
-                        type="text"
-                        placeholder="Search"
-                        value={searchWords}
-                    />
-                    
+                    <div className="left-container">
+                        <InputLine
+                            type="text"
+                            placeholder="Search"
+                            value={searchWords}
+                            onChange={(e) => setSearchWords(e.target.value)}
+                        />
+                        <div className="word-list">
+                            {simulationWords.length > 0 ? (
+                                simulationWords.map((wordItem, index) => (
+                                    <span
+                                        key={wordItem.simulationWordsID || wordItem.word}
+                                        className={`word-item`}
+                                        draggable
+                                        onDragStart={(e) => handleOnDrag(e, wordItem.word)}
+                                        >
+                                            {wordItem.word}
+                                    </span>
+                                ))
+                            ) : (
+                                <h1>No words available</h1>
+                            )}                                        
+                        </div>        
+                    </div>
                 </CardWord>
             </section>
             <section className="myword-right_container">
@@ -49,7 +91,7 @@ const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy }) =
                 </section>
                 <section className="enemylist-container">
                     {enemies.map((enemy) => (
-                        <CardEnemy key={enemy.id} enemy={enemy} removeEnemy={removeEnemy} />
+                        <CardEnemy key={enemy.id} enemy={enemy} removeEnemy={removeEnemy} updateEnemyWords={updateEnemyWords} updateEnemyImagePath={updateEnemyImagePath}/>
                     ))}
                 </section>
             </section>

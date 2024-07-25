@@ -5,11 +5,14 @@ import "./roominformation.scss";
 import CardUser from "@/app/component/Card/CardUser/CardUser";
 import CardSetting from "@/app/component/Card/CardSetting/CardSetting";
 import useUsernameToID from "@/hook/useUsernameToID";
+import insertStudent from "@/lib/room-endpoint/insertStudent";
 import { useState } from "react";
+import { useRoomStore } from "@/store/roomStore";
 
 export default function RoomInformation() {
     const [username, setUsername] = useState<string>("");
     const { usernameToID } = useUsernameToID();
+    const { currentRoom } = useRoomStore();
 
     const handleDelete = () => {
         console.log("Delete button clicked");
@@ -23,6 +26,7 @@ export default function RoomInformation() {
         if (username.trim()) {
             try {
                 const response = await usernameToID(username);
+                insertStudent(response, currentRoom);
                 console.log("User ID fetched for", username, ":", response);
             } catch (error) {
                 console.error("Error fetching user ID:", error);
