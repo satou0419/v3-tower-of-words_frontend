@@ -47,7 +47,7 @@
 }
 
 .toggle-button.enabled {
-    transform: translateX(0.2em);
+    transform: translateX(1.6em);
     background-color: #ffc658;
 }
 
@@ -56,6 +56,6 @@
 }
 
 .toggle-button.disabled {
-    transform: translateX(1.6em);
+    transform: translateX(0.2em);
     background-color: #ffe8bb;
 }
