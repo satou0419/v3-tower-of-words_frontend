@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
 import "./navigation.css";
+import { useRouter } from "next/navigation";
 import { getGreeting } from "@/util/greetings";
 import useUserInfoStore from "@/store/userInfoStore";
 import getUserInfo from "@/lib/user-endpoint/getUserInfo";
@@ -15,6 +16,11 @@ const Navigation = () => {
     const userDashboard = useProgressDashboardStore(
         (state) => state.progressDashboard
     );
+    const router = useRouter();
+
+    const toDashboard = () => {
+        router.push("/dashboard");
+    };
 
     useEffect(() => {
         getUserDetails();
@@ -39,6 +45,11 @@ const Navigation = () => {
             setIsShrinking(true); // Start shrinking animation
             setShowList(false);
         }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem("auth-user");
+        router.push("/login");
     };
 
     const toggleRef = useRef<HTMLDivElement>(null);
@@ -106,7 +117,11 @@ const Navigation = () => {
                 <span>{lastname}</span>
             </section>
             <div className="navigation_logo">
-                <img src="/assets/images/logo/logo_simple.webp" alt="Logo" />
+                <img
+                    src="/assets/images/logo/logo_simple.webp"
+                    alt="Logo"
+                    onClick={toDashboard}
+                />
             </div>
             <section
                 className={`drop-container ${
@@ -119,23 +134,19 @@ const Navigation = () => {
                     className={`drop-profile ${
                         isShrinking ? "shrink" : "expand"
                     }`}
-                    ref={toggleRef}
-                    onClick={toggleDropdown}
+                    // ref={toggleRef}
+                    // onClick={toggleDropdown}
                 >
                     <span>{username}</span>
                 </section>
                 <div className="profile">{getInitial(username)}</div>
                 {showList && (
-                    <section
-                        className="drop-list"
-                        ref={toggleRef}
-                        onClick={toggleDropdown}
-                    >
+                    <section className="drop-list">
                         <Link href="/item/inventory">Inventory</Link>
                         <Link href="/setting/personal-information">
                             Settings
                         </Link>
-                        <Link href="#">Logout</Link>
+                        <a onClick={handleLogout}>Logout</a>
                     </section>
                 )}
             </section>

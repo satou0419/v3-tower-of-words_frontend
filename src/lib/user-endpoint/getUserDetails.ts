@@ -28,73 +28,25 @@ const getUserDetails = async () => {
 
         const data = await response.json();
 
-        // Log the data received from the API
-        console.log("API Response:", data);
-
         // Extract userProgress from the response
         const userProgress = data.data.userProgress;
 
         // Update and log User Progress
         setUserProgressID(userProgress.userProgressID);
-        console.log(
-            "Updated userProgressID:",
-            useUserProgressStore.getState().userProgress.userProgressID
-        );
-
         setTowerSectionProgress(userProgress.towerSectionProgress);
-        console.log(
-            "Updated towerSectionProgress:",
-            useUserProgressStore.getState().userProgress.towerSectionProgress
-        );
-
         setFloorIDProgress(userProgress.floorID);
-        console.log(
-            "Updated floorIDProgress:",
-            useUserProgressStore.getState().userProgress.floorIDProgress
-        );
 
         // Update and log Progress Dashboard
         setCreditAmount(data.data.creditAmount);
-        console.log(
-            "Updated creditAmount:",
-            useProgressDashboardStore.getState().progressDashboard.creditAmount
-        );
-
         setWordsCollected(data.data.wordsCollected);
-        console.log(
-            "Updated wordsCollected:",
-            useProgressDashboardStore.getState().progressDashboard
-                .wordsCollected
-        );
-
         setAchievementCount(data.data.achievementCount);
-        console.log(
-            "Updated achievementCount:",
-            useProgressDashboardStore.getState().progressDashboard
-                .achievementCount
-        );
-
         setFloorCount(data.data.floorCount);
-        console.log(
-            "Updated floorCount:",
-            useProgressDashboardStore.getState().progressDashboard.floorCount
-        );
 
         // Update and log Progress Equipped
         setEquippedCharacter(data.data.equipped_character);
-        console.log(
-            "Updated equippedCharacter:",
-            useProgressEquippedStore.getState().progressEquipped
-                .equippedCharacter
-        );
 
         setEquippedBadge(data.data.badge_display);
-        console.log(
-            "Updated equippedBadge:",
-            useProgressEquippedStore.getState().progressEquipped.equippedBadge
-        );
 
-        console.log("User Details", data);
         return data;
     } catch (error) {
         console.log("Error fetching user details:", error);

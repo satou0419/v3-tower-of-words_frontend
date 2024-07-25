@@ -1,4 +1,4 @@
-.creategame-wrapper {
+.game-wrapper {
     height: 100%;
     width: 100%;
 
@@ -7,12 +7,12 @@
     align-items: center;
 }
 
-.creategame-control {
+.game-control {
     width: 100%;
     display: flex;
     justify-content: space-between;
 }
-.creategame-container {
+.game-container {
     height: 80%;
     width: 80%;
     display: flex;
@@ -22,7 +22,7 @@
     align-items: flex-start;
 }
 
-.creategame-room {
+.game-room {
     display: flex;
     width: 100%;
     height: 100%;

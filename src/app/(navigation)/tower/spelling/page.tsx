@@ -1,5 +1,3 @@
-// src/pages/spelling.tsx
-
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
@@ -9,14 +7,17 @@ import { useFloorStore } from "@/store/floorStore";
 import { RewardData } from "@/store/rewardStore";
 import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID";
 import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID";
+import useUserProgressStore from "@/store/userProgressStore";
 
 const Spelling = () => {
     const { floors, getAllFloors } = useFloorStore();
+    const { userProgress } = useUserProgressStore();
     const [uniqueTowerSections, setUniqueTowerSections] = useState<number[]>(
         []
     );
     const [rewardData, setRewardData] = useState<RewardData | null>(null);
     const [activeFloorId, setActiveFloorId] = useState<number | null>(null);
+    const [activeSection, setActiveSection] = useState<number | null>(null);
     const [enemyData, setEnemyData] = useState<any | null>(null); // Adjust this type as per your actual enemy data structure
     const activeFloorRef = useRef<HTMLDivElement>(null);
     const navigation = useRouter();
@@ -74,13 +75,46 @@ const Spelling = () => {
         }
     };
 
-    const handleFloorClick = (floorId: number) => {
-        setActiveFloorId(floorId);
+    const [activeGameType, setActiveGameType] = useState<number | null>(null);
+
+    const handleFloorClick = (
+        floorId: number,
+        section: number,
+        gameType: number
+    ) => {
+        if (floorId <= userProgress.floorIDProgress) {
+            setActiveFloorId(floorId);
+            setActiveSection(section);
+            setActiveGameType(gameType); // Set the active game type
+        }
+    };
+
+    const getNextFloorAndSection = () => {
+        // Find the next floor and its section based on the current user progress
+        const currentFloorIndex = floors.findIndex(
+            (floor) => floor.towerFloorID === userProgress.floorIDProgress
+        );
+        if (
+            currentFloorIndex === -1 ||
+            currentFloorIndex === floors.length - 1
+        ) {
+            return { nextFloorId: null, nextSection: null };
+        }
+
+        const nextFloor = floors[currentFloorIndex + 1];
+        return {
+            nextFloorId: nextFloor.towerFloorID,
+            nextSection: nextFloor.towerSection,
+        };
     };
 
     const handleEnterClick = () => {
-        if (activeFloorId && enemyData) {
-            navigation.push(`/gameplay/adventure?floorId=${activeFloorId}`);
+        if (activeFloorId && activeSection && enemyData) {
+            const { nextFloorId, nextSection } = getNextFloorAndSection();
+            const isCleared = activeFloorId < userProgress.floorIDProgress;
+            navigation.push(
+                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
+            );
         }
     };
 
@@ -89,12 +123,11 @@ const Spelling = () => {
             <section className="spelling-container">
                 <section className="spelling-upper">
                     <section className="reward">
+                        <h1>{userProgress.floorIDProgress}</h1>
                         <CardWord className="reward-container">
                             <h1>Floor {rewardData?.towerFloorID}</h1>
-
                             <section className="reward-list">
                                 <h2>Rewards:</h2>
-
                                 <section className="reward-item">
                                     {/* Credit Reward */}
                                     <section className="reward-box">
@@ -109,7 +142,7 @@ const Spelling = () => {
                                                     <span>
                                                         {
                                                             rewardData.adventureRewardCredit
-                                                        }
+                                                        }{" "}
                                                         x
                                                     </span>
                                                 </>
@@ -136,7 +169,7 @@ const Spelling = () => {
                                                             rewardData
                                                                 .rewardItemOne
                                                                 .rewardItemQuantity
-                                                        }
+                                                        }{" "}
                                                         x
                                                     </span>
                                                 </>
@@ -163,7 +196,7 @@ const Spelling = () => {
                                                             rewardData
                                                                 .rewardItemTwo
                                                                 .rewardItemQuantity
-                                                        }
+                                                        }{" "}
                                                         x
                                                     </span>
                                                 </>
@@ -172,7 +205,6 @@ const Spelling = () => {
                                     </section>
                                 </section>
                             </section>
-
                             <button onClick={handleEnterClick}>Enter</button>
                         </CardWord>
                     </section>
@@ -193,7 +225,9 @@ const Spelling = () => {
                                             }
                                             onClick={() =>
                                                 handleFloorClick(
-                                                    floor.towerFloorID
+                                                    floor.towerFloorID,
+                                                    floor.towerSection,
+                                                    floor.gameType // Pass gameType here
                                                 )
                                             }
                                             className={
@@ -205,10 +239,10 @@ const Spelling = () => {
                                         >
                                             <span
                                                 className={
-                                                    floor.towerFloorID ===
-                                                    activeFloorId
-                                                        ? ""
-                                                        : "locked"
+                                                    floor.towerFloorID >
+                                                    userProgress.floorIDProgress
+                                                        ? "locked"
+                                                        : ""
                                                 }
                                             >
                                                 Floor {floor.towerFloorID}
@@ -223,7 +257,6 @@ const Spelling = () => {
                 <section className="spelling-lower">
                     <section className="progress-container">
                         <h1>Progress:</h1>
-
                         <section className="section-list">
                             {uniqueTowerSections.map((section) => (
                                 <span key={section}>Section {section}</span>

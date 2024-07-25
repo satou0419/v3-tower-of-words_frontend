@@ -5,6 +5,8 @@ import "./cardsetting.scss";
 interface InputConfig {
     type: string;
     placeholder: string;
+    value?: string; // Add value prop
+    onChange?: React.ChangeEventHandler<HTMLInputElement>; // Add onChange prop
 }
 
 interface CardSettingProps {
@@ -36,6 +38,8 @@ const CardSetting: React.FC<CardSettingProps> = ({
                             key={index}
                             type={input.type}
                             placeholder={input.placeholder}
+                            value={input.value} // Pass value
+                            onChange={input.onChange} // Pass onChange
                         />
                     ))}
                 </div>
