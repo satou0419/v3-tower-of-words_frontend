@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import Drag from "react-draggable";
+import React, { useState, useRef } from "react";
+import Draggable  from "react-draggable";
 import "./cardenemy.scss";
 import useImageParse from "@/hook/useImageParse";
 
@@ -28,6 +28,7 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
     const [showWords, setShowWords] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
     const name = useImageParse(enemy.imagePath);
+    const popupRef = useRef<HTMLDivElement>(null);
 
     const toggleWords = () => {
         setShowWords(!showWords);
@@ -110,8 +111,8 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                 )}
 
                 {showPopup && (
-                    <Drag>
-                        <div className="cardenemy-popup">
+                    <Draggable nodeRef={popupRef}>
+                        <div ref={popupRef} className="cardenemy-popup">
                             <button onClick={togglePopup} className="close-popup">X</button>
                             <div onClick={() => updateEnemyImagePath(enemy.id, "melee_spring-a28-i11")} className="cardenemy-assgin">
                                 <img src={`/assets/images/sprite/profile-spring.png`} alt={`Enemy spring`} />
@@ -122,7 +123,7 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                                 <button>Crab</button>
                             </div>
                         </div>
-                    </Drag>
+                    </Draggable>
                 )}
             </section>
         </section>
