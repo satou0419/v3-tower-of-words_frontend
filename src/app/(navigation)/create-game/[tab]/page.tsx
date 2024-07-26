@@ -38,7 +38,7 @@ interface SimulationDetails {
 
 export default function CreateGame() {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
-    const [room, setRoom] = useState<Room>({roomID: 1});
+    const [room, setRoom] = useState<Room>({ roomID: 1 });
     const [settings, setSettings] = useState<SimulationDetails>({
         roomID: { roomID: 1 },
         simulationType: "Spelling",
@@ -99,17 +99,19 @@ export default function CreateGame() {
     const addEnemy = () => {
         const newEnemy: Enemy = {
             id: enemies.length > 0 ? enemies[enemies.length - 1].id + 1 : 1,
-            imagePath:"------",// TO BE CHANGE 
-            words:[]
+            imagePath: "------", // TO BE CHANGE
+            words: [],
         };
 
         setEnemies([...enemies, newEnemy]);
     };
 
     const updateEnemyWords = (id: number, updatedWords: SimulationWords[]) => {
-        setEnemies(enemies.map(enemy => 
-            enemy.id === id ? { ...enemy, words: updatedWords } : enemy
-        ));
+        setEnemies(
+            enemies.map((enemy) =>
+                enemy.id === id ? { ...enemy, words: updatedWords } : enemy
+            )
+        );
     };
 
     const updateEnemyImagePath = (id: number, imagePath: string) => {
@@ -135,12 +137,25 @@ export default function CreateGame() {
         {
             title: "Words",
             id: "my-word",
-            content: <WordsTab enemies={enemies} addEnemy={addEnemy} removeEnemy={removeEnemy} updateEnemyWords={updateEnemyWords} updateEnemyImagePath={updateEnemyImagePath} />,
+            content: (
+                <WordsTab
+                    enemies={enemies}
+                    addEnemy={addEnemy}
+                    removeEnemy={removeEnemy}
+                    updateEnemyWords={updateEnemyWords}
+                    updateEnemyImagePath={updateEnemyImagePath}
+                />
+            ),
         },
         {
             title: "Setting",
             id: "setting",
-            content: <SettingsTab settings={settings} updateSettings={updateSettings} />,
+            content: (
+                <SettingsTab
+                    settings={settings}
+                    updateSettings={updateSettings}
+                />
+            ),
         },
     ];
 

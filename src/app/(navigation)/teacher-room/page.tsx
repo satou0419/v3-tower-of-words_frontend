@@ -37,6 +37,7 @@ export default function TeacherRoom() {
             setCurrentRoom(room);
             console.log(roomSimulation);
             console.log(room);
+            router.push("/teacher-word");
         } catch (error) {
             console.error("Failed to fetch simulations for the room:", error);
         }
@@ -64,7 +65,7 @@ export default function TeacherRoom() {
                             infoTitle="Game"
                             counter={room.members.length}
                             glow={false}
-                            link={`/${userType.toLowerCase()}-room/game`}
+                            // link={`/${userType.toLowerCase()}-room/game`}
                             onClick={() => handleCardClick(room)}
                         />
                     ))}

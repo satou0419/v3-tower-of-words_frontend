@@ -21,6 +21,7 @@ import useItem from "@/hook/useItem";
 import { useGameplayStore } from "@/store/gameplayStore";
 import ConfettiWrapper from "@/app/component/Confetti/Confetti";
 import useSimulationDetails from "@/hook/useSimulationDetails";
+import useTimer from "@/util/timer";
 
 interface SimulationWordsArray {
     simulationWordsID: number;
@@ -326,6 +327,7 @@ const SimulationGameplay = () => {
         }
     };
 
+    const duration = useTimer();
     const [mistakes, setMistakes] = useState(0);
     const incrementMistake = () => {
         setMistakes((prevMistakes) => prevMistakes + 1);
@@ -339,17 +341,37 @@ const SimulationGameplay = () => {
             currentEnemy.words[currentWordIndex].word.toLowerCase();
 
         // Handle the game logic for correct answers
+
+        // const updateProgress = useUpdateProgress();
+        // const [progress, setProgress] = useState(
+        //     simulationWordsID: 1,
+        //     numberOfAttempts: 3,
+        //     isCorrect: true,
+        //     score: 85,
+        //     duration: 120,
+        //     accuracy: 0.95,
+        // );
+
         if (
             typedWord.toLowerCase() === currentWord ||
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
 
+            duration.reset();
+            // const timeHours = duration.getFormattedTimeInHours();
+            const timeSec = duration.getFormattedTimeInSeconds();
+            const isCorrect = true;
+
+            console.log("sec:", timeSec);
             console.log(
                 "Simulation Word ID:::>",
                 simulationDetails.simulationDetails?.enemy[currentEnemyIndex]
                     .words[currentWordIndex].simulationWordsID
             );
+
+            console.log("Number of Attempts:::", mistakes);
+            console.log("IsCorrect:::>", isCorrect);
 
             console.log(
                 "Accuracy::::>",
@@ -357,9 +379,8 @@ const SimulationGameplay = () => {
             );
 
             console.log(simulationDetails.simulationDetails?.studentLife);
-            console.log("Lives:::", lives);
+            console.log("Lives:::", simulationDetails.simulationDetails);
 
-            console.log("Mistakes:::", mistakes);
             setMistakes(0);
             const studentLive =
                 simulationDetails.simulationDetails?.studentLife;
@@ -422,6 +443,11 @@ const SimulationGameplay = () => {
             const timer = setTimeout(() => {
                 word.playAudio();
             }, 1000);
+
+            setTimeout(() => {
+                console.log("audio ends");
+                duration.start();
+            }, 2000);
 
             return () => clearTimeout(timer); // Clear the timeout if the component unmounts or word changes
         }

@@ -1,5 +1,5 @@
 // WordsTab.tsx
-import React,{ useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
 import CardEnemy from "@/app/component/Card/CardEnemy/CardEnemy";
 import { InputLine } from "@/app/component/Input/Input";
@@ -24,9 +24,17 @@ interface WordsTabProps {
     updateEnemyImagePath: (id: number, imagePath: string) => void;
 }
 
-const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy, updateEnemyWords, updateEnemyImagePath }) => {
+const WordsTab: React.FC<WordsTabProps> = ({
+    enemies,
+    addEnemy,
+    removeEnemy,
+    updateEnemyWords,
+    updateEnemyImagePath,
+}) => {
     const [searchWords, setSearchWords] = useState("");
-    const [simulationWords, setSimulationWords] = useState<SimulationWords[]>([]);
+    const [simulationWords, setSimulationWords] = useState<SimulationWords[]>(
+        []
+    );
 
     useEffect(() => {
         const fetchData = async () => {
@@ -50,7 +58,6 @@ const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy, upd
         e.preventDefault();
     }
 
-
     console.log(enemies);
 
     return (
@@ -69,18 +76,23 @@ const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy, upd
                             {simulationWords.length > 0 ? (
                                 simulationWords.map((wordItem, index) => (
                                     <span
-                                        key={wordItem.simulationWordsID || wordItem.word}
+                                        key={
+                                            wordItem.simulationWordsID ||
+                                            wordItem.word
+                                        }
                                         className={`word-item`}
                                         draggable
-                                        onDragStart={(e) => handleOnDrag(e, wordItem.word)}
-                                        >
-                                            {wordItem.word}
+                                        onDragStart={(e) =>
+                                            handleOnDrag(e, wordItem.word)
+                                        }
+                                    >
+                                        {wordItem.word}
                                     </span>
                                 ))
                             ) : (
                                 <h1>No words available</h1>
-                            )}                                        
-                        </div>        
+                            )}
+                        </div>
                     </div>
                 </CardWord>
             </section>
@@ -91,7 +103,13 @@ const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy, upd
                 </section>
                 <section className="enemylist-container">
                     {enemies.map((enemy) => (
-                        <CardEnemy key={enemy.id} enemy={enemy} removeEnemy={removeEnemy} updateEnemyWords={updateEnemyWords} updateEnemyImagePath={updateEnemyImagePath}/>
+                        <CardEnemy
+                            key={enemy.id}
+                            enemy={enemy}
+                            removeEnemy={removeEnemy}
+                            updateEnemyWords={updateEnemyWords}
+                            updateEnemyImagePath={updateEnemyImagePath}
+                        />
                     ))}
                 </section>
             </section>
