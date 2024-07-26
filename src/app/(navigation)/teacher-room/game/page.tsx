@@ -11,14 +11,13 @@ import { useRouter } from "next/navigation";
 export default function Game() {
     const { currentRoom } = useRoomStore();
     const { userType } = useUserInfoStore.getState();
-    const { simulations , setSimulation } = useSimulationStore();
+    const { simulations, setSimulation } = useSimulationStore();
     const router = useRouter();
 
-    console.log(simulations)
+    console.log(simulations);
 
     const handleCardClick = async () => {
         try {
-            
         } catch (error) {
             console.error("Failed to fetch simulations for the room:", error);
         }
@@ -32,21 +31,25 @@ export default function Game() {
         <main className="game-wrapper">
             <section className="game-container">
                 <section className="game-control">
-                    <h1>{currentRoom.name} - Simulations | {currentRoom.code}</h1>
-                    <button onClick={handleRoomInfoClick}>Room Information</button>
+                    <h1>
+                        {currentRoom.name} - Simulations | {currentRoom.code}
+                    </h1>
+                    <button onClick={handleRoomInfoClick}>
+                        Room Information
+                    </button>
                 </section>
 
                 <div className="game-room">
                     {simulations.map((simulation) => (
                         <CardRoomGame
-                            key = {simulation.simulationID}
+                            key={simulation.simulationID}
                             bannerClass="room-banner"
                             title={simulation.name}
                             description={simulation.simulationType}
                             infoTitle="Student Done"
                             counter={4}
                             glow={false}
-                            link = {`/${userType.toLowerCase()}-room/game`}
+                            // link = {`/${userType.toLowerCase()}-room/game`}
                             onClick={() => handleCardClick()}
                         />
                     ))}

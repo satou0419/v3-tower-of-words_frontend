@@ -1,37 +1,70 @@
 "use client";
+import { useEffect } from "react";
+import { useSimulationStore } from "@/store/simulationStore";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./game.scss";
 import useUserInfoStore from "@/store/userInfoStore";
-
-const handleCardClick = () => {
-    try {
-        console.log("click");
-    } catch (error) {
-        console.error("Failed to fetch simulations for the room:", error);
-    }
-};
+import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Game() {
     const { userType } = useUserInfoStore.getState();
+    const { simulations, setSimulation } = useSimulationStore(); // Assuming you have a setSimulation method
+    const searchParams = useSearchParams(); // Get the search parameters
+
+    const roomIDParam = searchParams.get("roomID");
+    const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
+
+    useEffect(() => {
+        const fetchSimulations = async () => {
+            try {
+                const data = await viewRoomSimulations(roomID);
+                setSimulation(data);
+            } catch (error) {
+                console.error("Failed to fetch simulations:", error);
+            }
+        };
+
+        fetchSimulations();
+    }, [setSimulation]);
+
+    const navigation = useRouter();
+
+    const handleCardClick = (simulationID: number) => {
+        navigation.push(`/gameplay/simulation?simulationID=${simulationID}`);
+    };
 
     return (
         <main className="game-wrapper">
             <section className="game-container">
                 <section className="game-control">
-                    <h1>Simulation - Name Code</h1>
+                    <h1>
+                        Simulation -{" "}
+                        {simulations.length > 0
+                            ? simulations[0].name
+                            : "No Simulation"}
+                    </h1>
                 </section>
 
                 <div className="game-room">
-                    <CardRoomGame
-                        bannerClass="room-banner"
-                        title="Game Name"
-                        description="Teacher Name"
-                        infoTitle="Score"
-                        counter={4}
-                        glow={false}
-                        link={`/${userType.toLowerCase()}-room/game`}
-                        onClick={() => handleCardClick()}
-                    />
+                    {simulations.length > 0 ? (
+                        simulations.map((simulation) => (
+                            <CardRoomGame
+                                key={simulation.simulationID}
+                                bannerClass="room-banner"
+                                title={simulation.name}
+                                description={`Teacher Name`} // Replace with actual data if available
+                                infoTitle="Score" // Replace with actual data if available
+                                counter={simulation.numberOfAttempt}
+                                glow={false}
+                                onClick={() =>
+                                    handleCardClick(simulation.simulationID)
+                                } // Pass simulationID to the handler
+                            />
+                        ))
+                    ) : (
+                        <p>No simulations available</p>
+                    )}
                 </div>
             </section>
         </main>

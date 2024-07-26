@@ -22,13 +22,13 @@ export default function Dashboard() {
         getUserDetails();
     }, []);
 
-    if (userType.toLowerCase() == "teacher"){
+    if (userType.toLowerCase() == "teacher") {
         useEffect(() => {
             const fetchRooms = async () => {
                 try {
                     const roomData = await viewCreatedRoom();
                     setRoom(roomData);
-                    console.log(roomData)
+                    console.log(roomData);
                 } catch (error) {
                     console.error("Failed to fetch rooms:", error);
                     setRoom([]);
@@ -46,7 +46,7 @@ export default function Dashboard() {
                     console.error("Failed to fetch rooms:", error);
                 }
             };
-    
+
             fetchRooms();
         }, [setRoom]);
     }

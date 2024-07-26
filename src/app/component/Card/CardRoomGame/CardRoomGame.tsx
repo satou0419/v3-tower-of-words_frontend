@@ -1,9 +1,7 @@
-// CardRoomGame.tsx
 import React from "react";
 import CardDetails from "../CardDetails/CardDetails";
 import CardInfo from "../CardInfo/CardInfo";
 import "./cardroomgame.scss";
-import Link from "next/link";
 
 interface CardRoomGameProps {
     bannerClass: string;
@@ -12,7 +10,6 @@ interface CardRoomGameProps {
     infoTitle: string;
     counter: number;
     glow: boolean;
-    link: string;
     onClick: () => void;
 }
 
@@ -23,11 +20,10 @@ const CardRoomGame: React.FC<CardRoomGameProps> = ({
     infoTitle,
     counter,
     glow,
-    link = "#",
     onClick,
 }) => {
     return (
-        <Link className="cardroomgame-card" href={link} onClick={onClick}>
+        <div className="cardroomgame-card" onClick={onClick}>
             <section className="cardroomgame-container">
                 <section className={`cardroomgame-banner ${bannerClass}`}>
                     <div className="banner-container"></div>
@@ -35,7 +31,7 @@ const CardRoomGame: React.FC<CardRoomGameProps> = ({
                 <CardDetails title={title} description={description} />
                 <CardInfo title={infoTitle} counter={counter} glow={glow} />
             </section>
-        </Link>
+        </div>
     );
 };
 
