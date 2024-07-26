@@ -50,9 +50,14 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
 
             updateEnemyWords(enemy.id, [...enemy.words, newWord]);
         }
-
-        console.log(enemy)
+        console.log(word)
         console.log(enemy.id)
+    }
+
+    function handleOnDrag(e: React.DragEvent, word: string, wordID: number, enemyID: number ) {
+        e.dataTransfer.setData("word", word);
+        e.dataTransfer.setData("wordID", wordID.toString());
+        e.dataTransfer.setData("enemyID", enemyID.toString());
     }
 
     function handleDragOver(e: React.DragEvent) {
@@ -95,6 +100,8 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                             <span
                                 key={wordItem.simulationWordsID}
                                 className={`word-item`}
+                                draggable
+                                onDragStart={(e) => handleOnDrag(e, wordItem.word, wordItem.simulationWordsID, enemy.id)}
                             >
                                 {wordItem.word}
                             </span>    

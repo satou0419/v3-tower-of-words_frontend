@@ -46,6 +46,25 @@ const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy, upd
         e.dataTransfer.setData("word", word);
     }
 
+    function handleOnDrop(e: React.DragEvent) {
+        e.preventDefault();
+
+        const wordID = parseInt(e.dataTransfer.getData("wordID"), 10);
+        const enemyID = parseInt(e.dataTransfer.getData("enemyID"), 10);
+
+        if (!isNaN(wordID) && !isNaN(enemyID)) {
+            const enemy = enemies.find((enemy) => enemy.id === enemyID);
+            if (enemy) {
+                const updatedWords = enemy.words.filter((w) => w.simulationWordsID !== wordID);
+                updateEnemyWords(enemyID, updatedWords);
+            }
+        }
+
+        console.log(wordID)
+        console.log(enemyID)
+
+    }
+
     function handleDragOver(e: React.DragEvent) {
         e.preventDefault();
     }
@@ -65,7 +84,10 @@ const WordsTab: React.FC<WordsTabProps> = ({ enemies, addEnemy, removeEnemy, upd
                             value={searchWords}
                             onChange={(e) => setSearchWords(e.target.value)}
                         />
-                        <div className="word-list">
+                        <div className="word-list" 
+                        onDrop={handleOnDrop}
+                        onDragOver={handleDragOver}
+                        >
                             {simulationWords.length > 0 ? (
                                 simulationWords.map((wordItem, index) => (
                                     <span
