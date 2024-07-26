@@ -14,6 +14,7 @@ interface Enemy {
 }
 
 interface SimulationWords {
+    simulationWordsID: number;
     word: string;
 }
 
@@ -105,6 +106,20 @@ export default function CreateGame() {
         setEnemies([...enemies, newEnemy]);
     };
 
+    const updateEnemyWords = (id: number, updatedWords: SimulationWords[]) => {
+        setEnemies(enemies.map(enemy => 
+            enemy.id === id ? { ...enemy, words: updatedWords } : enemy
+        ));
+    };
+
+    const updateEnemyImagePath = (id: number, imagePath: string) => {
+        setEnemies((prevEnemies) =>
+            prevEnemies.map((enemy) =>
+                enemy.id === id ? { ...enemy, imagePath } : enemy
+            )
+        );
+    };
+
     const removeEnemy = (id: number) => {
         setEnemies(enemies.filter((enemy) => enemy.id !== id));
     };
@@ -120,7 +135,7 @@ export default function CreateGame() {
         {
             title: "Words",
             id: "my-word",
-            content: <WordsTab enemies={enemies} addEnemy={addEnemy} removeEnemy={removeEnemy} />,
+            content: <WordsTab enemies={enemies} addEnemy={addEnemy} removeEnemy={removeEnemy} updateEnemyWords={updateEnemyWords} updateEnemyImagePath={updateEnemyImagePath} />,
         },
         {
             title: "Setting",

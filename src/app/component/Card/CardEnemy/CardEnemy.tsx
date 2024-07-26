@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import Draggable from "react-draggable";
+import Drag from "react-draggable";
 import "./cardenemy.scss";
+import useImageParse from "@/hook/useImageParse";
 
 interface SimulationWords {
+    simulationWordsID: number;
     word: string;
 }
 
@@ -13,13 +15,19 @@ interface CardEnemyProps {
         words: SimulationWords[];
     };
     removeEnemy: (id: number) => void;
+    updateEnemyWords: (id: number, updatedWords: SimulationWords[]) => void;
+    updateEnemyImagePath: (id: number, imagePath: string) => void;
 }
+
 const CardEnemy: React.FC<CardEnemyProps> = ({
     enemy,
     removeEnemy,
+    updateEnemyWords,
+    updateEnemyImagePath,
 }) => {
     const [showWords, setShowWords] = useState(false);
     const [showPopup, setShowPopup] = useState(false);
+    const name = useImageParse(enemy.imagePath);
 
     const toggleWords = () => {
         setShowWords(!showWords);
@@ -29,24 +37,46 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
         setShowPopup(!showPopup);
     };
 
+    function handleOnDrop(e: React.DragEvent) {
+        e.preventDefault();
+
+        const word = e.dataTransfer.getData("word");
+
+        if (word) {
+            const newWord: SimulationWords = {
+                simulationWordsID: enemy.words.length > 0 ? enemy.words[enemy.words.length - 1].simulationWordsID + 1 : 1,
+                word: word,
+            };
+
+            updateEnemyWords(enemy.id, [...enemy.words, newWord]);
+        }
+
+        console.log(enemy)
+        console.log(enemy.id)
+    }
+
+    function handleDragOver(e: React.DragEvent) {
+        e.preventDefault();
+    }
+
     return (
         <section className="cardenemy-wrapper">
             <section className="cardenemy-card">
                 <section className="cardenemy-main">
                     <section className="cardenemy-banner">
-                        <div></div>
+                        <img src={`/assets/images/sprite/profile-${name.name}.png`} alt={`Enemy ${name.name}`} />
                         <button onClick={togglePopup}>change</button>
                     </section>
 
                     <section className="cardenemy-details">
                         <div className="name">
                             <span>Name</span>
-                            <h1>Enemy {enemy.id}</h1>
+                            <h1>{name.name}</h1>
                         </div>
 
                         <div className="total">
                             <span>Words held</span>
-                            <p>3</p>
+                            <p>{enemy.words.length}</p>
                         </div>
                     </section>
 
@@ -56,22 +86,36 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                     </section>
                 </section>
                 {showWords && (
-                    <section className="cardenemy-words">
-                        <p>drag and drop words here</p>
-                    </section>
+                    <div className="cardenemy-words"
+                    onDrop={handleOnDrop}
+                    onDragOver={handleDragOver}
+                    >
+                        <p>Drag and Drop</p>
+                        {enemy.words.map((wordItem, index) => (
+                            <span
+                                key={wordItem.simulationWordsID}
+                                className={`word-item`}
+                            >
+                                {wordItem.word}
+                            </span>    
+                        ))}
+                    </div>            
                 )}
 
                 {showPopup && (
-                    <Draggable>
+                    <Drag>
                         <div className="cardenemy-popup">
-                            <div>
+                            <button onClick={togglePopup} className="close-popup">X</button>
+                            <div onClick={() => updateEnemyImagePath(enemy.id, "melee_spring-a28-i11")} className="cardenemy-assgin">
+                                <img src={`/assets/images/sprite/profile-spring.png`} alt={`Enemy spring`} />
                                 <button>Spring</button>
                             </div>
-                            <div>
+                            <div onClick={() => updateEnemyImagePath(enemy.id, "melee_crab-a20-i20")} className="cardenemy-assgin">
+                                <img src={`/assets/images/sprite/profile-crab.png`} alt={`Enemy crab`} />
                                 <button>Crab</button>
                             </div>
                         </div>
-                    </Draggable>
+                    </Drag>
                 )}
             </section>
         </section>

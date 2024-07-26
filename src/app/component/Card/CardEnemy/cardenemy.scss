@@ -24,7 +24,7 @@
 }
 
 .cardenemy-banner {
-    height: 100%;
+    height: 100px;
     width: 100px;
     aspect-ratio: 1/1;
     border-radius: 50%;
@@ -34,7 +34,7 @@
     border: 4px solid var(--clr-violet);
     position: relative;
 
-    div {
+    img {
         background-color: #fff;
         width: 100%;
         height: 100%;
@@ -110,6 +110,7 @@
     background-color: white;
     color: #5e5e5e;
     border-radius: 0.5em;
+    flex-direction: column;
 }
 
 .cardenemy-popup {
@@ -124,6 +125,13 @@
     z-index: 1000;
     display: flex;
     gap: 1em;
+
+    .cardenemy-assgin{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
     
     button{
         border: none;
@@ -132,5 +140,23 @@
         color: white;
         width: 5em;
         height: 2em;
+        border-radius: .5em;
+    }
+
+    .close-popup {
+        width: 10px;
+        background: none;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        color: #000;
+    }
+
+    img {
+        border: #662b9a solid;
+        background-color: #fff;
+        width: 5em;
+        height: 5em;
+        border-radius: 50%;
     }
 }

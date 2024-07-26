@@ -11,6 +11,7 @@ interface Enemy {
 }
 
 interface SimulationWords {
+    simulationWordsID: number;
     word: string;
 }
 
@@ -81,7 +82,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                     value={settings.attackInterval}
                     onChange={handleChange('attackInterval')}
                 >
-                    <option className="select-display">Attack Interval</option>
+                    <option className="select-display" disabled value="">Attack Interval</option>
                     <option value={15}>15</option>
                     <option value={20}>20</option>
                     <option value={25}>25</option>
@@ -97,7 +98,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                     value={settings.studentLife}
                     onChange={handleChange('studentLife')}
                 >
-                    <option className="select-display">Student Life</option>
+                    <option className="select-display" disabled value="">Student Life</option>
                     <option value={1}>1</option>
                     <option value={2}>2</option>
                     <option value={3}>3</option>
@@ -111,7 +112,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                     value={settings.numberOfAttempt}
                     onChange={handleChange('numberOfAttempt')}
                 >
-                    <option className="select-display">Number of Attempts</option>
+                    <option className="select-display" disabled value="">Number of Attempts</option>
                     <option value={1}>1</option>
                     <option value={2}>2</option>
                     <option value={3}>3</option>
@@ -136,15 +137,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                     isEnabled={settings.pronunciation}
                     onToggle={handleToggle('pronunciation')}
                 />
-                <select>
-                    <option className="select-display">Number of Attempts</option>
-                    <option>1</option>
-                    <option>2</option>
-                    <option>3</option>
-                    <option>4</option>
-                    <option>5</option>
-                </select>
-                <button onClick={handleCreateGame}> bots </button>
+                <button onClick={handleCreateGame}> Create Game </button>
             </section>
         </main>
     );

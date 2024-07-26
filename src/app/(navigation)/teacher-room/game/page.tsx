@@ -50,7 +50,7 @@ export default function Game() {
                             onClick={() => handleCardClick()}
                         />
                     ))}
-                    <CardNew title="+ Create Game" link={`/create-game/my-word`} />
+                    <CardNew title="+ Create Game" link={`/game-mode`} />
                 </div>
             </section>
         </main>
