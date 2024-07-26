@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import BASE_URL from "@/util/baseUrl";
 
-// Interfaces
 interface SimulationWordsArray {
     simulationWordsID: number;
     creatorID: number;
@@ -53,7 +52,6 @@ interface SimulationDetails {
     assessment: SimulationAssessment[];
 }
 
-// Custom hook
 const useSimulationDetails = (simulationID: number) => {
     const [simulationDetails, setSimulationDetails] =
         useState<SimulationDetails | null>(null);

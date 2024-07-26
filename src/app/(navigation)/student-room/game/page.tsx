@@ -5,7 +5,7 @@ import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./game.scss";
 import useUserInfoStore from "@/store/userInfoStore";
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function Game() {
     const { userType } = useUserInfoStore.getState();
@@ -28,14 +28,10 @@ export default function Game() {
         fetchSimulations();
     }, [setSimulation]);
 
+    const navigation = useRouter();
+
     const handleCardClick = (simulationID: number) => {
-        try {
-            // Implement functionality for card click
-            console.log(`Card clicked for simulation ID: ${simulationID}`);
-            // Additional logic can be added here
-        } catch (error) {
-            console.error("Failed to handle card click:", error);
-        }
+        navigation.push(`/gameplay/simulation?simulationID=${simulationID}`);
     };
 
     return (

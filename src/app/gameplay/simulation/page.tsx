@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { InputBox } from "@/app/component/Input/Input";
-import { useEnemyStore } from "@/store/enemyStore";
 import Loading from "@/app/loading";
 import useImageParse from "@/hook/useImageParse";
 import "./adventure.scss"; // Make sure your SCSS file is imported correctly
@@ -29,13 +28,11 @@ interface SimulationWordsArray {
     word: string;
     silentIndex: string;
 }
-
 interface SimulationEnemy {
     simulationEnemyID: number;
     imagePath: string;
     words: SimulationWordsArray[];
 }
-
 interface Item {
     itemID: number;
     name: string;
@@ -43,7 +40,6 @@ interface Item {
     description: string;
     price: number;
 }
-
 interface UserItem {
     userItemID: number;
     quantity: number;
@@ -52,15 +48,26 @@ interface UserItem {
 }
 
 const SimulationGameplay = () => {
+    const searchParams = useSearchParams();
+
+    const simulationIDParam = searchParams.get("simulationID");
+    const simulationID = simulationIDParam
+        ? parseInt(simulationIDParam, 10)
+        : NaN;
     const [loading, setLoading] = useState<boolean>(true);
+    const simulationDetails = useSimulationDetails(simulationID);
 
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
-    const [isPronunciationLocked, setIsPronunciationLocked] = useState(true);
-    const [isDefinitionLocked, setIsDefinitionLocked] = useState(false);
-    const [isItemLocked] = useState(true);
+    const [isPronunciationLocked, setIsPronunciationLocked] = useState(
+        simulationDetails.simulationDetails?.pronunciation
+    );
+    const [isDefinitionLocked, setIsDefinitionLocked] = useState(
+        simulationDetails.simulationDetails?.description
+    );
+    const [isItemLocked] = useState(simulationDetails.simulationDetails?.items);
 
-    const lockedPronunciation = isPronunciationLocked ? "" : "";
+    const lockedPronunciation = isPronunciationLocked ? "locked" : "";
     const lockedDefinition = isDefinitionLocked ? "locked" : "";
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
 
@@ -139,8 +146,6 @@ const SimulationGameplay = () => {
 
         // Add additional logic here to reset the game state
     };
-
-    const simulationDetails = useSimulationDetails(4);
 
     const [enemies, setEnemies] = useState<SimulationEnemy[]>([]);
 
@@ -320,10 +325,11 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
         }
     };
-    const { updateProgress, isLoading, error, data } = useUpdateProgress();
-    const { redeemReward } = useRedeemReward();
-    const { incrementFloor } = useFloorIncrement();
 
+    const [mistakes, setMistakes] = useState(0);
+    const incrementMistake = () => {
+        setMistakes((prevMistakes) => prevMistakes + 1);
+    };
     const { lives, subtractLives, addLives } = useGameplayStore();
     // Other state and hooks...
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -331,12 +337,38 @@ const SimulationGameplay = () => {
         const currentEnemy = enemies[currentEnemyIndex];
         const currentWord =
             currentEnemy.words[currentWordIndex].word.toLowerCase();
+
         // Handle the game logic for correct answers
         if (
             typedWord.toLowerCase() === currentWord ||
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
+
+            console.log(
+                "Simulation Word ID:::>",
+                simulationDetails.simulationDetails?.enemy[currentEnemyIndex]
+                    .words[currentWordIndex].simulationWordsID
+            );
+
+            console.log(
+                "Accuracy::::>",
+                simulationDetails.simulationDetails?.studentLife || 0 / lives
+            );
+
+            console.log(simulationDetails.simulationDetails?.studentLife);
+            console.log("Lives:::", lives);
+
+            console.log("Mistakes:::", mistakes);
+            setMistakes(0);
+            const studentLive =
+                simulationDetails.simulationDetails?.studentLife;
+            const liveValue = studentLive ?? 0; // Provide a default value of 0 if studentLive is undefined
+
+            console.log(
+                "Accuracy:::",
+                ((liveValue - mistakes) / liveValue) * 100
+            );
             setTypedWord("");
             handleCharacterAttack();
 
@@ -374,6 +406,7 @@ const SimulationGameplay = () => {
         } else {
             // Check if lives have reached 0
 
+            incrementMistake();
             handleMissedAttack();
             setTimeout(() => {
                 handleEnemyAttack();
@@ -684,6 +717,7 @@ const SimulationGameplay = () => {
                                         placeholder="Type the word..."
                                         required
                                     />
+
                                     <button type="submit">Go!</button>
                                 </>
                             )}
