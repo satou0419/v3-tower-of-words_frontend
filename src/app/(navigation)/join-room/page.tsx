@@ -2,44 +2,70 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { InputLine } from "@/app/component/Input/Input";
-import "./joinroom.scss";
+import Modal from "@/app/component/Modal/Modal";
 import joinRoom from "@/lib/room-endpoint/joinRoom";
-import Toast from "@/app/component/Toast/Toast";
+import "./joinroom.scss";
 
 export default function JoinRoom() {
     const [code, setCode] = useState("");
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-    const [toastType, setToastType] = useState<"success" | "error" | "warning">(
-        "success"
-    );
+
+    const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
     const router = useRouter();
 
     const handleJoinRoom = async (e: React.FormEvent) => {
         e.preventDefault();
-        setToastMessage(null); // Clear any previous toast message
 
         try {
             await joinRoom(code);
-            setToastMessage("Successfully joined the room!");
-            setToastType("success");
+            setIsSuccessModalOpen(true); // Open success modal
             router.push("/student-room"); // Redirect to the room page or any desired page
         } catch (err) {
-            setToastMessage(
-                "Failed to join the room. Please check the code and try again."
-            );
-            setToastType("error");
+            setIsErrorModalOpen(true); // Open error modal
         }
+    };
+
+    const handleCloseSuccessModal = () => {
+        setIsSuccessModalOpen(false);
+    };
+
+    const handleCloseErrorModal = () => {
+        setIsErrorModalOpen(false);
     };
 
     return (
         <main className="joinroom-wrapper">
-            {toastMessage && (
-                <Toast
-                    message={toastMessage}
-                    type={toastType}
-                    onClose={() => setToastMessage(null)}
-                />
-            )}
+            {/* Success Modal */}
+            <Modal
+                className="success-modal"
+                isOpen={isSuccessModalOpen}
+                onClose={handleCloseSuccessModal}
+                title="Success!"
+                details="Successfully joined the room!"
+                buttons={[
+                    <button key="ok" onClick={handleCloseSuccessModal}>
+                        OK
+                    </button>,
+                ]}
+            />
+
+            {/* Error Modal */}
+            <Modal
+                className="error-modal"
+                isOpen={isErrorModalOpen}
+                onClose={handleCloseErrorModal}
+                title="Error"
+                details="Failed to join the room. Please check the code and try again."
+                buttons={[
+                    <button key="retry" onClick={handleCloseErrorModal}>
+                        Retry
+                    </button>,
+                    <button key="cancel" onClick={handleCloseErrorModal}>
+                        Cancel
+                    </button>,
+                ]}
+            />
+
             <section className="joinroom-container">
                 <section className="joinroom-card">
                     <form onSubmit={handleJoinRoom}>
