@@ -793,9 +793,7 @@ const SimulationGameplay = () => {
                 buttons={[
                     <button
                         key="menu"
-                        onClick={() =>
-                            (window.location.href = "/tower/spelling")
-                        }
+                        onClick={() => (window.location.href = "/student-room")}
                     >
                         Return to Main Menu
                     </button>,

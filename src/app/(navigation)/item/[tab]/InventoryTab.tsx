@@ -4,13 +4,11 @@ import CardInventory from "@/app/component/Card/CardInventory/CardInventory";
 import { useRouter, usePathname } from "next/navigation";
 import { useItemStore } from "@/store/itemStore";
 import getAllItems from "@/lib/item-endpoint/getAllItem";
-import Loading from "@/app/loading"; // Import the Loading component
 
 const InventoryTab: React.FC = () => {
     const { items, setItems } = useItemStore();
     const router = useRouter();
     const pathname = usePathname();
-    const [loading, setLoading] = useState(true); // Loading state
     const [selectedItem, setSelectedItem] = useState<{
         name: string | null;
         description: string | null;
@@ -22,33 +20,15 @@ const InventoryTab: React.FC = () => {
     });
 
     useEffect(() => {
-        const fetchItems = async () => {
-            try {
-                const fetchedItems = await getAllItems();
-                // Sort items so those with quantity 0 are at the bottom
-                const sortedItems = fetchedItems.sort((a: any, b: any) => {
-                    if (a.quantity === 0 && b.quantity !== 0) return 1;
-                    if (a.quantity !== 0 && b.quantity === 0) return -1;
-                    return 0;
-                });
-                setItems(sortedItems);
-
-                // Set the first item as the selected item
-                if (sortedItems.length > 0) {
-                    setSelectedItem({
-                        name: sortedItems[0].itemName,
-                        description: sortedItems[0].itemDescription,
-                        banner: `/assets/images/reward/${sortedItems[0].imagePath}`,
-                    });
-                }
-            } catch (error) {
-                console.error("Failed to fetch items:", error);
-            } finally {
-                setLoading(false); // Set loading to false after fetching items
-            }
-        };
-
-        fetchItems();
+        getAllItems().then((fetchedItems) => {
+            // Sort items so those with quantity 0 are at the bottom
+            const sortedItems = fetchedItems.sort((a: any, b: any) => {
+                if (a.quantity === 0 && b.quantity !== 0) return 1;
+                if (a.quantity !== 0 && b.quantity === 0) return -1;
+                return 0;
+            });
+            setItems(sortedItems);
+        });
     }, [setItems]);
 
     useEffect(() => {
@@ -67,12 +47,6 @@ const InventoryTab: React.FC = () => {
             banner: `/assets/images/reward/${item.imagePath}`,
         });
     };
-
-    if (loading) {
-        return <div>Loading...</div>;
-
-        // return <Loading />; // Render Loading component while data is being loaded
-    }
 
     return (
         <section className="inventory_wrapper">

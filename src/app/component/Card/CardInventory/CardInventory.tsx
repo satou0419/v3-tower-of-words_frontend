@@ -5,7 +5,7 @@ interface CardInventoryProps {
     imgSrc: string;
     title: string;
     description: string;
-    quantity: number;
+    quantity: number | string;
     className?: string;
     onClick?: () => void;
 }
