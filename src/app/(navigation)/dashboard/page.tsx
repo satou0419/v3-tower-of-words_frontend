@@ -1,15 +1,16 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import CardMode from "@/app/component/Card/CardMode/CardMode";
 import "./dashboard.scss";
 import CardArchive from "@/app/component/Card/CardArchive/CardArchive";
 import useUserInfoStore from "@/store/userInfoStore";
 import useProgressDashboardStore from "@/store/progressDashboardStore";
-import { useEffect } from "react";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";
 import { useRoomStore } from "@/store/roomStore";
 import viewStudentRoom from "@/lib/room-endpoint/viewStudentRoom";
+import Loading from "@/app/loading";
 
 export default function Dashboard() {
     const { rooms, setRoom } = useRoomStore();
@@ -17,38 +18,35 @@ export default function Dashboard() {
     const userDashboard = useProgressDashboardStore(
         (state) => state.progressDashboard
     );
+    const [loading, setLoading] = useState(true); // Loading state
 
     useEffect(() => {
         getUserDetails();
     }, []);
 
-    if (userType.toLowerCase() == "teacher") {
-        useEffect(() => {
-            const fetchRooms = async () => {
-                try {
+    useEffect(() => {
+        const fetchRooms = async () => {
+            try {
+                if (userType.toLowerCase() === "teacher") {
                     const roomData = await viewCreatedRoom();
                     setRoom(roomData);
-                    console.log(roomData);
-                } catch (error) {
-                    console.error("Failed to fetch rooms:", error);
-                    setRoom([]);
-                }
-            };
-            fetchRooms();
-        }, [setRoom]);
-    } else {
-        useEffect(() => {
-            const fetchRooms = async () => {
-                try {
+                } else {
                     const roomData = await viewStudentRoom();
                     setRoom(roomData);
-                } catch (error) {
-                    console.error("Failed to fetch rooms:", error);
                 }
-            };
+            } catch (error) {
+                console.error("Failed to fetch rooms:", error);
+                setRoom([]);
+            } finally {
+                setLoading(false); // Set loading to false after data is fetched
+            }
+        };
 
-            fetchRooms();
-        }, [setRoom]);
+        fetchRooms();
+    }, [setRoom, userType]);
+
+    if (loading) {
+        return <Loading />; // Render Loading component while fetching data
     }
 
     return (

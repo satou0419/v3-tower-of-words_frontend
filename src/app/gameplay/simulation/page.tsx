@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { InputBox } from "@/app/component/Input/Input";
-import Loading from "@/app/loading";
 import useImageParse from "@/hook/useImageParse";
 import "./adventure.scss"; // Make sure your SCSS file is imported correctly
 import "./animation.scss";
@@ -10,12 +9,8 @@ import Modal from "@/app/component/Modal/Modal";
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
 import "./modals.scss";
 import useMerriam from "@/hook/useMerriam";
-import useAddWord from "@/hook/useAddWord"; // Import the custom hook
 import useProgressEquippedStore from "@/store/progressEquippedStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
-import useUpdateProgress from "@/hook/useUpdateProgress";
-import useRedeemReward from "@/hook/useRedeemReward";
-import useFloorIncrement from "@/hook/useFloorIncrement";
 import getUserItems from "@/lib/item-endpoint/getUserItem";
 import useItem from "@/hook/useItem";
 import { useGameplayStore } from "@/store/gameplayStore";
@@ -55,7 +50,7 @@ const SimulationGameplay = () => {
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
         : NaN;
-    const [loading, setLoading] = useState<boolean>(true);
+    // const [loading, setLoading] = useState<boolean>(true);
     const simulationDetails = useSimulationDetails(simulationID);
 
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
@@ -73,7 +68,6 @@ const SimulationGameplay = () => {
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
 
     //#region  Item Logic
-
     const [userItems, setUserItems] = useState<UserItem[]>([]);
     const [showConfirmationModal, setShowConfirmationModal] =
         useState<boolean>(false);
@@ -134,11 +128,8 @@ const SimulationGameplay = () => {
         setShowConfirmationModal(false);
         setItemToUse(null);
     };
-    //#endregion
 
     const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
-
-    // Handler for restarting the game
     const handleGameOverRestart = () => {
         // Logic to restart the game
         console.log("Restarting game...");
@@ -333,7 +324,6 @@ const SimulationGameplay = () => {
         setMistakes((prevMistakes) => prevMistakes + 1);
     };
     const { lives, subtractLives, addLives } = useGameplayStore();
-    // Other state and hooks...
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemies[currentEnemyIndex];

@@ -50,6 +50,7 @@ export default function JoinRoom() {
                                 placeholder="Enter Tower Code"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
+                                required
                             />
                             <button type="submit">Join now</button>
                             <button type="button" onClick={() => router.back()}>

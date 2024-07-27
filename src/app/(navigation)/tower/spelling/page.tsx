@@ -8,6 +8,7 @@ import { RewardData } from "@/store/rewardStore";
 import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID";
 import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID";
 import useUserProgressStore from "@/store/userProgressStore";
+import Loading from "@/app/loading";
 
 const Spelling = () => {
     const { floors, getAllFloors } = useFloorStore();
@@ -19,11 +20,16 @@ const Spelling = () => {
     const [activeFloorId, setActiveFloorId] = useState<number | null>(null);
     const [activeSection, setActiveSection] = useState<number | null>(null);
     const [enemyData, setEnemyData] = useState<any | null>(null); // Adjust this type as per your actual enemy data structure
+    const [loading, setLoading] = useState(true); // Loading state
     const activeFloorRef = useRef<HTMLDivElement>(null);
     const navigation = useRouter();
 
     useEffect(() => {
-        getAllFloors();
+        const fetchFloors = async () => {
+            await getAllFloors();
+            setLoading(false); // Set loading to false after data is fetched
+        };
+        fetchFloors();
     }, [getAllFloors]);
 
     useEffect(() => {
@@ -34,10 +40,23 @@ const Spelling = () => {
     }, [floors]);
 
     useEffect(() => {
+        if (floors.length > 0 && userProgress.floorIDProgress) {
+            // Automatically set the active floor ID if it exists in the floors array
+            const currentFloor = floors.find(
+                (floor) => floor.towerFloorID === userProgress.floorIDProgress
+            );
+            if (currentFloor) {
+                setActiveFloorId(currentFloor.towerFloorID);
+                setActiveSection(currentFloor.towerSection);
+            }
+        }
+    }, [floors, userProgress.floorIDProgress]);
+
+    useEffect(() => {
         if (activeFloorRef.current) {
             activeFloorRef.current.scrollIntoView({ behavior: "smooth" });
         }
-    }, [floors, uniqueTowerSections]);
+    }, [activeFloorId, floors, uniqueTowerSections]);
 
     useEffect(() => {
         if (activeFloorId) {
@@ -108,22 +127,27 @@ const Spelling = () => {
         };
     };
 
+    useEffect(() => {});
     const handleEnterClick = () => {
         if (activeFloorId && activeSection && enemyData) {
             const { nextFloorId, nextSection } = getNextFloorAndSection();
             const isCleared = activeFloorId < userProgress.floorIDProgress;
+
             navigation.push(
                 `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
             );
         }
     };
 
+    if (loading) {
+        return <Loading />; // Render Loading component while fetching data
+    }
+
     return (
         <main className="spelling-wrapper">
             <section className="spelling-container">
                 <section className="spelling-upper">
                     <section className="reward">
-                        <h1>{userProgress.floorIDProgress}</h1>
                         <CardWord className="reward-container">
                             <h1>Floor {rewardData?.towerFloorID}</h1>
                             <section className="reward-list">
@@ -259,7 +283,19 @@ const Spelling = () => {
                         <h1>Progress:</h1>
                         <section className="section-list">
                             {uniqueTowerSections.map((section) => (
-                                <span key={section}>Section {section}</span>
+                                <span
+                                    key={section}
+                                    className={`section ${
+                                        activeSection === section
+                                            ? "active-section"
+                                            : userProgress.floorIDProgress >
+                                              section
+                                            ? "done-section"
+                                            : ""
+                                    }`}
+                                >
+                                    Section {section}
+                                </span>
                             ))}
                         </section>
                     </section>

@@ -446,5 +446,12 @@
             border: 1px solid #000;
             cursor: pointer;
         }
+
+        .active-section {
+            background-color: #ffc658;
+        }
+        .done-section {
+            // background-color: #ffc658;
+        }
     }
 }

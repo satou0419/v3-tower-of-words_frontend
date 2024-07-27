@@ -1,16 +1,19 @@
 "use client";
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useSimulationStore } from "@/store/simulationStore";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./game.scss";
 import useUserInfoStore from "@/store/userInfoStore";
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
 import { useRouter, useSearchParams } from "next/navigation";
+import Loading from "@/app/loading"; // Import the Loading component
 
 export default function Game() {
     const { userType } = useUserInfoStore.getState();
     const { simulations, setSimulation } = useSimulationStore(); // Assuming you have a setSimulation method
     const searchParams = useSearchParams(); // Get the search parameters
+    const [loading, setLoading] = useState(true); // Loading state
 
     const roomIDParam = searchParams.get("roomID");
     const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
@@ -20,19 +23,25 @@ export default function Game() {
             try {
                 const data = await viewRoomSimulations(roomID);
                 setSimulation(data);
+                setLoading(false); // Set loading to false after data is fetched
             } catch (error) {
                 console.error("Failed to fetch simulations:", error);
+                setLoading(false); // Set loading to false even if there's an error
             }
         };
 
         fetchSimulations();
-    }, [setSimulation]);
+    }, [setSimulation, roomID]);
 
     const navigation = useRouter();
 
     const handleCardClick = (simulationID: number) => {
         navigation.push(`/gameplay/simulation?simulationID=${simulationID}`);
     };
+
+    if (loading) {
+        return <Loading />; // Render Loading component while fetching data
+    }
 
     return (
         <main className="game-wrapper">

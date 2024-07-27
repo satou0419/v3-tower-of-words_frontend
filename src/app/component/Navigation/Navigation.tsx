@@ -8,11 +8,13 @@ import getUserInfo from "@/lib/user-endpoint/getUserInfo";
 import useProgressDashboardStore from "@/store/progressDashboardStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 import Link from "next/link";
+import Modal from "@/app/component/Modal/Modal"; // Adjust import as needed
 
 const Navigation = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isShrinking, setIsShrinking] = useState(false);
     const [showList, setShowList] = useState(false);
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // New state for logout modal
     const userDashboard = useProgressDashboardStore(
         (state) => state.progressDashboard
     );
@@ -47,9 +49,17 @@ const Navigation = () => {
         }
     };
 
-    const handleLogout = () => {
+    const handleLogoutClick = () => {
+        setIsLogoutModalOpen(true); // Open the logout confirmation modal
+    };
+
+    const confirmLogout = () => {
         localStorage.removeItem("auth-user");
         router.push("/login");
+    };
+
+    const cancelLogout = () => {
+        setIsLogoutModalOpen(false); // Close the logout confirmation modal
     };
 
     const toggleRef = useRef<HTMLDivElement>(null);
@@ -134,8 +144,6 @@ const Navigation = () => {
                     className={`drop-profile ${
                         isShrinking ? "shrink" : "expand"
                     }`}
-                    // ref={toggleRef}
-                    // onClick={toggleDropdown}
                 >
                     <span>{username}</span>
                 </section>
@@ -146,11 +154,37 @@ const Navigation = () => {
                         <Link href="/setting/personal-information">
                             Settings
                         </Link>
-                        <a onClick={handleLogout}>Logout</a>
+                        <a onClick={handleLogoutClick}>Logout</a>{" "}
+                        {/* Updated to handle logout click */}
                     </section>
                 )}
             </section>
             {isOpen && <div className="overlay" onClick={handleOverlayClick} />}
+
+            {/* Logout Confirmation Modal */}
+            <Modal
+                title="Confirm Logout"
+                details="Are you sure you want to logout?"
+                isOpen={isLogoutModalOpen}
+                onClose={cancelLogout} // Close modal on overlay click
+                className="modal-logout"
+                buttons={[
+                    <button
+                        key="cancel"
+                        className="btn-cancel"
+                        onClick={cancelLogout}
+                    >
+                        Cancel
+                    </button>,
+                    <button
+                        key="confirm"
+                        className="btn-confirm"
+                        onClick={confirmLogout}
+                    >
+                        Confirm
+                    </button>,
+                ]}
+            />
         </nav>
     );
 };

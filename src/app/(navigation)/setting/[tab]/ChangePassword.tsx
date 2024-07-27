@@ -3,6 +3,7 @@ import { InputLine } from "@/app/component/Input/Input";
 import changePassword from "@/lib/auth-endpoint/changePassword";
 import Modal from "@/app/component/Modal/Modal";
 import Toast from "@/app/component/Toast/Toast";
+import "./setting.scss";
 
 const ChangePassword = () => {
     const [currentPassword, setCurrentPassword] = useState("");
@@ -69,6 +70,7 @@ const ChangePassword = () => {
 
             {/* Success Modal */}
             <Modal
+                className="change-passwordmodal"
                 isOpen={isSuccessModalOpen}
                 onClose={() => setIsSuccessModalOpen(false)}
                 title="Password Changed"
@@ -76,6 +78,7 @@ const ChangePassword = () => {
                 buttons={[
                     <button
                         key="ok"
+                        className="confirm" // Add class for confirmation button
                         onClick={() => setIsSuccessModalOpen(false)}
                     >
                         OK

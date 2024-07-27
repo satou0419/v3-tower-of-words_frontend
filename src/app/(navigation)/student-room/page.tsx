@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRoomStore } from "@/store/roomStore";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./studentroom.scss";
@@ -11,14 +11,15 @@ import viewStudentRoom from "@/lib/room-endpoint/viewStudentRoom";
 import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
 import { useRouter } from "next/navigation";
+import Loading from "@/app/loading";
 
 export default function StudentRoom() {
     const { rooms, setRoom } = useRoomStore();
     const { userType } = useUserInfoStore.getState();
-
-    // Fetch rooms when the component mounts
+    const [loading, setLoading] = useState(true); // Loading state
 
     const navigation = useRouter();
+
     useEffect(() => {
         const fetchRooms = async () => {
             try {
@@ -29,9 +30,11 @@ export default function StudentRoom() {
                     roomData = await viewStudentRoom(); // Fetch data for students
                 }
                 setRoom(roomData); // Update Zustand store with fetched data
+                setLoading(false); // Set loading to false after data is fetched
             } catch (error) {
                 console.error("Failed to fetch rooms:", error);
                 setRoom([]); // Optionally clear the rooms if fetching fails
+                setLoading(false); // Set loading to false even if there's an error
             }
         };
 
@@ -51,6 +54,10 @@ export default function StudentRoom() {
             console.error("Failed to fetch simulations for the room:", error);
         }
     };
+
+    if (loading) {
+        return <Loading />; // Render Loading component while fetching data
+    }
 
     return (
         <main className="studentroom-wrapper">

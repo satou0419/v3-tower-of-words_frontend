@@ -49,6 +49,7 @@ const UpdateProgress: React.FC = () => {
                         onChange={handleInputChange}
                     />
                 </div>
+
                 <div>
                     <label>Is Correct:</label>
                     <input
