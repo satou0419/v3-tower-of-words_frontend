@@ -8,14 +8,14 @@ import WordsTab from "./WordsTab";
 import useTabManagement from "@/hook/useTab";
 
 interface Enemy {
-    id: number;
     imagePath: string;
     words: SimulationWords[];
 }
 
 interface SimulationWords {
-    simulationWordsID: number;
+    creatorID: number;
     word: string;
+    silentIndex: string;
 }
 
 interface Room {
@@ -98,8 +98,7 @@ export default function CreateGame() {
 
     const addEnemy = () => {
         const newEnemy: Enemy = {
-            id: enemies.length > 0 ? enemies[enemies.length - 1].id + 1 : 1,
-            imagePath: "------", // TO BE CHANGE
+            imagePath: "",
             words: [],
         };
 
@@ -108,22 +107,22 @@ export default function CreateGame() {
 
     const updateEnemyWords = (id: number, updatedWords: SimulationWords[]) => {
         setEnemies(
-            enemies.map((enemy) =>
-                enemy.id === id ? { ...enemy, words: updatedWords } : enemy
+            enemies.map((enemy, index) =>
+                index === id ? { ...enemy, words: updatedWords } : enemy
             )
         );
     };
 
     const updateEnemyImagePath = (id: number, imagePath: string) => {
         setEnemies((prevEnemies) =>
-            prevEnemies.map((enemy) =>
-                enemy.id === id ? { ...enemy, imagePath } : enemy
+            prevEnemies.map((enemy, index) =>
+                index === id ? { ...enemy, imagePath } : enemy
             )
         );
     };
 
     const removeEnemy = (id: number) => {
-        setEnemies(enemies.filter((enemy) => enemy.id !== id));
+        setEnemies(enemies.filter((enemy, index) => index !== id));
     };
 
     const updateSettings = (updatedSettings: Partial<SimulationDetails>) => {

@@ -5,14 +5,18 @@ import Toggle from "@/app/component/Toggle/Toggle";
 import createGame from "@/lib/simulation-endpoint/createGame";
 
 interface Enemy {
-    id: number;
     imagePath: string;
     words: SimulationWords[];
 }
 
 interface SimulationWords {
+<<<<<<< HEAD
     id: number;
+=======
+    creatorID: number;
+>>>>>>> 66989863b9649b7d2c3991c7d00617851d466992
     word: string;
+    silentIndex: string;
 }
 
 interface Room {

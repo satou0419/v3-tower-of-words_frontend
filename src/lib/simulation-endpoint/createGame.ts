@@ -1,13 +1,14 @@
 import BASE_URL from "@/util/baseUrl";
 
 interface Enemy {
-    id: number;
     imagePath: string;
     words: SimulationWords[];
 }
 
 interface SimulationWords {
+    creatorID: number;
     word: string;
+    silentIndex: string;
 }
 
 interface Room {
@@ -29,6 +30,7 @@ interface SimulationDetails {
 }
 
 const createGame = async (simulation: SimulationDetails) => {
+    console.log(simulation)
     try {
         const response = await fetch(`${BASE_URL}/simulation/create_simulation`, {
             method: "POST",

@@ -6,14 +6,14 @@ import { InputLine } from "@/app/component/Input/Input";
 import viewSimulationWords from "@/lib/simulation-endpoint/viewSimulationWords";
 
 interface Enemy {
-    id: number;
     imagePath: string;
     words: SimulationWords[];
 }
 
 interface SimulationWords {
-    simulationWordsID: number;
+    creatorID: number;
     word: string;
+    silentIndex: string;
 }
 
 interface WordsTabProps {
@@ -61,10 +61,10 @@ const WordsTab: React.FC<WordsTabProps> = ({
         const enemyID = parseInt(e.dataTransfer.getData("enemyID"), 10);
 
         if (!isNaN(wordID) && !isNaN(enemyID)) {
-            const enemy = enemies.find((enemy) => enemy.id === enemyID);
+            const enemy = enemies.find((enemy, index) => index === enemyID);
             if (enemy) {
                 const updatedWords = enemy.words.filter(
-                    (w) => w.simulationWordsID !== wordID
+                    (word, index) => index !== wordID
                 );
                 updateEnemyWords(enemyID, updatedWords);
             }
@@ -100,10 +100,7 @@ const WordsTab: React.FC<WordsTabProps> = ({
                             {simulationWords.length > 0 ? (
                                 simulationWords.map((wordItem, index) => (
                                     <span
-                                        key={
-                                            wordItem.simulationWordsID ||
-                                            wordItem.word
-                                        }
+                                        key={index || wordItem.word}
                                         className={`word-item`}
                                         draggable
                                         onDragStart={(e) =>
@@ -126,9 +123,10 @@ const WordsTab: React.FC<WordsTabProps> = ({
                     <button onClick={addEnemy}>Add Enemy</button>
                 </section>
                 <section className="enemylist-container">
-                    {enemies.map((enemy) => (
+                    {enemies.map((enemy, index) => (
                         <CardEnemy
-                            key={enemy.id}
+                            key={index}
+                            index={index}
                             enemy={enemy}
                             removeEnemy={removeEnemy}
                             updateEnemyWords={updateEnemyWords}
