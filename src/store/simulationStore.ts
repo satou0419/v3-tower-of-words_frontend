@@ -7,6 +7,7 @@ interface Enemy {
 }
 
 interface SimulationWords {
+    id: number;
     word: string;
 }
 

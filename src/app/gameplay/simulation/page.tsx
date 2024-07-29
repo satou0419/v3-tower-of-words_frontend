@@ -17,6 +17,7 @@ import { useGameplayStore } from "@/store/gameplayStore";
 import ConfettiWrapper from "@/app/component/Confetti/Confetti";
 import useSimulationDetails from "@/hook/useSimulationDetails";
 import useTimer from "@/util/timer";
+import useUpdateSimulationProgress from "@/hook/useUpdateSimulationProgress";
 
 interface SimulationWordsArray {
     simulationWordsID: number;
@@ -46,6 +47,15 @@ interface UserItem {
 const SimulationGameplay = () => {
     const searchParams = useSearchParams();
 
+    //#region Progress Setters
+    const [duration, setDuration] = useState("");
+    const [simulationWordsID, setSimulationWordsID] = useState(0);
+    const [noOfAttempt, setNoOfAttempt] = useState(0);
+    const [isCorrect, setIsCorrect] = useState(false);
+    const [score, setScore] = useState(0);
+    const [accuracy, setAccuracy] = useState(0);
+
+    //#endregion
     const simulationIDParam = searchParams.get("simulationID");
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
@@ -318,29 +328,19 @@ const SimulationGameplay = () => {
         }
     };
 
-    const duration = useTimer();
+    const time = useTimer();
     const [mistakes, setMistakes] = useState(0);
     const incrementMistake = () => {
         setMistakes((prevMistakes) => prevMistakes + 1);
     };
     const { lives, subtractLives, addLives } = useGameplayStore();
+    const { updateProgress, loading, error } = useUpdateSimulationProgress();
+
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemies[currentEnemyIndex];
         const currentWord =
             currentEnemy.words[currentWordIndex].word.toLowerCase();
-
-        // Handle the game logic for correct answers
-
-        // const updateProgress = useUpdateProgress();
-        // const [progress, setProgress] = useState(
-        //     simulationWordsID: 1,
-        //     numberOfAttempts: 3,
-        //     isCorrect: true,
-        //     score: 85,
-        //     duration: 120,
-        //     accuracy: 0.95,
-        // );
 
         if (
             typedWord.toLowerCase() === currentWord ||
@@ -348,44 +348,47 @@ const SimulationGameplay = () => {
         ) {
             // Correct word spelling
 
-            duration.reset();
-            // const timeHours = duration.getFormattedTimeInHours();
-            const timeSec = duration.getFormattedTimeInSeconds();
-            const isCorrect = true;
+            time.reset();
+            const timeSec = time.getFormattedTimeInSeconds();
+            setIsCorrect(true);
 
-            console.log("sec:", timeSec);
-            console.log(
-                "Simulation Word ID:::>",
+            const simulationWordsID =
                 simulationDetails.simulationDetails?.enemy[currentEnemyIndex]
-                    .words[currentWordIndex].simulationWordsID
-            );
+                    .words[currentWordIndex].simulationWordsID || 0;
 
-            console.log("Number of Attempts:::", mistakes);
-            console.log("IsCorrect:::>", isCorrect);
-
-            console.log(
-                "Accuracy::::>",
-                simulationDetails.simulationDetails?.studentLife || 0 / lives
-            );
-
-            console.log(simulationDetails.simulationDetails?.studentLife);
-            console.log("Lives:::", simulationDetails.simulationDetails);
-
-            setMistakes(0);
             const studentLive =
                 simulationDetails.simulationDetails?.studentLife;
-            const liveValue = studentLive ?? 0; // Provide a default value of 0 if studentLive is undefined
+            const liveValue = studentLive ?? 0;
 
-            console.log(
-                "Accuracy:::",
-                ((liveValue - mistakes) / liveValue) * 100
-            );
+            const accuracy = ((liveValue - mistakes) / liveValue) * 100;
+
+            // Update state
+            setNoOfAttempt(mistakes);
+            setMistakes(0);
+            setAccuracy(accuracy);
             setTypedWord("");
             handleCharacterAttack();
 
             const updatedSpelledWords = { ...spelledWords };
             updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true;
             setSpelledWords(updatedSpelledWords);
+
+            // Prepare progress data
+            const progress = {
+                simulationWordsID,
+                numberOfAttempts: mistakes,
+                correct: true,
+                score: 0, // Assuming you want to set this dynamically
+                duration: timeSec.toString(),
+                accuracy,
+            };
+
+            // Submit progress data
+            try {
+                await updateProgress(progress);
+            } catch (err) {
+                console.error("Failed to update progress:", err);
+            }
 
             setTimeout(() => {
                 setIsCharacterAttacking(false);
@@ -400,7 +403,6 @@ const SimulationGameplay = () => {
                     setTimeout(() => {
                         if (currentEnemyIndex === enemies.length - 1) {
                             // All enemies defeated, show confetti
-
                             setShowConfetti(true);
                             setShowConquerFloorModal(true); // Show the conquering floor modal
                         } else {
@@ -416,7 +418,6 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
         } else {
             // Check if lives have reached 0
-
             incrementMistake();
             handleMissedAttack();
             setTimeout(() => {
@@ -436,7 +437,7 @@ const SimulationGameplay = () => {
 
             setTimeout(() => {
                 console.log("audio ends");
-                duration.start();
+                time.start();
             }, 2000);
 
             return () => clearTimeout(timer); // Clear the timeout if the component unmounts or word changes

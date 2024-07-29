@@ -229,7 +229,11 @@ const Spelling = () => {
                                     </section>
                                 </section>
                             </section>
-                            <button onClick={handleEnterClick}>Enter</button>
+                            <div className="btn-enter">
+                                <button onClick={handleEnterClick}>
+                                    Enter
+                                </button>
+                            </div>
                         </CardWord>
                     </section>
                     <section className="tower">
