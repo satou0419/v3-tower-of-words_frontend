@@ -1,14 +1,15 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Draggable  from "react-draggable";
 import "./cardenemy.scss";
 import useImageParse from "@/hook/useImageParse";
 import { useAuthStore } from "@/store/authStore";
+import useFetchAllSimulationWords from "@/hook/useAllSimulationWords";
 
 interface SimulationWords {
     simulationWordsID: number;
-    creatorID: number;
-    word: string;
-    silentIndex: string;
+    creatorID: number | null;
+    word: string | null;
+    silentIndex: string | null;
 }
 
 interface Enemy {
@@ -36,6 +37,10 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
     const name = useImageParse(enemy.imagePath);
     const popupRef = useRef<HTMLDivElement>(null);
     const { userID } = useAuthStore.getState();
+    const [profile, setProfile] = useState(false);
+    const simulationWords = useFetchAllSimulationWords(enemy.words);
+
+    console.log(simulationWords);
 
     const toggleWords = () => {
         setShowWords(!showWords);
@@ -74,7 +79,11 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
             <section className="cardenemy-card">
                 <section className="cardenemy-main">
                     <section className="cardenemy-banner">
-                        <img src={`/assets/images/sprite/profile-${name.name}.png`} alt={`Enemy ${name.name}`} />
+                        {name.name ? (
+                            <img src={`/assets/images/sprite/profile-${name.name}.png`} alt={`Enemy ${name.name}`} />
+                        ) : (
+                            <div></div>
+                        )}
                         <button onClick={togglePopup}>change</button>
                     </section>
 
@@ -101,14 +110,14 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                     onDragOver={handleDragOver}
                     >
                         <p>Drag and Drop</p>
-                        {enemy.words.map((wordItem, id) => (
+                        {simulationWords.simulationWords.map((wordItem, id) => (
                             <span
                                 key={id}
                                 className={`word-item`}
                                 draggable
                                 onDragStart={(e) => handleOnDrag(e, id, index)}
                             >
-                                {wordItem}
+                                {wordItem.word}
                             </span>    
                         ))}
                     </div>            
@@ -118,11 +127,11 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                     <Draggable nodeRef={popupRef}>
                         <div ref={popupRef} className="cardenemy-popup">
                             <button onClick={togglePopup} className="close-popup">X</button>
-                            <div onClick={() => updateEnemyImagePath(index, "melee_spring-a28-i11")} className="cardenemy-assgin">
+                            <div onClick={() => updateEnemyImagePath(index, "&melee_spring-a28-i11")} className="cardenemy-assgin">
                                 <img src={`/assets/images/sprite/profile-spring.png`} alt={`Enemy spring`} />
                                 <button>Spring</button>
                             </div>
-                            <div onClick={() => updateEnemyImagePath(index, "melee_crab-a20-i20")} className="cardenemy-assgin">
+                            <div onClick={() => updateEnemyImagePath(index, "&melee_crab-a20-i20")} className="cardenemy-assgin">
                                 <img src={`/assets/images/sprite/profile-crab.png`} alt={`Enemy crab`} />
                                 <button>Crab</button>
                             </div>
