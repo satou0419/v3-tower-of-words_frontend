@@ -69,13 +69,16 @@ const WordsTab: React.FC<WordsTabProps> = ({
         if (!isNaN(wordID) && !isNaN(enemyID)) {
             const enemy = enemies.find((enemy, index) => index === enemyID);
             if (enemy) {
-                const updatedWords = enemy.words.filter((word, index) => index !== wordID);
+                const updatedWords = enemy.words.filter(
+                    (word, index) => index !== wordID
+                );
                 updateEnemyWords(enemyID, updatedWords);
             }
         }
 
         console.log(wordID)
         console.log(enemyID)
+
     }
 
     function handleDragOver(e: React.DragEvent) {
@@ -96,17 +99,15 @@ const WordsTab: React.FC<WordsTabProps> = ({
                             value={searchWords}
                             onChange={(e) => setSearchWords(e.target.value)}
                         />
-                        <div className="word-list" 
-                        onDrop={handleOnDrop}
-                        onDragOver={handleDragOver}
+                        <div
+                            className="word-list"
+                            onDrop={handleOnDrop}
+                            onDragOver={handleDragOver}
                         >
                             {simulationWords.length > 0 ? (
                                 simulationWords.map((wordItem, index) => (
                                     <span
-                                        key={
-                                            index ||
-                                            wordItem.word
-                                        }
+                                        key={index || wordItem.word}
                                         className={`word-item`}
                                         draggable
                                         onDragStart={(e) =>

@@ -1,7 +1,6 @@
 import { create } from "zustand";
 
 interface Enemy {
-    id: number;
     imagePath: string;
     words: number[];
 }

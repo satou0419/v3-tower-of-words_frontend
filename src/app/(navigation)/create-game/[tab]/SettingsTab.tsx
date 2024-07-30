@@ -32,12 +32,16 @@ interface SettingsTabProps {
     updateSettings: (updatedSettings: Partial<SimulationDetails>) => void;
 }
 
-const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) => {
+const SettingsTab: React.FC<SettingsTabProps> = ({
+    settings,
+    updateSettings,
+}) => {
     const [isEnabled, setIsEnabled] = useState(false);
 
-    const handleToggle = (field: keyof SimulationDetails) => (state: boolean) => {
-        updateSettings({ [field]: state });
-    };
+    const handleToggle =
+        (field: keyof SimulationDetails) => (state: boolean) => {
+            updateSettings({ [field]: state });
+        };
 
     useEffect(() => {
         if (settings) {
@@ -45,18 +49,23 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
         }
     }, [settings]);
 
-    const handleChange = (field: keyof SimulationDetails) => (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const value = event.target.type === 'checkbox' ? (event.target as HTMLInputElement).checked : event.target.value;
-        updateSettings({ [field]: value });
-    };
+    const handleChange =
+        (field: keyof SimulationDetails) =>
+        (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+            const value =
+                event.target.type === "checkbox"
+                    ? (event.target as HTMLInputElement).checked
+                    : event.target.value;
+            updateSettings({ [field]: value });
+        };
 
     const handleCreateGame = () => {
         console.log("Creating game with settings:", settings);
         createGame(settings);
         localStorage.removeItem("enemies");
         localStorage.removeItem("settings");
-    }
-    console.log(settings)
+    };
+    console.log(settings);
 
     return (
         <main className="setting-wrapper">
@@ -65,18 +74,20 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                     type="text"
                     placeholder="Enter Simulation Name"
                     value={settings.name}
-                    onChange={handleChange('name')}
+                    onChange={handleChange("name")}
                 />
                 <InputBox
                     type="datetime-local"
                     value={settings.deadline}
-                    onChange={handleChange('deadline')}
+                    onChange={handleChange("deadline")}
                 />
                 <select
                     value={settings.attackInterval}
-                    onChange={handleChange('attackInterval')}
+                    onChange={handleChange("attackInterval")}
                 >
-                    <option className="select-display" disabled value="">Attack Interval</option>
+                    <option className="select-display" disabled value="">
+                        Attack Interval
+                    </option>
                     <option value={15}>15</option>
                     <option value={20}>20</option>
                     <option value={25}>25</option>
@@ -90,9 +101,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                 </select>
                 <select
                     value={settings.studentLife}
-                    onChange={handleChange('studentLife')}
+                    onChange={handleChange("studentLife")}
                 >
-                    <option className="select-display" disabled value="">Student Life</option>
+                    <option className="select-display" disabled value="">
+                        Student Life
+                    </option>
                     <option value={1}>1</option>
                     <option value={2}>2</option>
                     <option value={3}>3</option>
@@ -104,9 +117,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                 </select>
                 <select
                     value={settings.numberOfAttempt}
-                    onChange={handleChange('numberOfAttempt')}
+                    onChange={handleChange("numberOfAttempt")}
                 >
-                    <option className="select-display" disabled value="">Number of Attempts</option>
+                    <option className="select-display" disabled value="">
+                        Number of Attempts
+                    </option>
                     <option value={1}>1</option>
                     <option value={2}>2</option>
                     <option value={3}>3</option>
@@ -117,19 +132,19 @@ const SettingsTab: React.FC<SettingsTabProps> = ({ settings, updateSettings }) =
                     className="toggle"
                     label="Items"
                     isEnabled={settings.items}
-                    onToggle={handleToggle('items')}
+                    onToggle={handleToggle("items")}
                 />
                 <Toggle
                     className="toggle"
                     label="Description"
                     isEnabled={settings.description}
-                    onToggle={handleToggle('description')}
+                    onToggle={handleToggle("description")}
                 />
                 <Toggle
                     className="toggle"
                     label="Pronunciation"
                     isEnabled={settings.pronunciation}
-                    onToggle={handleToggle('pronunciation')}
+                    onToggle={handleToggle("pronunciation")}
                 />
                 <button onClick={handleCreateGame}> Create Game </button>
             </section>

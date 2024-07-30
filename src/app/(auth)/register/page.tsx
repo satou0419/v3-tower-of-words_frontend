@@ -5,6 +5,7 @@ import "./register.scss";
 import Link from "next/link";
 import registerUser from "@/lib/auth-endpoint/registerUser";
 import Toast from "@/app/component/Toast/Toast";
+import { useRouter } from "next/navigation";
 
 interface FormData {
     username: string;
@@ -44,6 +45,8 @@ const Register: React.FC = () => {
         }));
     };
 
+    const route = useRouter();
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (formData.password !== formData.confirmPassword) {
@@ -60,6 +63,8 @@ const Register: React.FC = () => {
             setToastMessage("User registered successfully");
             setToastType("success");
             setShowToast(true);
+            route.push("/login");
+
             // Handle successful registration (e.g., redirect to login)
         } catch (error) {
             console.error("Registration failed:", error);
@@ -96,6 +101,8 @@ const Register: React.FC = () => {
                                 placeholder="Firstname"
                                 value={formData.firstname}
                                 onChange={handleChange}
+                                required
+                                autoFocus
                             />
                             <InputBox
                                 type="text"
@@ -103,6 +110,7 @@ const Register: React.FC = () => {
                                 placeholder="Lastname"
                                 value={formData.lastname}
                                 onChange={handleChange}
+                                required
                             />
                         </div>
 
@@ -112,6 +120,7 @@ const Register: React.FC = () => {
                             placeholder="Username"
                             value={formData.username}
                             onChange={handleChange}
+                            required
                         />
                         <InputBox
                             type="text"
@@ -119,6 +128,7 @@ const Register: React.FC = () => {
                             placeholder="Email"
                             value={formData.email}
                             onChange={handleChange}
+                            required
                         />
                         <InputBox
                             type="password"
@@ -126,6 +136,7 @@ const Register: React.FC = () => {
                             placeholder="Password"
                             value={formData.password}
                             onChange={handleChange}
+                            required
                         />
                         <InputBox
                             type="password"
@@ -133,11 +144,13 @@ const Register: React.FC = () => {
                             placeholder="Confirm Password"
                             value={formData.confirmPassword}
                             onChange={handleChange}
+                            required
                         />
                         <select
                             name="userType"
                             value={formData.userType}
                             onChange={handleChange}
+                            required
                         >
                             <option disabled value="">
                                 Select Type
