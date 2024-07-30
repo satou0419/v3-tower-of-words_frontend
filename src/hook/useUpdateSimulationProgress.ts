@@ -3,11 +3,13 @@ import BASE_URL from "@/util/baseUrl";
 import { useState, useCallback } from "react";
 
 interface SimulationProgressInput {
+    studentWordProgressID: number;
     simulationWordsID: number;
+    studentID: number;
     numberOfAttempts: number;
-    correct: boolean;
+    isCorrect: boolean;
     score: number;
-    duration: string;
+    duration: number;
     accuracy: number;
 }
 
@@ -19,7 +21,9 @@ interface UseUpdateSimulationProgressResult {
 
 const { userID } = useAuthStore.getState();
 
-const useUpdateSimulationProgress = (): UseUpdateSimulationProgressResult => {
+const useUpdateSimulationProgress = (
+    simulationAttemptID: number
+): UseUpdateSimulationProgressResult => {
     const [loading, setLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
@@ -30,9 +34,9 @@ const useUpdateSimulationProgress = (): UseUpdateSimulationProgressResult => {
 
             try {
                 const response = await fetch(
-                    `${BASE_URL}/student_word_progress/insert`,
+                    `${BASE_URL}/student_word_progress/edit/${simulationAttemptID}`,
                     {
-                        method: "POST",
+                        method: "PUT",
                         headers: {
                             "Content-Type": "application/json",
                         },

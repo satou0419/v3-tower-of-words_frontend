@@ -19,7 +19,7 @@ const getUserDetails = async () => {
 
     try {
         const response = await fetch(
-            `${BASE_URL}/user_details/get_user_detail?user_id=${userID}`
+            `${BASE_URL}/user_details/get_user_detail?userID=${userID}`
         );
 
         if (!response.ok) {

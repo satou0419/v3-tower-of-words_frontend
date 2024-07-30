@@ -1,13 +1,11 @@
 import { create } from "zustand";
 
 interface Enemy {
-    id: number;
     imagePath: string;
     words: SimulationWords[];
 }
 
 interface SimulationWords {
-    id: number;
     word: string;
 }
 

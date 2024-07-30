@@ -18,6 +18,7 @@ import ConfettiWrapper from "@/app/component/Confetti/Confetti";
 import useSimulationDetails from "@/hook/useSimulationDetails";
 import useTimer from "@/util/timer";
 import useUpdateSimulationProgress from "@/hook/useUpdateSimulationProgress";
+import { useAuthStore } from "@/store/authStore";
 
 interface SimulationWordsArray {
     simulationWordsID: number;
@@ -45,23 +46,29 @@ interface UserItem {
 }
 
 const SimulationGameplay = () => {
+    const { userID } = useAuthStore.getState();
     const searchParams = useSearchParams();
 
-    //#region Progress Setters
-    const [duration, setDuration] = useState("");
-    const [simulationWordsID, setSimulationWordsID] = useState(0);
-    const [noOfAttempt, setNoOfAttempt] = useState(0);
-    const [isCorrect, setIsCorrect] = useState(false);
-    const [score, setScore] = useState(0);
-    const [accuracy, setAccuracy] = useState(0);
-
-    //#endregion
     const simulationIDParam = searchParams.get("simulationID");
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
         : NaN;
     // const [loading, setLoading] = useState<boolean>(true);
     const simulationDetails = useSimulationDetails(simulationID);
+    const studentLife = simulationDetails?.simulationDetails?.studentLife ?? 0;
+    const [lives, setLives] = useState<number>(studentLife);
+
+    // Set the initial state and update it if studentLife changes
+    useEffect(() => {
+        setLives(studentLife);
+    }, [studentLife]);
+    const addLives = (amount: number) => {
+        setLives((prevLives) => prevLives + amount);
+    };
+
+    const subtractLives = (amount: number) => {
+        setLives((prevLives) => Math.max(prevLives - amount, 0)); // Ensure lives don't go below 0
+    };
 
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
@@ -149,6 +156,9 @@ const SimulationGameplay = () => {
         // Add additional logic here to reset the game state
     };
 
+    useEffect(() => {
+        console.log("Simu", simulationDetails.simulationDetails);
+    }, []);
     const [enemies, setEnemies] = useState<SimulationEnemy[]>([]);
 
     useEffect(() => {
@@ -193,6 +203,10 @@ const SimulationGameplay = () => {
     );
 
     useEffect(() => {
+        console.log(simulationDetails.simulationDetails);
+    }, []);
+
+    useEffect(() => {
         getUserDetails();
     }, []);
     const characterDetails = useImageParse(userEquipped.equippedCharacter);
@@ -230,6 +244,8 @@ const SimulationGameplay = () => {
         setTypedWord(event.target.value);
     };
 
+    const [isLastEnemyWord, setIsLastEnemyWord] = useState(false);
+
     const handleEnemyAttack = () => {
         if (enemyDetails.attackType == "melee") {
             setEnemyAttackType("expand-width");
@@ -247,7 +263,7 @@ const SimulationGameplay = () => {
                 setCharacterAttackType("");
 
                 setTimeout(() => {
-                    if (lives === 1) {
+                    if (lives === 1 || isLastEnemyWord === true) {
                         setShowGameOverModal(true);
                     }
                 }, 500);
@@ -333,8 +349,6 @@ const SimulationGameplay = () => {
     const incrementMistake = () => {
         setMistakes((prevMistakes) => prevMistakes + 1);
     };
-    const { lives, subtractLives, addLives } = useGameplayStore();
-    const { updateProgress, loading, error } = useUpdateSimulationProgress();
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -342,30 +356,47 @@ const SimulationGameplay = () => {
         const currentWord =
             currentEnemy.words[currentWordIndex].word.toLowerCase();
 
+        console.log(
+            `Submitting: Enemy ${currentEnemyIndex + 1}/${enemies.length}`
+        );
+        console.log(
+            `Word ${currentWordIndex + 1}/${
+                currentEnemy.words.length
+            }: ${typedWord.toLowerCase()}`
+        );
+        console.log(`Current word to match: ${currentWord}`);
+
+        // Check if the current word matches the expected word or syllable
         if (
             typedWord.toLowerCase() === currentWord ||
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
+            console.log("Correct word entered.");
 
             time.reset();
             const timeSec = time.getFormattedTimeInSeconds();
-            setIsCorrect(true);
 
+            //#region Update Progress
+
+            // const studentWordProgressID = simulationDetails.simulationDetails?.enemy[currentEnemyIndex].words[current
             const simulationWordsID =
                 simulationDetails.simulationDetails?.enemy[currentEnemyIndex]
-                    .words[currentWordIndex].simulationWordsID || 0;
+                    .words[currentWordIndex].simulationWordsID;
 
-            const studentLive =
-                simulationDetails.simulationDetails?.studentLife;
-            const liveValue = studentLive ?? 0;
+            const studentID = userID;
+            const numberOfAttempts = mistakes;
+            const duration = time.getFormattedTimeInSeconds();
 
-            const accuracy = ((liveValue - mistakes) / liveValue) * 100;
+            const accuracy = ((studentLife - mistakes) / studentLife) * 100;
+            console.log("Simulation Words ID: ", simulationWordsID);
+            console.log("Stunde ID: ", studentID);
+            console.log("Number of Attempts: ", numberOfAttempts);
+            console.log("Duration: ", duration);
+            console.log("Accuracy", accuracy);
 
-            // Update state
-            setNoOfAttempt(mistakes);
-            setMistakes(0);
-            setAccuracy(accuracy);
+            //#endregion
+
             setTypedWord("");
             handleCharacterAttack();
 
@@ -383,41 +414,50 @@ const SimulationGameplay = () => {
                 accuracy,
             };
 
-            // Submit progress data
-            try {
-                await updateProgress(progress);
-            } catch (err) {
-                console.error("Failed to update progress:", err);
-            }
-
             setTimeout(() => {
                 setIsCharacterAttacking(false);
+                setLives(lives);
 
-                if (currentWordIndex === currentEnemy.words.length - 1) {
-                    // Last word for this enemy defeated
+                // Check if the current word is the last one for this enemy
+                const isLastWord =
+                    currentWordIndex === currentEnemy.words.length - 1;
+                // Check if the current enemy is the last one
+                const isLastEnemy = currentEnemyIndex === enemies.length - 1;
+
+                if (isLastWord && isLastEnemy) {
+                    // Last word of the last enemy
+                    console.log("Last word of the last enemy.");
                     setDefeatedEnemies((prevDefeatedEnemies) => [
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
                     ]);
 
                     setTimeout(() => {
-                        if (currentEnemyIndex === enemies.length - 1) {
-                            // All enemies defeated, show confetti
-                            setShowConfetti(true);
-                            setShowConquerFloorModal(true); // Show the conquering floor modal
-                        } else {
-                            setCurrentEnemyIndex(currentEnemyIndex + 1);
-                            setCurrentWordIndex(0);
-                            setIsPronunciationLocked(true);
-                        }
-                    }, 500); // Add delay before switching to next enemy (adjust as needed)
+                        console.log("All enemies defeated.");
+                        setShowConfetti(true);
+                        setShowConquerFloorModal(true); // Show the conquering floor modal
+                    }, 500); // Add delay before showing confetti and modal
+                } else if (isLastWord) {
+                    // Last word of current enemy but not the last enemy
+                    console.log("Last word for this enemy.");
+                    setDefeatedEnemies((prevDefeatedEnemies) => [
+                        ...prevDefeatedEnemies,
+                        currentEnemyIndex,
+                    ]);
+                    setCurrentEnemyIndex(currentEnemyIndex + 1);
+                    setCurrentWordIndex(0);
+                    setIsPronunciationLocked(true);
                 } else {
+                    console.log(
+                        `Proceeding to next word: Word ${currentWordIndex + 1}`
+                    );
                     setCurrentWordIndex(currentWordIndex + 1);
                     setIsPronunciationLocked(true);
                 }
             }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
         } else {
-            // Check if lives have reached 0
+            // Incorrect input
+            console.log("Incorrect word entered.");
             incrementMistake();
             handleMissedAttack();
             setTimeout(() => {
