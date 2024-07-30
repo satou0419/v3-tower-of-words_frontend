@@ -10,6 +10,7 @@ interface Enemy {
 }
 
 interface SimulationWords {
+    simulationWordsID: number;
     creatorID: number;
     word: string;
     silentIndex: string;

@@ -6,6 +6,7 @@ import "./creategame.scss";
 import SettingsTab from "./SettingsTab";
 import WordsTab from "./WordsTab";
 import useTabManagement from "@/hook/useTab";
+import { useRoomStore } from "@/store/roomStore";
 
 interface Enemy {
     imagePath: string;
@@ -13,6 +14,7 @@ interface Enemy {
 }
 
 interface SimulationWords {
+    simulationWordsID: number;
     creatorID: number;
     word: string;
     silentIndex: string;
@@ -38,9 +40,10 @@ interface SimulationDetails {
 
 export default function CreateGame() {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
-    const [room, setRoom] = useState<Room>({ roomID: 1 });
+    const { currentRoom } = useRoomStore();
+    const [room, setRoom] = useState<Room>({ roomID: currentRoom.roomID });
     const [settings, setSettings] = useState<SimulationDetails>({
-        roomID: { roomID: 1 },
+        roomID: { roomID: currentRoom.roomID },
         simulationType: "Spelling",
         name: "",
         deadline: "",

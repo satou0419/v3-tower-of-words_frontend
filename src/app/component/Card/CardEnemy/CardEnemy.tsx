@@ -5,6 +5,7 @@ import useImageParse from "@/hook/useImageParse";
 import { useAuthStore } from "@/store/authStore";
 
 interface SimulationWords {
+    simulationWordsID: number;
     creatorID: number;
     word: string;
     silentIndex: string;
@@ -51,9 +52,11 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
         e.preventDefault();
 
         const word = e.dataTransfer.getData("word");
+        const simulationWordsID = parseInt(e.dataTransfer.getData("simulationWordsID"));
 
         if (word) {
             const newWord: SimulationWords = {
+                simulationWordsID: simulationWordsID,
                 creatorID: userID,
                 word: word,
                 silentIndex: "",
@@ -69,6 +72,9 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
         e.dataTransfer.setData("word", word);
         e.dataTransfer.setData("wordID", wordID.toString());
         e.dataTransfer.setData("enemyID", enemyID.toString());
+        console.log(word)
+        console.log(wordID)
+        console.log(enemyID)
     }
 
     function handleDragOver(e: React.DragEvent) {
@@ -107,12 +113,12 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                     onDragOver={handleDragOver}
                     >
                         <p>Drag and Drop</p>
-                        {enemy.words.map((wordItem, index) => (
+                        {enemy.words.map((wordItem, id) => (
                             <span
-                                key={index}
+                                key={id}
                                 className={`word-item`}
                                 draggable
-                                onDragStart={(e) => handleOnDrag(e, wordItem.word, index, enemy)}
+                                onDragStart={(e) => handleOnDrag(e, wordItem.word, id, index)}
                             >
                                 {wordItem.word}
                             </span>    

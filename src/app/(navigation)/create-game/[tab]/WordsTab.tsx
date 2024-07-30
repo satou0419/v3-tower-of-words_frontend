@@ -11,6 +11,7 @@ interface Enemy {
 }
 
 interface SimulationWords {
+    simulationWordsID: number;
     creatorID: number;
     word: string;
     silentIndex: string;
@@ -36,6 +37,8 @@ const WordsTab: React.FC<WordsTabProps> = ({
         []
     );
 
+    console.log(simulationWords)
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -50,8 +53,11 @@ const WordsTab: React.FC<WordsTabProps> = ({
         fetchData();
     }, []);
 
-    function handleOnDrag(e: React.DragEvent, word: string) {
+    function handleOnDrag(e: React.DragEvent, word: string, simulationWordsID: number) {
+        console.log(simulationWordsID)
         e.dataTransfer.setData("word", word);
+        e.dataTransfer.setData("simulationWordsID", simulationWordsID.toString());
+        
     }
 
     function handleOnDrop(e: React.DragEvent) {
@@ -70,7 +76,6 @@ const WordsTab: React.FC<WordsTabProps> = ({
 
         console.log(wordID)
         console.log(enemyID)
-
     }
 
     function handleDragOver(e: React.DragEvent) {
@@ -105,7 +110,7 @@ const WordsTab: React.FC<WordsTabProps> = ({
                                         className={`word-item`}
                                         draggable
                                         onDragStart={(e) =>
-                                            handleOnDrag(e, wordItem.word)
+                                            handleOnDrag(e, wordItem.word, wordItem.simulationWordsID)
                                         }
                                     >
                                         {wordItem.word}
