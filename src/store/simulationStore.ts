@@ -3,10 +3,11 @@ import { create } from "zustand";
 interface Enemy {
     id: number;
     imagePath: string;
-    words: SimulationWords[];
+    words: number[];
 }
 
 interface SimulationWords {
+    simulationWordsID: number;
     word: string;
 }
 

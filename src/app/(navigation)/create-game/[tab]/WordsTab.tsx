@@ -7,7 +7,7 @@ import viewSimulationWords from "@/lib/simulation-endpoint/viewSimulationWords";
 
 interface Enemy {
     imagePath: string;
-    words: SimulationWords[];
+    words: number[];
 }
 
 interface SimulationWords {
@@ -21,7 +21,7 @@ interface WordsTabProps {
     enemies: Enemy[];
     addEnemy: () => void;
     removeEnemy: (id: number) => void;
-    updateEnemyWords: (id: number, updatedWords: SimulationWords[]) => void;
+    updateEnemyWords: (id: number, updatedWords: number[]) => void;
     updateEnemyImagePath: (id: number, imagePath: string) => void;
 }
 

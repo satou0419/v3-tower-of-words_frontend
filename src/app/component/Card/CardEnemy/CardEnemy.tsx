@@ -13,17 +13,14 @@ interface SimulationWords {
 
 interface Enemy {
     imagePath: string;
-    words: SimulationWords[];
+    words: number[];
 }
 
 interface CardEnemyProps {
-    enemy: {
-        imagePath: string;
-        words: SimulationWords[];
-    };
+    enemy: Enemy;
     index: number;
     removeEnemy: (id: number) => void;
-    updateEnemyWords: (id: number, updatedWords: SimulationWords[]) => void;
+    updateEnemyWords: (id: number, updatedWords: number[]) => void;
     updateEnemyImagePath: (id: number, imagePath: string) => void;
 }
 
@@ -55,24 +52,15 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
         const simulationWordsID = parseInt(e.dataTransfer.getData("simulationWordsID"));
 
         if (word) {
-            const newWord: SimulationWords = {
-                simulationWordsID: simulationWordsID,
-                creatorID: userID,
-                word: word,
-                silentIndex: "",
-            };
-
-            updateEnemyWords(index, [...enemy.words, newWord]);
+            updateEnemyWords(index, [...enemy.words, simulationWordsID]);
         }
         console.log(word)
         console.log(enemy)
     }
 
-    function handleOnDrag(e: React.DragEvent, word: string, wordID: number, enemyID: any ) {
-        e.dataTransfer.setData("word", word);
+    function handleOnDrag(e: React.DragEvent, wordID: number, enemyID: any ) {
         e.dataTransfer.setData("wordID", wordID.toString());
         e.dataTransfer.setData("enemyID", enemyID.toString());
-        console.log(word)
         console.log(wordID)
         console.log(enemyID)
     }
@@ -118,9 +106,9 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                                 key={id}
                                 className={`word-item`}
                                 draggable
-                                onDragStart={(e) => handleOnDrag(e, wordItem.word, id, index)}
+                                onDragStart={(e) => handleOnDrag(e, id, index)}
                             >
-                                {wordItem.word}
+                                {wordItem}
                             </span>    
                         ))}
                     </div>            

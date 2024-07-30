@@ -10,11 +10,11 @@ import { useRoomStore } from "@/store/roomStore";
 
 interface Enemy {
     imagePath: string;
-    words: SimulationWords[];
+    words: number[];
 }
 
 interface SimulationWords {
-    simulationWordsID: number;
+    //simulationWordsID: number;
     creatorID: number;
     word: string;
     silentIndex: string;
@@ -108,7 +108,7 @@ export default function CreateGame() {
         setEnemies([...enemies, newEnemy]);
     };
 
-    const updateEnemyWords = (id: number, updatedWords: SimulationWords[]) => {
+    const updateEnemyWords = (id: number, updatedWords: number[]) => {
         setEnemies(
             enemies.map((enemy, index) =>
                 index === id ? { ...enemy, words: updatedWords } : enemy

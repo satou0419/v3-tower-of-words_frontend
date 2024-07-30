@@ -6,14 +6,7 @@ import createGame from "@/lib/simulation-endpoint/createGame";
 
 interface Enemy {
     imagePath: string;
-    words: SimulationWords[];
-}
-
-interface SimulationWords {
-    simulationWordsID: number;
-    creatorID: number;
-    word: string;
-    silentIndex: string;
+    words: number[];
 }
 
 interface Room {

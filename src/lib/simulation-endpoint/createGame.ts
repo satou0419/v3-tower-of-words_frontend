@@ -2,13 +2,7 @@ import BASE_URL from "@/util/baseUrl";
 
 interface Enemy {
     imagePath: string;
-    words: SimulationWords[];
-}
-
-interface SimulationWords {
-    creatorID: number;
-    word: string;
-    silentIndex: string;
+    words: number[];
 }
 
 interface Room {
