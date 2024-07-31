@@ -2,15 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import Draggable  from "react-draggable";
 import "./cardenemy.scss";
 import useImageParse from "@/hook/useImageParse";
-import { useAuthStore } from "@/store/authStore";
 import useFetchAllSimulationWords from "@/hook/useAllSimulationWords";
-
-interface SimulationWords {
-    simulationWordsID: number;
-    creatorID: number | null;
-    word: string | null;
-    silentIndex: string | null;
-}
 
 interface Enemy {
     imagePath: string;
@@ -36,8 +28,6 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
     const [showPopup, setShowPopup] = useState(false);
     const name = useImageParse(enemy.imagePath);
     const popupRef = useRef<HTMLDivElement>(null);
-    const { userID } = useAuthStore.getState();
-    const [profile, setProfile] = useState(false);
     const simulationWords = useFetchAllSimulationWords(enemy.words);
 
     console.log(simulationWords);

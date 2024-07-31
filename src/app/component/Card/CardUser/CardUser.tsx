@@ -3,7 +3,7 @@ import "./carduser.scss";
 
 interface CardUserProps {
     username?: string;
-    time?: string;
+    time?: string | null;
     score?: number;
     className?: string;
 }

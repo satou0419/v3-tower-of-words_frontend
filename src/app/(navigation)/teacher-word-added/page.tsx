@@ -5,6 +5,8 @@ import { InputLine } from "@/app/component/Input/Input";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useRouter } from "next/navigation";
+import { useSimulationStore } from "@/store/simulationStore";
+import useFetchAllSimulationWords from "@/hook/useAllSimulationWords";
 
 const words = [
     {
@@ -70,17 +72,35 @@ const words = [
             "acknowledge (a significant or happy day or event) with a social gathering or enjoyable activity.",
     },
 ];
+
+interface SimulationWords {
+    simulationWordsID: number;
+    creatorID: number;
+    word: string;
+    silentIndex: string;
+}
+
 export default function TeacherWordAdded() {
+    const { currentSimulation } = useSimulationStore();
+    const [ simulationWordsID, setSimulationWordsID ] = useState<number[]>([]);
     const router = useRouter();
     const pathname = usePathname();
     const pathSegments = pathname.split("/");
-
-    const initialTab =
-        pathSegments.length > 2 ? pathSegments[2] : "word-vocabulary";
+    const initialTab = pathSegments.length > 2 ? pathSegments[2] : "word-vocabulary";
     const [activeTab, setActiveTab] = useState<string>(initialTab);
     const [selectedWord, setSelectedWord] = useState(words[5]); // Default to "Happy"
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredWords, setFilteredWords] = useState(words);
+    const simulationWords = useFetchAllSimulationWords(simulationWordsID).simulationWords;
+
+    console.log(simulationWords);
+
+    useEffect(() => {
+        if (currentSimulation && currentSimulation.enemy) {
+            const wordsID = currentSimulation.enemy.flatMap(enemy => enemy.words);
+            setSimulationWordsID(wordsID);
+        }
+    }, [currentSimulation]);
 
     useEffect(() => {
         const currentPathSegments = pathname.split("/");
