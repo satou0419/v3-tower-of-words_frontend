@@ -16,7 +16,7 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
+    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;

@@ -20,7 +20,7 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
+    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -115,7 +115,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     <option value={7}>7</option>
                     <option value={8}>8</option>
                 </select>
-                <select
+                {/* <select
                     value={settings.numberOfAttempt}
                     onChange={handleChange("numberOfAttempt")}
                 >
@@ -127,7 +127,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     <option value={3}>3</option>
                     <option value={4}>4</option>
                     <option value={5}>5</option>
-                </select>
+                </select> */}
                 <Toggle
                     className="toggle"
                     label="Items"

@@ -31,7 +31,7 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
+    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -49,7 +49,7 @@ export default function CreateGame() {
         deadline: "",
         attackInterval: 20,
         studentLife: 6,
-        numberOfAttempt: 1,
+        // numberOfAttempt: 1,
         items: true,
         description: true,
         pronunciation: true,

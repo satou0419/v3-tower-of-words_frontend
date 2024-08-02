@@ -88,7 +88,7 @@ export default function TeacherWordAdded() {
     const pathSegments = pathname.split("/");
     const initialTab = pathSegments.length > 2 ? pathSegments[2] : "word-vocabulary";
     const [activeTab, setActiveTab] = useState<string>(initialTab);
-    const [selectedWord, setSelectedWord] = useState(words[5]); // Default to "Happy"
+    const [selectedWord, setSelectedWord] = useState(words[5]);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredWords, setFilteredWords] = useState(words);
     const simulationWords = useFetchAllSimulationWords(simulationWordsID).simulationWords;
