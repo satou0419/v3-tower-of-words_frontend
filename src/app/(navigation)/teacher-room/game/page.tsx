@@ -3,7 +3,6 @@
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./game.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
-import useUserInfoStore from "@/store/userInfoStore";
 import { useSimulationStore } from "@/store/simulationStore";
 import { useRoomStore } from "@/store/roomStore";
 import { useRouter } from "next/navigation";
@@ -53,7 +52,6 @@ interface SimulationDetails {
 
 export default function Game() {
     const { currentRoom } = useRoomStore();
-    const { userType } = useUserInfoStore.getState();
     const { simulations, setCurrentSimulation } = useSimulationStore();
     const router = useRouter();
 

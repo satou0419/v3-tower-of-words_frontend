@@ -57,7 +57,6 @@ const WordsTab: React.FC<WordsTabProps> = ({
         console.log(simulationWordsID)
         e.dataTransfer.setData("word", word);
         e.dataTransfer.setData("simulationWordsID", simulationWordsID.toString());
-        
     }
 
     function handleOnDrop(e: React.DragEvent) {
@@ -73,17 +72,21 @@ const WordsTab: React.FC<WordsTabProps> = ({
                     (word, index) => index !== wordID
                 );
                 updateEnemyWords(enemyID, updatedWords);
+                setSimulationWords(simulationWords.filter(word => word.simulationWordsID !== wordID));
             }
         }
 
         console.log(wordID)
         console.log(enemyID)
-
     }
 
     function handleDragOver(e: React.DragEvent) {
         e.preventDefault();
     }
+
+    const filteredWords = simulationWords.filter(
+        word => !enemies.some(enemy => enemy.words.includes(word.simulationWordsID))
+    );
 
     console.log(enemies);
 
@@ -104,8 +107,8 @@ const WordsTab: React.FC<WordsTabProps> = ({
                             onDrop={handleOnDrop}
                             onDragOver={handleDragOver}
                         >
-                            {simulationWords.length > 0 ? (
-                                simulationWords.map((wordItem, index) => (
+                            {filteredWords.length > 0 ? (
+                                filteredWords.map((wordItem, index) => (
                                     <span
                                         key={index || wordItem.word}
                                         className={`word-item`}

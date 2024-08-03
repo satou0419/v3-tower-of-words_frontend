@@ -67,6 +67,8 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     };
     console.log(settings);
 
+    
+
     return (
         <main className="setting-wrapper">
             <section className="setting">

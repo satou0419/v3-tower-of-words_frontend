@@ -7,6 +7,8 @@ import SettingsTab from "./SettingsTab";
 import WordsTab from "./WordsTab";
 import useTabManagement from "@/hook/useTab";
 import { useRoomStore } from "@/store/roomStore";
+import { useRouter } from "next/navigation";
+import useUserInfoStore from "@/store/userInfoStore";
 
 interface Enemy {
     imagePath: string;
@@ -56,6 +58,8 @@ export default function CreateGame() {
         enemy: [],
     });
     const [isClient, setIsClient] = useState(false);
+    const router = useRouter();
+    const { userType } = useUserInfoStore.getState();
 
     useEffect(() => {
         setIsClient(true);
@@ -134,6 +138,12 @@ export default function CreateGame() {
             ...updatedSettings,
         }));
     };
+
+    useEffect(() => {
+        if (!currentRoom) {
+            router.push(`/${userType.toLowerCase()}-room`)
+        }
+    }, [currentRoom]);
 
     const tabData = [
         {

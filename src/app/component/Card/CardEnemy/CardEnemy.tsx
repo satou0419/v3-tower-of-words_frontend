@@ -46,7 +46,9 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
         const word = e.dataTransfer.getData("word");
         const simulationWordsID = parseInt(e.dataTransfer.getData("simulationWordsID"));
 
-        if (word) {
+        const idExists = enemy.words.some(wordItem => wordItem === simulationWordsID);
+
+        if (word && !idExists) {
             updateEnemyWords(index, [...enemy.words, simulationWordsID]);
         }
         console.log(word)
