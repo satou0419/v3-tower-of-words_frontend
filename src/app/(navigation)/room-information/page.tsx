@@ -50,8 +50,7 @@ export default function RoomInformation() {
     ];
 
     const inputSetting = [
-        { type: "text", placeholder: "Update Simulation Name" },
-        { type: "datetime-local", placeholder: "Update Time" },
+        { type: "text", placeholder: "Update Room Name" },
     ];
 
     const inputAddStudent = [

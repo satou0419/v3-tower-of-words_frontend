@@ -64,7 +64,6 @@ export default function StudentRoom() {
             <section className="studentroom-container">
                 <section className="studentroom-control">
                     <h1>Rooms</h1>
-                    <Link href="/archive/word-vocabulary">My Words</Link>
                 </section>
 
                 <div className="studentroom-room">

@@ -67,6 +67,10 @@ export default function Leaderboard() {
                             <button type="button" onClick={handleViewWordClick}>View Words</button>
                             <button type="button">Create a Copy</button>
                         </div>
+
+                        <div className="button-group">
+                            <button type="button" >Game Assessment</button>
+                        </div>
                         <CardSetting
                             title="Settings"
                             inputs={inputSetting}

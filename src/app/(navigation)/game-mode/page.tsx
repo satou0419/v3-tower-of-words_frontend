@@ -17,7 +17,7 @@ export default function GameMode() {
     return (
         <main className="gamemode-wrapper">
             <section className="gamemode-container">
-                <button type="button">Back</button>
+                <button onClick={() => router.back()} type="button">Back</button>
 
                 <section className="gamemode-content">
                     <h1>Choose Game Mode</h1>
