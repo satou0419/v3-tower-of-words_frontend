@@ -6,7 +6,6 @@ import "./teacherroom.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
 import { useRoomStore } from "@/store/roomStore";
 import { useSimulationStore } from "@/store/simulationStore";
-import useUserInfoStore from "@/store/userInfoStore";
 import { useRouter } from "next/navigation";
 import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom"; // Assuming this endpoint fetches rooms for teachers
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
@@ -14,7 +13,6 @@ import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
 export default function TeacherRoom() {
     const { rooms, setRoom, setCurrentRoom } = useRoomStore();
     const { setSimulation } = useSimulationStore();
-    const { userType } = useUserInfoStore.getState();
     const router = useRouter();
 
     useEffect(() => {
@@ -33,11 +31,11 @@ export default function TeacherRoom() {
     const handleCardClick = async (room: any) => {
         try {
             const roomSimulation = await viewRoomSimulations(room.roomID);
+            router.push(`teacher-room/game?roomID=${room.roomID}`);
             setSimulation(roomSimulation);
             setCurrentRoom(room);
             console.log(roomSimulation);
             console.log(room);
-            router.push("/teacher-room/game");
         } catch (error) {
             console.error("Failed to fetch simulations for the room:", error);
         }

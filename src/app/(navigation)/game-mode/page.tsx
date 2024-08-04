@@ -1,17 +1,21 @@
 "use client"
 import CardTab from "@/app/component/Card/CardTab/CardTab";
 import "./gamemode.scss";
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function GameMode() {
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const roomIDParam = searchParams.get("roomID");
+    const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
 
     const handleGameModeClick = (type: string) => {
         const settings = localStorage.getItem("settings");
         let updatedSettings = settings ? JSON.parse(settings) : {};
         updatedSettings.simulationType = type;
         localStorage.setItem("settings", JSON.stringify(updatedSettings));
-        router.push('/create-game/my-word');
+        router.push(`/create-game/my-word`);
     };
     
     return (

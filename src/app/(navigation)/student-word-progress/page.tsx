@@ -1,6 +1,6 @@
 "use client";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
-import "./teacherwordadded.scss";
+import "./studentwordprogress.scss";
 import { InputLine } from "@/app/component/Input/Input";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
@@ -80,7 +80,7 @@ interface SimulationWords {
     silentIndex: string;
 }
 
-export default function TeacherWordAdded() {
+export default function StudentWordProgress() {
     const { currentSimulation } = useSimulationStore();
     const [ simulationWordsID, setSimulationWordsID ] = useState<number[]>([]);
     const router = useRouter();
@@ -132,9 +132,9 @@ export default function TeacherWordAdded() {
 
     return (
         <main className="main-wrapper">
-            <button>Back</button>
-            <section className="wordarchive-container">
-                <CardWord className="wordarchive-left">
+            <button onClick={() => router.back()} type="button">Back</button>
+            <section className="studentwordprogress-container">
+                <CardWord className="studentwordprogress-left">
                     <div className="left-container">
                         <InputLine
                             placeholder="Search..."
@@ -159,7 +159,7 @@ export default function TeacherWordAdded() {
                         </div>
                     </div>
                 </CardWord>
-                <CardWord className="wordarchive-right">
+                <CardWord className="studentwordprogress-right">
                     <section className="right-container">
                         <div className="word-control">
                             <button>Remove</button>

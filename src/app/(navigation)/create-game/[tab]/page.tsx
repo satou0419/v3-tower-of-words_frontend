@@ -43,7 +43,10 @@ interface SimulationDetails {
 export default function CreateGame() {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
     const { currentRoom } = useRoomStore();
-    const [room, setRoom] = useState<Room>({ roomID: currentRoom.roomID });
+    const [isClient, setIsClient] = useState(false);
+    const router = useRouter();
+    const { userType } = useUserInfoStore.getState();
+    
     const [settings, setSettings] = useState<SimulationDetails>({
         roomID: { roomID: currentRoom.roomID },
         simulationType: "Spelling",
@@ -57,9 +60,12 @@ export default function CreateGame() {
         pronunciation: true,
         enemy: [],
     });
-    const [isClient, setIsClient] = useState(false);
-    const router = useRouter();
-    const { userType } = useUserInfoStore.getState();
+
+    useEffect(() => {
+        if(currentRoom.roomID == 0 && userType) {
+            router.push(`/${userType.toLowerCase()}-room`);
+        }
+    }, []);
 
     useEffect(() => {
         setIsClient(true);
@@ -92,15 +98,15 @@ export default function CreateGame() {
         if (isClient) {
             setSettings((prevSettings) => ({
                 ...prevSettings,
-                roomID: room,
+                roomID: currentRoom,
                 enemy: enemies,
             }));
         }
-    }, [room, enemies]);
+    }, [currentRoom, enemies]);
 
     const { activeTab, handleTabChange } = useTabManagement(
         "/create-game",
-        "my-word"
+        `my-word`
     );
 
     const addEnemy = () => {
@@ -148,7 +154,7 @@ export default function CreateGame() {
     const tabData = [
         {
             title: "Words",
-            id: "my-word",
+            id: `my-word`,
             content: (
                 <WordsTab
                     enemies={enemies}
@@ -161,7 +167,7 @@ export default function CreateGame() {
         },
         {
             title: "Setting",
-            id: "setting",
+            id: `setting`,
             content: (
                 <SettingsTab
                     settings={settings}

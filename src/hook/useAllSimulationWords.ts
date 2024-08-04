@@ -4,7 +4,7 @@ import BASE_URL from "@/util/baseUrl";
 interface SimulationWords {
     simulationWordsID: number;
     creatorID: number | null;
-    word: string | null;
+    word: string;
     silentIndex: string | null;
 }
 

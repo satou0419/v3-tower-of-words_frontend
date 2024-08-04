@@ -36,7 +36,7 @@
     transition: all 0.3s ease;
 }
 
-.wordarchive-container {
+.studentwordprogress-container {
     height: 100%;
     width: 100%;
     display: flex;
@@ -46,8 +46,8 @@
     transition: all 0.3s ease;
 }
 
-.wordarchive-left,
-.wordarchive-right {
+.studentwordprogress-left,
+.studentwordprogress-right {
     height: 90%;
     width: 40%;
 
@@ -73,7 +73,7 @@
     }
 }
 
-.wordarchive-left {
+.studentwordprogress-left {
     .left-container {
         height: 90%;
         width: 90%;
@@ -140,14 +140,14 @@
     }
 }
 
-.wordarchive-spine {
+.studentwordprogress-spine {
     height: 60%;
     width: 1em;
     background-color: #666666;
     transition: all 0.3s ease;
 }
 
-.wordarchive-right {
+.studentwordprogress-right {
     color: #fff;
 
     .cardword-card {
