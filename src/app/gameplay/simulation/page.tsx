@@ -13,24 +13,13 @@ import useProgressEquippedStore from "@/store/progressEquippedStore";
 import getUserDetails from "@/lib/user-endpoint/getUserDetails";
 import getUserItems from "@/lib/item-endpoint/getUserItem";
 import useItem from "@/hook/useItem";
-import { useGameplayStore } from "@/store/gameplayStore";
 import ConfettiWrapper from "@/app/component/Confetti/Confetti";
 import useSimulationDetails from "@/hook/useSimulationDetails";
 import useTimer from "@/util/timer";
 import useUpdateSimulationProgress from "@/hook/useUpdateSimulationProgress";
 import { useAuthStore } from "@/store/authStore";
+import useFetchSimulationWords from "@/hook/useSimulationWord";
 
-interface SimulationWordsArray {
-    simulationWordsID: number;
-    creatorID: number;
-    word: string;
-    silentIndex: string;
-}
-interface SimulationEnemy {
-    simulationEnemyID: number;
-    imagePath: string;
-    words: SimulationWordsArray[];
-}
 interface Item {
     itemID: number;
     name: string;
@@ -43,6 +32,19 @@ interface UserItem {
     quantity: number;
     userID: number;
     itemID: Item;
+}
+
+interface SimulationWordsArray {
+    simulationWordsID: number;
+    creatorID: number;
+    word: string;
+    silentIndex: string; // Keeping silentIndex as string
+}
+
+export interface SimulationEnemy {
+    simulationEnemyID: number;
+    imagePath: string;
+    words: number[]; // Array of numbers
 }
 
 const SimulationGameplay = () => {
@@ -156,14 +158,15 @@ const SimulationGameplay = () => {
         // Add additional logic here to reset the game state
     };
 
-    useEffect(() => {
-        console.log("Simu", simulationDetails.simulationDetails);
-    }, []);
     const [enemies, setEnemies] = useState<SimulationEnemy[]>([]);
 
     useEffect(() => {
-        setEnemies(simulationDetails.simulationDetails?.enemy || []);
-    }, [gameStarted]);
+        if (simulationDetails) {
+            setEnemies(simulationDetails.simulationDetails?.enemy || []);
+        }
+
+        console.log("My Enemies", enemies);
+    }, [gameStarted, enemies]);
 
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
@@ -237,8 +240,10 @@ const SimulationGameplay = () => {
     );
 
     const currentEnemy = enemies[currentEnemyIndex];
-    const currentWord = currentEnemy?.words[currentWordIndex].word;
-    const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
+    const currentWordID = currentEnemy?.words[currentWordIndex];
+    const simuWord = useFetchSimulationWords(currentWordID);
+    const currentWord = simuWord.word;
+    const word = useMerriam(currentWord || ""); // Pass the currentWord to the custom hook
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value);
@@ -353,8 +358,10 @@ const SimulationGameplay = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemies[currentEnemyIndex];
-        const currentWord =
-            currentEnemy.words[currentWordIndex].word.toLowerCase();
+
+        const currentWordID = currentEnemy?.words[currentWordIndex];
+        // const simuWord = useFetchSimulationWords(currentWordID);
+        const currentWord = simuWord.word?.toLowerCase();
 
         console.log(
             `Submitting: Enemy ${currentEnemyIndex + 1}/${enemies.length}`
@@ -380,16 +387,16 @@ const SimulationGameplay = () => {
             //#region Update Progress
 
             // const studentWordProgressID = simulationDetails.simulationDetails?.enemy[currentEnemyIndex].words[current
-            const simulationWordsID =
-                simulationDetails.simulationDetails?.enemy[currentEnemyIndex]
-                    .words[currentWordIndex].simulationWordsID;
+            // const simulationWordsID =
+            //     simulationDetails.simulationDetails?.enemy[currentEnemyIndex]
+            //         .words[currentWordIndex].simulationWordsID;
 
             const studentID = userID;
             const numberOfAttempts = mistakes;
             const duration = time.getFormattedTimeInSeconds();
 
             const accuracy = ((studentLife - mistakes) / studentLife) * 100;
-            console.log("Simulation Words ID: ", simulationWordsID);
+            // console.log("Simulation Words ID: ", simulationWordsID);
             console.log("Stunde ID: ", studentID);
             console.log("Number of Attempts: ", numberOfAttempts);
             console.log("Duration: ", duration);
@@ -406,7 +413,7 @@ const SimulationGameplay = () => {
 
             // Prepare progress data
             const progress = {
-                simulationWordsID,
+                // simulationWordsID,
                 numberOfAttempts: mistakes,
                 correct: true,
                 score: 0, // Assuming you want to set this dynamically

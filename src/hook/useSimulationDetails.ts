@@ -5,13 +5,13 @@ interface SimulationWordsArray {
     simulationWordsID: number;
     creatorID: number;
     word: string;
-    silentIndex: string;
+    silentIndex: string; // Keeping silentIndex as string
 }
 
 interface SimulationEnemy {
     simulationEnemyID: number;
     imagePath: string;
-    words: SimulationWordsArray[];
+    words: number[]; // Array of numbers
 }
 
 interface SimulationParticipant {
