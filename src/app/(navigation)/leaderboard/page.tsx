@@ -9,8 +9,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { viewSimulation } from "@/lib/simulation-endpoint/viewSimulation";
 import cloneGame from "@/lib/simulation-endpoint/cloneGame";
 import Toast from "@/app/component/Toast/Toast";
+import { useRoomStore } from "@/store/roomStore";
+import useUserInfoStore from "@/store/userInfoStore";
 
 export default function Leaderboard() {
+    const {currentRoom} = useRoomStore();
+    const { userType } = useUserInfoStore.getState();
     const { currentSimulation, setCurrentSimulation } = useSimulationStore();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -43,7 +47,13 @@ export default function Leaderboard() {
         const isConfirmed = window.confirm("Are you sure you want to create a copy of this simulation?");
         if (isConfirmed) {
             try {
-                await cloneGame(simulation);
+                if(currentRoom.roomID == 0 && userType) {
+                    setToastMessage("Error cloning simulation");
+                    setToastType("error");
+                    router.push(`/${userType.toLowerCase()}-room`);
+                    return;  
+                }
+                await cloneGame(simulationID, currentRoom.roomID);
                 setToastMessage("Simulation cloned successfully");
                 setToastType("success");
             } catch (error) {

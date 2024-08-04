@@ -55,12 +55,69 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             updateSettings({ [field]: value });
         };
 
+    const validateSettings = (settings: SimulationDetails) => {
+        const errors: string[] = [];
+
+        if (!settings.name.trim()) {
+            errors.push("Simulation name is required.");
+        }
+
+        if (!settings.deadline) {
+            errors.push("Deadline is required.");
+        } else {
+            const deadlineDate = new Date(settings.deadline);
+            if (isNaN(deadlineDate.getTime())) {
+                errors.push("Deadline must be a valid date.");
+            }
+        }
+
+        const validIntervals = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+        if (!validIntervals.includes(settings.attackInterval)) {
+            errors.push("Attack Interval must be a valid option.");
+        }
+
+        if (settings.studentLife < 1 || settings.studentLife > 8) {
+            errors.push("Student Life must be between 1 and 8.");
+        }
+
+        return errors;
+    };
+
     const handleCreateGame = () => {
-        console.log("Creating game with settings:", settings);
-        createGame(settings);
-        router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
-        localStorage.removeItem("enemies");
-        localStorage.removeItem("settings");
+        if (!settings.name) {
+            alert("Simulation name is required.");
+            return;
+        }
+
+        if (!settings.deadline) {
+            alert("Deadline is required.");
+            return;
+        }
+
+        const deadlineDate = new Date(settings.deadline);
+        if (isNaN(deadlineDate.getTime())) {
+            alert("Deadline must be a valid date.");
+            return;
+        }
+
+        if(settings.attackInterval == 0){
+            alert("Select Attack Interval");
+            return;
+        }
+
+        if(settings.studentLife == 0){
+            alert("Select Student Life");
+            return;
+        }
+
+        const confirmation = window.confirm("Are you sure you want to create this game?");
+        if (confirmation) {
+            console.log("Creating game with settings:", settings);
+            createGame(settings);
+            router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
+            localStorage.removeItem("enemies");
+            localStorage.removeItem("settings");
+        }
     };
     console.log(settings);
 
@@ -82,7 +139,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     value={settings.attackInterval}
                     onChange={handleChange("attackInterval")}
                 >
-                    <option className="select-display" disabled value="">
+                    <option className="select-display" value="">
                         Attack Interval
                     </option>
                     <option value={15}>15</option>
@@ -100,7 +157,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     value={settings.studentLife}
                     onChange={handleChange("studentLife")}
                 >
-                    <option className="select-display" disabled value="">
+                    <option className="select-display" value="">
                         Student Life
                     </option>
                     <option value={1}>1</option>
