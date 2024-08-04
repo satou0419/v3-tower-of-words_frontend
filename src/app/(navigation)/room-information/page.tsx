@@ -6,17 +6,67 @@ import CardUser from "@/app/component/Card/CardUser/CardUser";
 import CardSetting from "@/app/component/Card/CardSetting/CardSetting";
 import useUsernameToID from "@/hook/useUsernameToID";
 import insertStudent from "@/lib/room-endpoint/insertStudent";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRoomStore } from "@/store/roomStore";
+import { viewRoom } from "@/lib/room-endpoint/viewRoom";
+import { useSearchParams } from "next/navigation";
+import renameRoom from "@/lib/room-endpoint/renameRoom";
+import Toast from "@/app/component/Toast/Toast";
 
 export default function RoomInformation() {
     const [username, setUsername] = useState<string>("");
+    const [newRoomName, setNewRoomName] = useState<string>("");
     const { usernameToID } = useUsernameToID();
-    const { currentRoom } = useRoomStore();
+    const searchParams = useSearchParams();
+    const { currentRoom, setCurrentRoom} = useRoomStore();
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<"success" | "error" | "warning">(
+        "success"
+    );
+
+    const roomIDParam = searchParams.get("roomID");
+    const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
+
+
+    useEffect(() => {
+        const fetchSimulations = async () => {
+        try {
+            const room = await viewRoom(roomID);
+            setCurrentRoom(room);
+        } catch (error) {
+            console.error("Failed to fetch simulations for the room:", error);
+        }
+    };
+        fetchSimulations();
+    }, [setCurrentRoom]);
 
     const handleDelete = () => {
         console.log("Delete button clicked");
         // Handle delete action
+    };
+
+    const handleReset = () => {
+        console.log("Delete button clicked");
+        setUsername("");
+    };
+
+    const handleRename = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        if (!newRoomName.trim()) {
+            console.log("Room name cannot be empty");
+            setToastMessage("Room name cannot be empty.");
+            setToastType("warning");
+            return;
+        }
+
+        try {
+            await renameRoom({ roomID, name: newRoomName });
+            setToastMessage("Room renamed successfully");
+            setToastType("success");
+        } catch (error) {
+            setToastMessage("Failed to rename room");
+            setToastType("error");
+        }
     };
 
     const handleSaveAddStudent = async (
@@ -25,14 +75,25 @@ export default function RoomInformation() {
         event.preventDefault();
         if (username.trim()) {
             try {
-                const response = await usernameToID(username);
-                insertStudent(response, currentRoom);
-                console.log("User ID fetched for", username, ":", response);
+                const userID = await usernameToID(username);
+
+                const userExistsInRoom = currentRoom.members.some(member => member === userID);
+
+            if (userExistsInRoom) {
+                console.log("User already exists in the room");
+                setToastMessage("User already exists in the room.");
+                setToastType("error");
+            } else {
+                await insertStudent(userID, currentRoom);
+                setToastMessage("User added successfully.");
+                setToastType("success");
+            }
             } catch (error) {
                 console.error("Error fetching user ID:", error);
             }
         } else {
-            console.log("No username provided");
+            setToastMessage("No username provided");
+            setToastType("warning");
         }
     };
 
@@ -40,18 +101,17 @@ export default function RoomInformation() {
         setUsername(event.target.value);
     };
 
-    const users = [
-        { username: "Rey Dante", time: "10:00 AM", score: 85 },
-        { username: "Rey Mar", time: "10:05 AM", score: 90 },
-        { username: "Gil Joshua", time: "10:10 AM", score: 95 },
-        { username: "Jhon Lorenz", time: "10:15 AM", score: 88 },
-        { username: "Anton Joseph", time: "10:20 AM", score: 92 },
-        { username: "Trisha Mae", time: "10:25 AM", score: 87 },
-    ];
+    const handleInputRename = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNewRoomName(event.target.value);
+    };
 
     const inputSetting = [
-        { type: "text", placeholder: "Update Simulation Name" },
-        { type: "datetime-local", placeholder: "Update Time" },
+        {
+            type: "text",
+            placeholder: "Update Room Name",
+            value: newRoomName,
+            onChange: handleInputRename,
+        },
     ];
 
     const inputAddStudent = [
@@ -65,21 +125,28 @@ export default function RoomInformation() {
 
     return (
         <main className="roominformation-wrapper">
+            {toastMessage && (
+                <Toast
+                    message={toastMessage}
+                    type={toastType}
+                    onClose={() => setToastMessage(null)}
+                />
+            )}
             <section className="roominformation-container">
                 <h1>Room Settings</h1>
 
                 <section className="roominformation-content">
                     <CardTab
                         className="roominformation-card"
-                        title="roominformation"
+                        title="Student Room Information"
                         subtitle="Student Total: "
-                        counter="69"
+                        counter={currentRoom.members.length.toString()}
                     >
-                        {users.map((user, index) => (
+                        {currentRoom.members.map((user, index) => (
                             <CardUser
                                 key={index}
-                                username={user.username}
-                                time={user.time}
+                                username={user}
+                                className="custom-carduser"
                             />
                         ))}
                     </CardTab>
@@ -91,16 +158,16 @@ export default function RoomInformation() {
                             deleteButtonLabel="Delete"
                             saveButtonLabel="Save"
                             onDelete={handleDelete}
-                            onSave={handleDelete}
+                            onSave={handleRename}
                             className="custom-cardsetting"
                         />
 
                         <CardSetting
                             title="Add Student"
                             inputs={inputAddStudent}
-                            deleteButtonLabel="Delete"
+                            deleteButtonLabel="Reset"
                             saveButtonLabel="Save"
-                            onDelete={handleDelete}
+                            onDelete={handleReset}
                             onSave={handleSaveAddStudent}
                             className="custom-cardsetting"
                         />

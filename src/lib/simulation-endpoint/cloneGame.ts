@@ -23,10 +23,10 @@ interface SimulationDetails {
     enemy: Enemy[];
 }
 
-const createGame = async (simulation: SimulationDetails) => {
+const cloneGame = async (simulation: SimulationDetails) => {
     console.log(simulation)
     try {
-        const response = await fetch(`${BASE_URL}/simulation/create_simulation`, {
+        const response = await fetch(`${BASE_URL}/simulation/clone_simulation`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -46,4 +46,4 @@ const createGame = async (simulation: SimulationDetails) => {
     }
 };
 
-export default createGame;
+export default cloneGame;

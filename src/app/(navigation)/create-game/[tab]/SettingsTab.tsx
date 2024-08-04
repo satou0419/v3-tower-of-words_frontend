@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { InputBox } from "@/app/component/Input/Input";
 import Toggle from "@/app/component/Toggle/Toggle";
 import createGame from "@/lib/simulation-endpoint/createGame";
+import { useRouter } from "next/navigation";
 
 interface Enemy {
     imagePath: string;
@@ -20,7 +21,7 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
+    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -37,17 +38,12 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     updateSettings,
 }) => {
     const [isEnabled, setIsEnabled] = useState(false);
+    const router = useRouter();
 
     const handleToggle =
         (field: keyof SimulationDetails) => (state: boolean) => {
             updateSettings({ [field]: state });
         };
-
-    useEffect(() => {
-        if (settings) {
-            setIsEnabled(settings.items);
-        }
-    }, [settings]);
 
     const handleChange =
         (field: keyof SimulationDetails) =>
@@ -62,6 +58,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     const handleCreateGame = () => {
         console.log("Creating game with settings:", settings);
         createGame(settings);
+        router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
         localStorage.removeItem("enemies");
         localStorage.removeItem("settings");
     };
@@ -115,7 +112,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     <option value={7}>7</option>
                     <option value={8}>8</option>
                 </select>
-                <select
+                {/* <select
                     value={settings.numberOfAttempt}
                     onChange={handleChange("numberOfAttempt")}
                 >
@@ -127,7 +124,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     <option value={3}>3</option>
                     <option value={4}>4</option>
                     <option value={5}>5</option>
-                </select>
+                </select> */}
                 <Toggle
                     className="toggle"
                     label="Items"

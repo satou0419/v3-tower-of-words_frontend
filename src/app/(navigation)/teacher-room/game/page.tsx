@@ -1,12 +1,14 @@
 "use client";
 
+import { useEffect } from "react";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./game.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
-import useUserInfoStore from "@/store/userInfoStore";
 import { useSimulationStore } from "@/store/simulationStore";
 import { useRoomStore } from "@/store/roomStore";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
+import { viewRoom } from "@/lib/room-endpoint/viewRoom";
 
 interface Enemy {
     imagePath: string;
@@ -52,20 +54,38 @@ interface SimulationDetails {
 }
 
 export default function Game() {
-    const { currentRoom } = useRoomStore();
-    const { userType } = useUserInfoStore.getState();
-    const { simulations, setCurrentSimulation } = useSimulationStore();
+    const { currentRoom, setCurrentRoom } = useRoomStore();
+    const { simulations, setCurrentSimulation, setSimulation } = useSimulationStore();
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+    const roomIDParam = searchParams.get("roomID");
+    const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
 
     console.log(simulations);
 
+    useEffect(() => {
+        const fetchSimulations = async () => {
+        try {
+            const roomSimulation = await viewRoomSimulations(roomID);
+            const room = await viewRoom(roomID);
+            setSimulation(roomSimulation);
+            setCurrentRoom(room);
+            console.log(roomSimulation);
+        } catch (error) {
+            console.error("Failed to fetch simulations for the room:", error);
+        }
+    };
+        fetchSimulations();
+    }, [setSimulation, setCurrentRoom]);
+
     const handleCardClick = async (simulation: SimulationDetails) => {
         setCurrentSimulation(simulation);
-        router.push("/leaderboard");
+        router.push(`/leaderboard?simulationID=${simulation.simulationID}`);
     };
 
-    const handleRoomInfoClick = () => {
-        router.push("/room-information");
+    const handleRoomInfoClick = async (roomID: number) => {
+        router.push(`/room-information?roomID=${roomID}`);
     };
 
     return (
@@ -75,7 +95,7 @@ export default function Game() {
                     <h1>
                         {currentRoom.name} - Simulations | {currentRoom.code}
                     </h1>
-                    <button onClick={handleRoomInfoClick}>
+                    <button onClick={() =>handleRoomInfoClick(roomID)}>
                         Room Information
                     </button>
                 </section>
@@ -88,12 +108,12 @@ export default function Game() {
                             title={simulation.name}
                             description={simulation.simulationType}
                             infoTitle="Student Done"
-                            counter={4}
+                            counter={simulation.participants.filter((p) => p.done).length}
                             glow={false}
                             onClick={() => handleCardClick(simulation)}
                         />
                     ))}
-                    <CardNew title="+ Create Game" link={`/game-mode`} />
+                    <CardNew title="+ Create Game" link={`/game-mode?roomID=${roomID}`} />
                 </div>
             </section>
         </main>

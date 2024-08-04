@@ -7,6 +7,8 @@ import SettingsTab from "./SettingsTab";
 import WordsTab from "./WordsTab";
 import useTabManagement from "@/hook/useTab";
 import { useRoomStore } from "@/store/roomStore";
+import { useRouter } from "next/navigation";
+import useUserInfoStore from "@/store/userInfoStore";
 
 interface Enemy {
     imagePath: string;
@@ -31,7 +33,7 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
+    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -41,7 +43,10 @@ interface SimulationDetails {
 export default function CreateGame() {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
     const { currentRoom } = useRoomStore();
-    const [room, setRoom] = useState<Room>({ roomID: currentRoom.roomID });
+    const [isClient, setIsClient] = useState(false);
+    const router = useRouter();
+    const { userType } = useUserInfoStore.getState();
+    
     const [settings, setSettings] = useState<SimulationDetails>({
         roomID: { roomID: currentRoom.roomID },
         simulationType: "Spelling",
@@ -49,13 +54,18 @@ export default function CreateGame() {
         deadline: "",
         attackInterval: 20,
         studentLife: 6,
-        numberOfAttempt: 1,
+        // numberOfAttempt: 1,
         items: true,
         description: true,
         pronunciation: true,
         enemy: [],
     });
-    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+        if(currentRoom.roomID == 0 && userType) {
+            router.push(`/${userType.toLowerCase()}-room`);
+        }
+    }, []);
 
     useEffect(() => {
         setIsClient(true);
@@ -88,15 +98,15 @@ export default function CreateGame() {
         if (isClient) {
             setSettings((prevSettings) => ({
                 ...prevSettings,
-                roomID: room,
+                roomID: currentRoom,
                 enemy: enemies,
             }));
         }
-    }, [room, enemies]);
+    }, [currentRoom, enemies]);
 
     const { activeTab, handleTabChange } = useTabManagement(
         "/create-game",
-        "my-word"
+        `my-word`
     );
 
     const addEnemy = () => {
@@ -135,10 +145,16 @@ export default function CreateGame() {
         }));
     };
 
+    useEffect(() => {
+        if (!currentRoom) {
+            router.push(`/${userType.toLowerCase()}-room`)
+        }
+    }, [currentRoom]);
+
     const tabData = [
         {
             title: "Words",
-            id: "my-word",
+            id: `my-word`,
             content: (
                 <WordsTab
                     enemies={enemies}
@@ -151,7 +167,7 @@ export default function CreateGame() {
         },
         {
             title: "Setting",
-            id: "setting",
+            id: `setting`,
             content: (
                 <SettingsTab
                     settings={settings}

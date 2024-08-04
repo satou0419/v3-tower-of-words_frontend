@@ -9,6 +9,37 @@
     padding: 1em;
     height: 100%;
     width: 100%;
+
+    .cardroomcode-popup-container{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        flex-direction: column;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 0.5em;
+        z-index: 1000;
+        background: white;
+    
+        button{
+            align-self: flex-end;
+            cursor: pointer;
+            color: #fff;
+            background-color: #fc5776;
+            border-radius: 8px;
+            padding: 0.4em 0.8em;
+            border: none;
+            border-top: 2px solid #fff;
+        }
+    
+        .cardroomcode-popup {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+    }
 }
 
 .createroom-card {
@@ -109,14 +140,5 @@
     justify-content: center;
 }
 
-.cardroomcode-popup {
-    position: absolute;
-    background: white;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 0.5em;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+
+

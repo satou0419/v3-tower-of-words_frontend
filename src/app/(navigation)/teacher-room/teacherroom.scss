@@ -11,6 +11,17 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
+    button{
+        background-color: #ffaf40;
+        height: 3em;
+        width: 10em;
+        box-shadow: var(--shadow-burst);
+        border: none;
+        border-radius: 5px;
+        border-top: 2px solid #fff;
+        color: #fff;
+        cursor: pointer;
+    }
 }
 .teacherroom-container {
     height: 80%;

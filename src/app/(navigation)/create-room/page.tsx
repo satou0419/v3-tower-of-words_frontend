@@ -7,7 +7,7 @@ import { useRoomStore } from "@/store/roomStore";
 import { createRoom } from "@/lib/room-endpoint/createRoom";
 import { useAuthStore } from "@/store/authStore";
 import useUserInfoStore from "@/store/userInfoStore";
-
+import Toast from "@/app/component/Toast/Toast";
 
 export default function CreateRoom() {
     const { rooms, setRoom } = useRoomStore();
@@ -18,6 +18,10 @@ export default function CreateRoom() {
     const [error, setError] = useState("");
     const router = useRouter();
     const { userType } = useUserInfoStore.getState();
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<"success" | "error" | "warning">(
+        "success"
+    );
 
     console.log(userID);
 
@@ -35,7 +39,8 @@ export default function CreateRoom() {
         event.preventDefault();
 
         if (!roomName.trim()) {
-            setError("Room name cannot be empty");
+            setToastMessage("Room name cannot be empty");
+            setToastType("warning");
             return;
         }
 
@@ -45,11 +50,13 @@ export default function CreateRoom() {
             const newRoom = await createRoom({ name: roomName, creatorID });
             setRoom([...rooms, newRoom]);
             setCode(newRoom.data.code);
-            console.log(newRoom);
+            setToastMessage("Room Created!");
+            setToastType("success");
             setShowPopup(!showPopup);
             
         } catch (error) {
-            console.error("Failed to create room", error);
+            setToastMessage("Failed to create room!");
+            setToastType("error");
         }
     };
 
@@ -63,6 +70,13 @@ export default function CreateRoom() {
 
     return (
         <section className="createroom-wrapper">
+            {toastMessage && (
+                <Toast
+                    message={toastMessage}
+                    type={toastType}
+                    onClose={() => setToastMessage(null)}
+                />
+            )}
             <section className="createroom-card">
                 <form onSubmit={handleCreateRoom}>
                     <h1>Create Room</h1>
@@ -79,20 +93,16 @@ export default function CreateRoom() {
                         </button>
                     </div>
                 </form>
-
-                {error && <p className="error-message">{error}</p>}
-                    {showPopup && (
-                        <div className="cardroomcode-popup">
-                            <div>{code}</div>
-                            <div>
-                                <button onClick={handleBack} >Back</button>
-                            </div>
-                            <div>
-                                <button>Next</button>
-                            </div>
-                        </div>
-                    )}
             </section>
+            {showPopup && (
+                <div className="cardroomcode-popup-container">
+                    <button onClick={handleBack}>X</button>
+                    <div className="cardroomcode-popup">
+                        <h1>C O D E</h1>
+                        <div>{code}</div>
+                    </div>
+                </div>
+            )}
         </section>
     );
 }

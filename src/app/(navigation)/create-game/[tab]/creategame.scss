@@ -112,6 +112,15 @@
     button{
         position: absolute;
         right: 5%;
+        background-color: #ffaf40;
+        height: 2.5em;
+        width: 8em;
+        box-shadow: var(--shadow-burst);
+        border: none;
+        border-radius: 5px;
+        border-top: 2px solid #fff;
+        color: #fff;
+        cursor: pointer;
     }
 }
 
@@ -155,6 +164,18 @@ select {
         padding-right: 0.5em;
         height: 3.5em;
         color: #000;
+    }
+
+    button{
+        background-color: #ffaf40;
+        height: 2.5em;
+        width: 8em;
+        box-shadow: var(--shadow-burst);
+        border: none;
+        border-radius: 5px;
+        border-top: 2px solid #fff;
+        color: #fff;
+        cursor: pointer;
     }
 }
 
