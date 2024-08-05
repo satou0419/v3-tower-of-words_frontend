@@ -249,6 +249,10 @@ const SimulationGameplay = () => {
         setTypedWord(event.target.value);
     };
 
+    useEffect(() => {
+        console.log(simulationDetails.simulationDetails);
+    });
+
     const [isLastEnemyWord, setIsLastEnemyWord] = useState(false);
 
     const handleEnemyAttack = () => {
