@@ -387,9 +387,7 @@ const SimulationGameplay = () => {
             //#region Update Progress
 
             // const studentWordProgressID = simulationDetails.simulationDetails?.enemy[currentEnemyIndex].words[current
-            // const simulationWordsID =
-            //     simulationDetails.simulationDetails?.enemy[currentEnemyIndex]
-            //         .words[currentWordIndex].simulationWordsID;
+            // const simulationWordsID = c
 
             const studentID = userID;
             const numberOfAttempts = mistakes;
