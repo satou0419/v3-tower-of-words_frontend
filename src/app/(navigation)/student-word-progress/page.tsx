@@ -118,7 +118,7 @@ export default function StudentWordProgress() {
 
     return (
         <main className="main-wrapper">
-            <button onClick={() => router.back()} type="button">Back</button>
+            <button onClick={() => router.back()} type="button" className="studentwordprogress-button">Back</button>
             <section className="studentwordprogress-container">
                 <CardWord className="studentwordprogress-left">
                     <div className="left-container">
@@ -198,7 +198,7 @@ export default function StudentWordProgress() {
                 </CardWord>
                 {selectedAssessment && showGraph && (
                     <div className="graph">
-                        <button onClick={() => setShowGraph(!showGraph)} type="button">X</button>
+                        <button onClick={() => setShowGraph(!showGraph)} type="button" className="studentwordprogress-x">X</button>
                         <CardTab
                             className="cardtab"
                             title="Word Assessment"

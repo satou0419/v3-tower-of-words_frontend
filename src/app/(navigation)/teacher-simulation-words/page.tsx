@@ -108,7 +108,7 @@ export default function TeacherSimulationWords() {
 
     return (
         <main className="main-wrapper">
-            <button onClick={() => router.back()} type="button">Back</button>
+            <button onClick={() => router.back()} type="button" className="wordassessment-button">Back</button>
             <section className="teachersimulationwords-container">
                 <CardWord className="teachersimulationwords-left">
                     <div className="left-container">
@@ -193,7 +193,7 @@ export default function TeacherSimulationWords() {
                 
                 {selectedAssessment && showGraph && (
                     <div className="graph">
-                        <button onClick={() => setShowGraph(!showGraph)} type="button">X</button>
+                        <button onClick={() => setShowGraph(!showGraph)} type="button" className="wordassessment-x">X</button>
                         <CardTab
                             className="cardtab"
                             title="Word Assessment"

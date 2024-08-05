@@ -4,6 +4,7 @@ import CardTab from "@/app/component/Card/CardTab/CardTab";
 import "./studentassessment.scss";
 import React, { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import useStudentInfo from "@/hook/useStudentInfo";
 import viewStudentAssessment from "@/lib/assessment-endpoint/viewStudentAssessment";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend } from "chart.js";
@@ -21,6 +22,8 @@ export default function StudentAssessment() {
     const studentID = studentIDParam ? parseInt(studentIDParam, 10) : NaN;
 
     const [assessmentData, setAssessmentData] = useState<any>(null);
+
+    const user = useStudentInfo(studentID);
 
     console.log(simulationID)
     console.log(studentID)
@@ -71,6 +74,7 @@ export default function StudentAssessment() {
             <section className="studentassessment-container">
                 <div className="studentassessment-buttons">
                     <button className="button-back" onClick={() => router.back()} type="button">Back</button>
+                    <h1>{user.studentInfo?.data?.username}</h1>
                     <button className="button-next" onClick={handleWordProgress} type="button">Word Progress</button>
                 </div>
                 <CardTab
