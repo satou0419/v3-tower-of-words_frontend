@@ -7,6 +7,7 @@ interface CardUserProps {
     time?: string | null;
     score?: number;
     className?: string;
+    onClick?: () => void;
 }
 
 const CardUser: React.FC<CardUserProps> = ({
@@ -14,13 +15,14 @@ const CardUser: React.FC<CardUserProps> = ({
     time,
     score,
     className,
+    onClick,
 }) => {
     const user = useStudentInfo(username);
 
     console.log(user.studentInfo?.data?.username);
 
     return (
-        <section className={`carduser-card ${className || ""}`}>
+        <section className={`carduser-card ${className || ""}`} onClick={onClick}>
             <section className="carduser-container">
                 <section className="banner-container">
                     <div className="banner"></div>
