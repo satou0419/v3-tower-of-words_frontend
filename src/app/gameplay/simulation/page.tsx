@@ -299,6 +299,10 @@ const SimulationGameplay = () => {
         setTypedWord(event.target.value);
     };
 
+    useEffect(() => {
+        console.log(simulationDetails.simulationDetails);
+    });
+
     const [isLastEnemyWord, setIsLastEnemyWord] = useState(false);
 
     const handleEnemyAttack = () => {
@@ -752,7 +756,7 @@ const SimulationGameplay = () => {
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
                     <Modal
-                        className="confirmation-modal"
+                        className="item-used-modal"
                         isOpen={showConfirmationModal}
                         title="Confirm Item Use"
                         details={`Are you sure you want to use ${itemToUse?.name}?`}
@@ -876,7 +880,7 @@ const SimulationGameplay = () => {
 
             {/* Game Over Modal */}
             <Modal
-                className="game-over-modal"
+                className="gameover-modal"
                 isOpen={showGameOverModal}
                 title="Game Over"
                 details="Unfortunately, you have run out of lives. Would you like to restart the game?"

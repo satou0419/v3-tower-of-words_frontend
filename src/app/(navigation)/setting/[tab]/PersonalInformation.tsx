@@ -22,6 +22,7 @@ const PersonalInformation = () => {
     const [isDirty, setIsDirty] = useState(false); // Track form dirty state
     const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [isErrorModalOpen, setIsErrorModalOpen] = useState(false); // New state for error modal
 
     useEffect(() => {
         setLocalFirstname(firstname);
@@ -46,7 +47,7 @@ const PersonalInformation = () => {
             setInitialLocalLastname(localLastname);
         } catch (err) {
             console.error("Failed to update user information:", err);
-            // Handle error state
+            setIsErrorModalOpen(true); // Open error modal if update fails
         } finally {
             setIsConfirmModalOpen(false); // Close the confirmation modal after handling update
         }
@@ -100,25 +101,27 @@ const PersonalInformation = () => {
 
             {/* Confirmation Modal */}
             <Modal
+                className="confirmation-modal"
                 isOpen={isConfirmModalOpen}
                 onClose={() => setIsConfirmModalOpen(false)}
                 title="Confirm Update"
                 details="Are you sure you want to update your information?"
                 buttons={[
-                    <button key="confirm" onClick={confirmUpdate}>
-                        Confirm
-                    </button>,
                     <button
                         key="cancel"
                         onClick={() => setIsConfirmModalOpen(false)}
                     >
                         Cancel
                     </button>,
+                    <button key="confirm" onClick={confirmUpdate}>
+                        Confirm
+                    </button>,
                 ]}
             />
 
             {/* Success Modal */}
             <Modal
+                className="success-modal"
                 isOpen={isSuccessModalOpen}
                 onClose={() => setIsSuccessModalOpen(false)}
                 title="Update Successful"
@@ -129,6 +132,23 @@ const PersonalInformation = () => {
                         onClick={() => setIsSuccessModalOpen(false)}
                     >
                         OK
+                    </button>,
+                ]}
+            />
+
+            {/* Error Modal */}
+            <Modal
+                className="error-modal"
+                isOpen={isErrorModalOpen}
+                onClose={() => setIsErrorModalOpen(false)}
+                title="Update Failed"
+                details="Failed to update user information. Please try again."
+                buttons={[
+                    <button
+                        key="retry"
+                        onClick={() => setIsErrorModalOpen(false)}
+                    >
+                        Retry
                     </button>,
                 ]}
             />

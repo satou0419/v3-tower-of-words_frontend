@@ -120,11 +120,12 @@ const Navigation = () => {
 
     return (
         <nav className={`navigation ${isOpen ? "expanded" : ""}`}>
-            <section>
-                <span>Credits: {userDashboard.creditAmount}</span>
-                <span>{greeting}</span>
+            <section className="nav-section">
+                <span>{greeting} |</span>
                 <span>{firstname}</span>
-                <span>{lastname}</span>
+                <span>{lastname} |</span>
+                <div className="currency"></div>
+                <span> {userDashboard.creditAmount}</span>
             </section>
             <div className="navigation_logo">
                 <img
@@ -150,7 +151,8 @@ const Navigation = () => {
                 <div className="profile">{getInitial(username)}</div>
                 {showList && (
                     <section className="drop-list">
-                        <Link href="/item/inventory">Inventory</Link>
+                        <Link href="/item/inventory">Inventory</Link>{" "}
+                        <Link href="/item/shop">Shop</Link>
                         <Link href="/setting/personal-information">
                             Settings
                         </Link>
@@ -163,24 +165,16 @@ const Navigation = () => {
 
             {/* Logout Confirmation Modal */}
             <Modal
+                className="logout-modal"
                 title="Confirm Logout"
                 details="Are you sure you want to logout?"
                 isOpen={isLogoutModalOpen}
                 onClose={cancelLogout} // Close modal on overlay click
-                className="modal-logout"
                 buttons={[
-                    <button
-                        key="cancel"
-                        className="btn-cancel"
-                        onClick={cancelLogout}
-                    >
+                    <button key="cancel" onClick={cancelLogout}>
                         Cancel
                     </button>,
-                    <button
-                        key="confirm"
-                        className="btn-confirm"
-                        onClick={confirmLogout}
-                    >
+                    <button key="confirm" onClick={confirmLogout}>
                         Confirm
                     </button>,
                 ]}

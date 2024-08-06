@@ -8,7 +8,7 @@ const changePassword = async (oldPassword: string, newPassword: string) => {
         throw new Error("User is not logged in");
     }
 
-    const url = `${BASE_URL}/user/change_password?user_id=${userID}&oldPassword=${oldPassword}&newPassword=${newPassword}`;
+    const url = `${BASE_URL}/user/change_password?userID=${userID}&oldPassword=${oldPassword}&newPassword=${newPassword}`;
 
     try {
         const response = await fetch(url, {

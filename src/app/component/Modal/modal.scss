@@ -4,7 +4,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -12,11 +12,11 @@
 }
 
 .modal-content {
-    background: white;
+    background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    width: 500px;
-    max-width: 90%;
+    width: 90%;
+    max-width: 500px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     position: relative;
 }
@@ -24,42 +24,767 @@
 .modal-header {
     display: flex;
     align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #eaeaea;
+    padding-bottom: 10px;
     margin-bottom: 20px;
 
-    .icon {
-        flex-shrink: 0;
+    h2 {
+        margin: 0;
         font-size: 1.5rem;
+        flex: 1;
+        text-align: center; // Center the title if icon is present
     }
 
-    h2 {
-        margin: 0 0 0 10px;
+    .icon {
+        display: flex;
+        align-items: center;
+        font-size: 1.5rem; // Adjust size as needed
+        margin-right: 10px; // Space between icon and title
+    }
+
+    .close-button {
+        background: none;
+        border: none;
         font-size: 1.5rem;
+        cursor: pointer;
     }
 }
 
+.icon {
+    display: flex;
+    gap: 0.2em;
+}
 .modal-details {
     margin-bottom: 20px;
-
-    p {
-        margin: 0;
-    }
 }
 
 .modal-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: flex-end; // Align buttons to the right
+
+    .button-wrapper {
+        margin-left: 10px;
+
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+
+            &:hover {
+                background-color: #0056b3;
+            }
+        }
+    }
 }
 
-.modal-children {
-    margin-bottom: 20px;
+/* Custom styles for error modal */
+.error-modal {
+    .modal-content {
+        background-color: #ffebee; // Light red background
+        border: 1px solid #d32f2f; // Darker red border
+    }
+
+    .modal-header {
+        h2 {
+            color: #c62828; // Dark red for the title
+        }
+        .icon {
+            color: #c62828; // Match icon color with the title
+        }
+    }
+
+    .modal-footer {
+        .button-wrapper {
+            button {
+                background-color: #d32f2f; // Red background for primary button
+                color: #fff; // White text color
+                border: none; // Remove default border
+                padding: 10px 20px; // Padding for button size
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+
+                &:hover {
+                    background-color: #b71c1c; // Darker red on hover
+                }
+
+                &:nth-child(1) {
+                    background-color: #ff9800; // Retry button
+
+                    &:hover {
+                        background-color: #fb8c00;
+                    }
+                }
+
+                &:nth-child(2) {
+                    background-color: #d32f2f; // Cancel button
+
+                    &:hover {
+                        background-color: #b71c1c;
+                    }
+                }
+            }
+        }
+    }
 }
 
-.close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
+/* Custom styles for success modal */
+.success-modal {
+    .modal-content {
+        background-color: #e8f5e9; // Light green background
+        border: 1px solid #388e3c; // Dark green border
+    }
+
+    .modal-header {
+        h2 {
+            color: #2e7d32; // Dark green for the title
+        }
+        .icon {
+            color: #2e7d32; // Match icon color with the title
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #333; // Dark gray color for the details text
+            margin: 10px 0; // Margin around the details text
+        }
+    }
+
+    .modal-footer {
+        .button-wrapper {
+            button {
+                background-color: #388e3c; // Dark green background for the OK button
+                color: #fff; // White text color
+                border: none; // Remove default border
+                padding: 10px 20px; // Padding for button size
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+                font-size: 16px; // Font size for readability
+
+                &:hover {
+                    background-color: #2c6b2f; // Darker green on hover
+                }
+            }
+        }
+    }
+}
+
+/* Custom styles for confirmation modal */
+.confirmation-modal {
+    .modal-content {
+        background-color: #fff9e6; // Light yellow background
+        border: 1px solid #f0e4b5; // Soft yellow border
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #f0e4b5;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+
+        h2 {
+            margin: 0;
+            color: #f7b731; // Dark yellow for the title
+        }
+
+        .icon {
+            font-size: 1.5rem; // Adjust size as needed
+            color: #f7b731; // Match icon color with the title
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #333; // Dark gray for the details text
+            margin: 10px 0;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end; // Align buttons to the right
+
+        .button-wrapper {
+            button {
+                padding: 10px 20px; // Padding for button size
+                border: none; // Remove default border
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+                font-size: 16px; // Font size for readability
+                margin: 0 5px; // Spacing between buttons
+
+                &:hover {
+                    filter: brightness(0.9); // Slightly darken on hover
+                }
+            }
+
+            &:nth-child(1) {
+                button {
+                    background-color: #e57373; // Light red background for cancel button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #c62828; // Darker red on hover
+                    }
+                }
+            }
+
+            &:nth-child(2) {
+                button {
+                    background-color: #4caf50; // Green background for confirm button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #388e3c; // Darker green on hover
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Custom styles for room code modal */
+.room-code-modal {
+    .modal-content {
+        background-color: #e3f2fd; // Light blue background
+        border: 1px solid #0288d1; // Blue border
+    }
+
+    .modal-header {
+        h2 {
+            color: #01579b; // Darker blue for the title
+        }
+        .icon {
+            color: #01579b; // Match icon color with the title
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #333; // Dark gray color for the details text
+            margin: 10px 0; // Margin around the details text
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end; // Align buttons to the right
+
+        .button-wrapper {
+            button {
+                background-color: #0288d1; // Blue background for the OK button
+                color: #fff; // White text color
+                border: none; // Remove default border
+                padding: 10px 20px; // Padding for button size
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+                font-size: 16px; // Font size for readability
+
+                &:hover {
+                    background-color: #01579b; // Darker blue on hover
+                }
+            }
+        }
+    }
+} /* Custom styles for logout confirmation modal */
+.logout-modal {
+    .modal-content {
+        background-color: #f8f9fa; // Light gray background for neutrality
+        border: 1px solid #dee2e6; // Gray border for subtlety
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #dee2e6;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+
+        h2 {
+            margin: 0;
+            color: #343a40; // Dark gray for the title
+        }
+
+        .icon {
+            font-size: 1.5rem; // Adjust size as needed
+            color: #343a40; // Match icon color with the title
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #495057; // Slightly lighter gray for the details text
+            margin: 10px 0;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+
+        .button-wrapper {
+            button {
+                padding: 10px 20px; // Padding for button size
+                border: none; // Remove default border
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+
+                &:nth-child(1) {
+                    background-color: #6c757d; // Gray color for cancel
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #5a6268; // Darker gray on hover
+                    }
+                }
+
+                &:nth-child(2) {
+                    background-color: #28a745; // Green color for confirm
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #218838; // Darker green on hover
+                    }
+                }
+            }
+        }
+    }
+}
+/* Custom styles for welcome modal */
+.welcome-modal {
+    .modal-content {
+        background-color: #e8f5e9; // Light green background for welcome
+        border: 1px solid #81c784; // Green border
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #81c784;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+
+        h2 {
+            margin: 0;
+            color: #388e3c; // Darker green for the title
+        }
+
+        .icon {
+            font-size: 1.5rem; // Adjust size as needed
+            color: #388e3c; // Match icon color with the title
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #333; // Dark gray for the details text
+            margin: 10px 0;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end; // Align buttons to the right
+
+        .button-wrapper {
+            button {
+                padding: 10px 20px; // Padding for button size
+                border: none; // Remove default border
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+                font-size: 16px; // Font size for readability
+                margin: 0 5px; // Spacing between buttons
+
+                &:hover {
+                    filter: brightness(0.9); // Slightly darken on hover
+                }
+            }
+
+            &:nth-child(1) {
+                button {
+                    background-color: #81c784; // Light green background for the first button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #66bb6a; // Darker green on hover
+                    }
+                }
+            }
+
+            &:nth-child(2) {
+                button {
+                    background-color: #c0ca33; // Yellow-green background for the second button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #aabf1e; // Darker yellow-green on hover
+                    }
+                }
+            }
+        }
+    }
+}
+/* Custom styles for game over modal */
+.gameover-modal {
+    .modal-content {
+        background-color: #e0f7fa; // Soft teal background for a calming feel
+        border: 2px solid #4fc3f7; // Bright blue border for a cheerful look
+        border-radius: 10px; // Rounded corners for a softer appearance
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Gentle shadow for depth
+        position: relative; // To position the electric effect
+
+        z-index: 2; // Ensure modal content is above the electric effect
+    }
+
+    .modal-content::before {
+        content: "";
+        position: absolute;
+
+        top: -8px; // Position the effect outside the border
+        left: -8px;
+        width: calc(100% + 16px); // Expand effect outside the border
+        height: calc(100% + 16px);
+        border-radius: 10px; // Match border radius of modal
+        border: 3px solid transparent;
+        background: radial-gradient(
+                circle,
+                rgba(255, 255, 255, 0.3),
+                rgba(255, 255, 255, 0) 70%
+            ),
+            linear-gradient(
+                15deg,
+                transparent,
+                transparent 49%,
+                #4fc3f7 1%,
+                transparent 51%,
+                transparent
+            );
+        background-size: 5px 5px;
+        animation: electric-border 1.5s infinite;
+
+        z-index: -100; // Ensure electric effect is below modal content
+    }
+
+    @keyframes electric-border {
+        0%,
+        100% {
+            border-color: transparent;
+        }
+        50% {
+            border-color: #4fc3f7; // Bright blue effect
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #b3e5fc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+
+        h2 {
+            margin: 0;
+            color: #d32f2f; // Bright red for the title
+        }
+
+        .icon {
+            font-size: 2rem;
+            color: #d32f2f;
+            margin-left: 10px;
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #d32f2f;
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #555; // Dark gray for readability
+            margin: 10px 0;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+
+        .button-wrapper {
+            button {
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+                font-size: 16px;
+                margin: 0 5px;
+
+                &:hover {
+                    filter: brightness(0.9);
+                }
+            }
+
+            &:nth-child(1) {
+                button {
+                    background-color: #ff7043; // Orange for retry button
+                    color: #fff;
+
+                    &:hover {
+                        background-color: #ff5722;
+                    }
+                }
+            }
+
+            &:nth-child(2) {
+                button {
+                    background-color: #616161; // Gray for exit button
+                    color: #fff;
+
+                    &:hover {
+                        background-color: #424242;
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Custom styles for conquer floor modal */
+.conquer-floor-modal {
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); // Dark overlay
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background-color: #f9f3e8; // Light gold background
+        border: 1px solid #cda74f; // Gold border
+        box-shadow: 0 0 20px rgba(205, 167, 79, 0.6); // Initial box shadow for a glowing effect
+        animation: glow-box 1.5s infinite alternate; // Glowing animation
+        position: relative; // For pseudo-element positioning
+        padding: 20px;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #cda74f;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+
+        h2 {
+            margin: 0;
+            color: #8c3c92; // Dark purple for the title
+        }
+
+        .icon {
+            font-size: 1.5rem; // Adjust size as needed
+            color: #8c3c92; // Match icon color with the title
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #333; // Dark gray for the details text
+            margin: 10px 0;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end; // Align buttons to the right
+
+        .button-wrapper {
+            button {
+                padding: 10px 20px; // Padding for button size
+                border: none; // Remove default border
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+                font-size: 16px; // Font size for readability
+                margin: 0 5px; // Spacing between buttons
+
+                &:hover {
+                    filter: brightness(0.9); // Slightly darken on hover
+                }
+            }
+            &:nth-child(1) {
+                button {
+                    background-color: #8c3c92; // Dark purple background for the second button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #6e2c6f; // Darker purple on hover
+                    }
+                }
+            }
+            &:nth-child(2) {
+                button {
+                    background-color: #cda74f; // Gold background for the first button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #b89c4e; // Darker gold on hover
+                    }
+                }
+            }
+        }
+    }
+}
+
+/* Keyframes for glowing effect */
+@keyframes glow-box {
+    0% {
+        box-shadow: 0 0 10px rgba(205, 167, 79, 0.4),
+            0 0 20px rgba(205, 167, 79, 0.4), 0 0 30px rgba(205, 167, 79, 0.4);
+    }
+    100% {
+        box-shadow: 0 0 20px rgba(205, 167, 79, 0.6),
+            0 0 30px rgba(205, 167, 79, 0.6), 0 0 40px rgba(205, 167, 79, 0.6);
+    }
+}
+/* Custom styles for item used modal */
+.item-used-modal {
+    .modal-content {
+        background-color: #fff; // White background for neutrality
+        border: 1px solid #ccc; // Light gray border for subtle separation
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Soft shadow for depth
+    }
+
+    .modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ccc;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+
+        h2 {
+            margin: 0;
+            color: #333; // Dark gray for the title
+        }
+
+        .icon {
+            font-size: 1.5rem; // Adjust size as needed
+            color: #ffa726; // Orange color for the icon
+            margin-left: 10px; // Add some space between the title and icon
+        }
+
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #333; // Match close button color with the title
+        }
+    }
+
+    .modal-details {
+        p {
+            color: #555; // Slightly lighter gray for the details text
+            margin: 10px 0;
+        }
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end; // Align buttons to the right
+
+        .button-wrapper {
+            button {
+                padding: 10px 20px; // Padding for button size
+                border: none; // Remove default border
+                border-radius: 5px; // Rounded corners
+                cursor: pointer; // Pointer cursor on hover
+                transition: background-color 0.3s; // Smooth background color transition
+                font-size: 16px; // Font size for readability
+                margin: 0 5px; // Spacing between buttons
+
+                &:hover {
+                    filter: brightness(0.9); // Slightly darken on hover
+                }
+            }
+
+            &:nth-child(1) {
+                button {
+                    background-color: #66bb6a; // Green background for the confirm button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #43a047; // Darker green on hover
+                    }
+                }
+            }
+
+            &:nth-child(2) {
+                button {
+                    background-color: #ef5350; // Red background for the cancel button
+                    color: #fff; // White text color
+
+                    &:hover {
+                        background-color: #e53935; // Darker red on hover
+                    }
+                }
+            }
+        }
+    }
 }
