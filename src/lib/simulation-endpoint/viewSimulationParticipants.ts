@@ -9,7 +9,6 @@ const viewSimulationParticipants = async (simulationID: number, userID: number) 
             throw new Error(`Failed to fetch simulation participants for UserID: ${userID} and SimulationID: ${simulationID}`);
         }
         const data = await response.json();
-        console.log(data);
         return data.data;
     } catch (error) {
         console.error("Failed to fetch simulation participants:", error);

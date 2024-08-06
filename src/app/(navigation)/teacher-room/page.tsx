@@ -61,7 +61,7 @@ export default function TeacherRoom() {
                             title={room.name}
                             description={`Teacher ID: ${room.creatorID}`}
                             infoTitle="Game"
-                            counter={Array.isArray(room.members) ? room.members.length : 0}
+                            counter={room.simulations.length}
                             glow={false}
                             // link={`/${userType.toLowerCase()}-room/game`}
                             onClick={() => handleCardClick(room)}

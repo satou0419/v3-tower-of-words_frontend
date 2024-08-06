@@ -6,6 +6,7 @@ interface Room {
     roomID: number;
     code: string;
     members: number[];
+    simulations: any[];
 }
 
 interface RoomState {

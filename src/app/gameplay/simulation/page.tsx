@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { InputBox } from "@/app/component/Input/Input";
 import useImageParse from "@/hook/useImageParse";
-import "./adventure.scss"; // Make sure your SCSS file is imported correctly
+import "./adventure.scss"
 import "./animation.scss";
 import Modal from "@/app/component/Modal/Modal";
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
@@ -16,9 +16,12 @@ import useItem from "@/hook/useItem";
 import ConfettiWrapper from "@/app/component/Confetti/Confetti";
 import useSimulationDetails from "@/hook/useSimulationDetails";
 import useTimer from "@/util/timer";
-import useUpdateSimulationProgress from "@/hook/useUpdateSimulationProgress";
 import { useAuthStore } from "@/store/authStore";
 import useFetchSimulationWords from "@/hook/useSimulationWord";
+import updateSimulationProgress from "@/lib/assessment-endpoint/updateSimulationProgress";
+import useStudentWordProgress from "@/hook/useStudentWordProgress"
+import viewSimulationParticipants from "@/lib/simulation-endpoint/viewSimulationParticipants";
+import updateParticipantAssessment from "@/lib/assessment-endpoint/updateParticipantAssessment";
 
 interface Item {
     itemID: number;
@@ -47,6 +50,17 @@ export interface SimulationEnemy {
     words: number[]; // Array of numbers
 }
 
+interface SimulationProgress {
+    studentWordProgressID: number;
+    simulationWordsID: number;
+    studentID: number;
+    correct: boolean;
+    score: number;
+    duration: number;
+    accuracy: number;
+    mistake: number;
+}
+
 const SimulationGameplay = () => {
     const { userID } = useAuthStore.getState();
     const searchParams = useSearchParams();
@@ -57,38 +71,15 @@ const SimulationGameplay = () => {
         : NaN;
     // const [loading, setLoading] = useState<boolean>(true);
     const simulationDetails = useSimulationDetails(simulationID);
+
     const studentLife = simulationDetails?.simulationDetails?.studentLife ?? 0;
     const [lives, setLives] = useState<number>(studentLife);
 
+    const time = useTimer();
+    const [mistakes, setMistakes] = useState(0);
+
     const interval = simulationDetails?.simulationDetails?.attackInterval ?? 0;
     const [timeLeft, setTimeLeft] = useState<number>(interval);
-
-    useEffect(() => {
-        setTimeLeft(interval);
-    }, [interval]);
-
-    useEffect(() => {
-        console.log(timeLeft)
-        if (timeLeft > 0) {
-            const timerId = setTimeout(() => {
-                setTimeLeft(timeLeft - 1);
-            }, 1000);
-    
-            return () => clearTimeout(timerId);
-        }
-    }, [timeLeft]);
-
-    useEffect(() => {
-        if (timeLeft === 0) {
-            console.log("Time's up!");
-            incrementMistake();
-            handleMissedAttack();
-            setTimeLeft(interval);
-            setTimeout(() => {
-                handleEnemyAttack();
-            }, (characterDetails.attackFrame / 12) * 2000);
-        }
-    }, [timeLeft]);
 
     // Set the initial state and update it if studentLife changes
     useEffect(() => {
@@ -125,6 +116,28 @@ const SimulationGameplay = () => {
         id: number;
         name: string;
     } | null>(null);
+
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timerId = setTimeout(() => {
+                setTimeLeft(timeLeft - 1);
+            }, 1000);
+    
+            return () => clearTimeout(timerId);
+        }
+    }, [timeLeft]);
+
+    useEffect(() => {
+        if (timeLeft === 0 && gameStarted === true) {
+            console.log("Time's up!");
+            incrementMistake();
+            handleMissedAttack();
+            setTimeLeft(interval);
+            setTimeout(() => {
+                handleEnemyAttack();
+            }, (characterDetails.attackFrame / 12) * 2000);
+        }
+    }, [timeLeft]);
 
     useEffect(() => {
         const fetchUserItems = async () => {
@@ -189,16 +202,6 @@ const SimulationGameplay = () => {
         // Add additional logic here to reset the game state
     };
 
-    const [enemies, setEnemies] = useState<SimulationEnemy[]>([]);
-
-    useEffect(() => {
-        if (simulationDetails) {
-            setEnemies(simulationDetails.simulationDetails?.enemy || []);
-        }
-
-        console.log("My Enemies", enemies);
-    }, [gameStarted, enemies]);
-
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0);
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
     const [typedWord, setTypedWord] = useState<string>("");
@@ -209,6 +212,28 @@ const SimulationGameplay = () => {
     );
     const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
     const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
+
+    const [enemies, setEnemies] = useState<SimulationEnemy[]>([]);
+
+    const currentEnemy = enemies[currentEnemyIndex];
+    const currentWordID = currentEnemy?.words[currentWordIndex];
+    const simuWord = useFetchSimulationWords(currentWordID);
+    const currentWord = simuWord.word;
+    const word = useMerriam(currentWord || ""); // Pass the currentWord to the custom hook
+
+    const studentWordProgress = useStudentWordProgress(simulationID, userID, currentWordID);
+    
+    console.log();
+
+    useEffect(() => {
+        if (simulationDetails) {
+            setEnemies(simulationDetails.simulationDetails?.enemy || []);
+        }
+
+        console.log("My Enemies", enemies);
+    }, [gameStarted, enemies]);
+
+    
 
     useEffect(() => {
         if (enemies.length > 0) {
@@ -269,12 +294,6 @@ const SimulationGameplay = () => {
         enemyDetails.idleFrame,
         enemyDetails.attackFrame
     );
-
-    const currentEnemy = enemies[currentEnemyIndex];
-    const currentWordID = currentEnemy?.words[currentWordIndex];
-    const simuWord = useFetchSimulationWords(currentWordID);
-    const currentWord = simuWord.word;
-    const word = useMerriam(currentWord || ""); // Pass the currentWord to the custom hook
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value);
@@ -380,8 +399,6 @@ const SimulationGameplay = () => {
         }
     };
 
-    const time = useTimer();
-    const [mistakes, setMistakes] = useState(0);
     const incrementMistake = () => {
         setMistakes((prevMistakes) => prevMistakes + 1);
     };
@@ -411,6 +428,7 @@ const SimulationGameplay = () => {
         ) {
             // Correct word spelling
             console.log("Correct word entered.");
+            
 
             time.reset();
             const timeSec = time.getFormattedTimeInSeconds();
@@ -424,14 +442,28 @@ const SimulationGameplay = () => {
             const numberOfAttempts = mistakes;
             const duration = time.getFormattedTimeInSeconds();
 
+            console.log(mistakes)
+
             const accuracy = ((studentLife - mistakes) / studentLife) * 100;
+            console.log(accuracy)
             // console.log("Simulation Words ID: ", simulationWordsID);
-            console.log("Stunde ID: ", studentID);
+            console.log("Student ID: ", studentID);
             console.log("Number of Attempts: ", numberOfAttempts);
             console.log("Duration: ", duration);
             console.log("Accuracy", accuracy);
 
-            //#endregion
+            const updatedStudentProgress = {
+                studentWordProgressID: studentWordProgress.wordProgress.studentWordProgressID,
+                simulationWordsID: currentWordID,
+                studentID: userID,
+                correct: true,
+                score: 0,
+                duration: interval - timeLeft,
+                accuracy: accuracy,
+                mistake: mistakes,
+            };
+
+            updateSimulationProgress(updatedStudentProgress);
 
             setTypedWord("");
             handleCharacterAttack();
@@ -441,14 +473,14 @@ const SimulationGameplay = () => {
             setSpelledWords(updatedSpelledWords);
 
             // Prepare progress data
-            const progress = {
-                // simulationWordsID,
-                numberOfAttempts: mistakes,
-                correct: true,
-                score: 0, // Assuming you want to set this dynamically
-                duration: timeSec.toString(),
-                accuracy,
-            };
+            // const progress = {
+            //     // simulationWordsID,
+            //     numberOfAttempts: mistakes,
+            //     correct: true,
+            //     score: 0, // Assuming you want to set this dynamically
+            //     duration: timeSec.toString(),
+            //     accuracy,
+            // };
 
             setTimeout(() => {
                 setIsCharacterAttacking(false);
@@ -472,6 +504,7 @@ const SimulationGameplay = () => {
                         console.log("All enemies defeated.");
                         setShowConfetti(true);
                         setShowConquerFloorModal(true); // Show the conquering floor modal
+                        updateParticipantAssessment(studentID, simulationID);
                     }, 500); // Add delay before showing confetti and modal
                 } else if (isLastWord) {
                     // Last word of current enemy but not the last enemy
@@ -480,7 +513,6 @@ const SimulationGameplay = () => {
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
                     ]);
-                    setTimeLeft(interval);
                     setCurrentEnemyIndex(currentEnemyIndex + 1);
                     setCurrentWordIndex(0);
                     setIsPronunciationLocked(true);
@@ -488,7 +520,6 @@ const SimulationGameplay = () => {
                     console.log(
                         `Proceeding to next word: Word ${currentWordIndex + 1}`
                     );
-                    setTimeLeft(interval);
                     setCurrentWordIndex(currentWordIndex + 1);
                     setIsPronunciationLocked(true);
                 }
@@ -498,7 +529,6 @@ const SimulationGameplay = () => {
             console.log("Incorrect word entered.");
             incrementMistake();
             handleMissedAttack();
-            setTimeLeft(interval);
             setTimeout(() => {
                 handleEnemyAttack();
             }, (characterDetails.attackFrame / 12) * 2000);
@@ -516,6 +546,8 @@ const SimulationGameplay = () => {
 
             setTimeout(() => {
                 console.log("audio ends");
+                setTimeLeft(interval);
+                setMistakes(0);
                 time.start();
             }, 2000);
 

@@ -13,6 +13,7 @@ import CardTab from "@/app/component/Card/CardTab/CardTab";
 import { viewSimulation } from "@/lib/simulation-endpoint/viewSimulation";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend } from "chart.js";
+import updateWordAssessment from "@/lib/assessment-endpoint/updateWordAssessment";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
 
@@ -37,6 +38,7 @@ export default function TeacherSimulationWords() {
         const fetchSimulations = async () => {
         try {
             const simulation = await viewSimulation(simulationID);
+            updateWordAssessment(simulationID);
             setCurrentSimulation(simulation);
             console.log(simulation);
         } catch (error) {
