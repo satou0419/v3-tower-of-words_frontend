@@ -68,12 +68,12 @@ const SimulationGameplay = () => {
     }, [interval]);
 
     useEffect(() => {
-        console.log(timeLeft)
+        console.log(timeLeft);
         if (timeLeft > 0) {
             const timerId = setTimeout(() => {
                 setTimeLeft(timeLeft - 1);
             }, 1000);
-    
+
             return () => clearTimeout(timerId);
         }
     }, [timeLeft]);
@@ -724,7 +724,7 @@ const SimulationGameplay = () => {
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
                     <Modal
-                        className="confirmation-modal"
+                        className="item-used-modal"
                         isOpen={showConfirmationModal}
                         title="Confirm Item Use"
                         details={`Are you sure you want to use ${itemToUse?.name}?`}
@@ -848,7 +848,7 @@ const SimulationGameplay = () => {
 
             {/* Game Over Modal */}
             <Modal
-                className="game-over-modal"
+                className="gameover-modal"
                 isOpen={showGameOverModal}
                 title="Game Over"
                 details="Unfortunately, you have run out of lives. Would you like to restart the game?"

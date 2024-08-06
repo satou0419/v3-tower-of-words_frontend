@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import { InputLine } from "@/app/component/Input/Input";
 import { useRouter } from "next/navigation";
-import "./createroom.scss";
 import { useRoomStore } from "@/store/roomStore";
 import { createRoom } from "@/lib/room-endpoint/createRoom";
 import { useAuthStore } from "@/store/authStore";
 import useUserInfoStore from "@/store/userInfoStore";
 import Toast from "@/app/component/Toast/Toast";
+import Modal from "@/app/component/Modal/Modal";
+import "./createroom.scss";
 
 export default function CreateRoom() {
     const { rooms, setRoom } = useRoomStore();
@@ -16,14 +17,13 @@ export default function CreateRoom() {
     const [showPopup, setShowPopup] = useState(false);
     const [code, setCode] = useState("");
     const [error, setError] = useState("");
+    const [isCopied, setIsCopied] = useState(false); // New state for copy status
     const router = useRouter();
     const { userType } = useUserInfoStore.getState();
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastType, setToastType] = useState<"success" | "error" | "warning">(
         "success"
     );
-
-    console.log(userID);
 
     useEffect(() => {
         if (error) {
@@ -34,6 +34,16 @@ export default function CreateRoom() {
             return () => clearTimeout(timer);
         }
     }, [error]);
+
+    useEffect(() => {
+        if (isCopied) {
+            const timer = setTimeout(() => {
+                setIsCopied(false); // Reset the copy status after a short delay
+            }, 3000);
+
+            return () => clearTimeout(timer);
+        }
+    }, [isCopied]);
 
     const handleCreateRoom = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -52,20 +62,34 @@ export default function CreateRoom() {
             setCode(newRoom.data.code);
             setToastMessage("Room Created!");
             setToastType("success");
-            setShowPopup(!showPopup);
-            
+            setShowPopup(true); // Open the modal when room is created
         } catch (error) {
             setToastMessage("Failed to create room!");
             setToastType("error");
         }
     };
 
-    const handleCancel = () => {
+    const handleCloseModal = () => {
+        setShowPopup(false);
         router.push(`/${userType.toLowerCase()}-room`);
     };
 
-    const handleBack = () => {
-        setShowPopup(!showPopup);
+    const handleCopyToClipboard = () => {
+        navigator.clipboard.writeText(code).then(
+            () => {
+                setIsCopied(true); // Set the copy status to true
+                setToastMessage("Room code copied to clipboard!");
+                setToastType("success");
+            },
+            () => {
+                setToastMessage("Failed to copy room code!");
+                setToastType("error");
+            }
+        );
+    };
+
+    const handleCancel = () => {
+        router.push(`/${userType.toLowerCase()}-room`);
     };
 
     return (
@@ -94,14 +118,27 @@ export default function CreateRoom() {
                     </div>
                 </form>
             </section>
+            {/* Room Code Modal */}
             {showPopup && (
-                <div className="cardroomcode-popup-container">
-                    <button onClick={handleBack}>X</button>
-                    <div className="cardroomcode-popup">
-                        <h1>C O D E</h1>
-                        <div>{code}</div>
-                    </div>
-                </div>
+                <Modal
+                    className="room-code-modal"
+                    title="Room Code"
+                    details={`The room code is ${code}.`}
+                    isOpen={showPopup}
+                    onClose={handleCloseModal}
+                    buttons={[
+                        <button
+                            key="copy"
+                            onClick={handleCopyToClipboard}
+                            className={isCopied ? "copied" : ""} // Apply dynamic class
+                        >
+                            {isCopied ? "Copied!" : "Copy"}
+                        </button>,
+                        <button key="ok" onClick={handleCloseModal}>
+                            OK
+                        </button>,
+                    ]}
+                />
             )}
         </section>
     );

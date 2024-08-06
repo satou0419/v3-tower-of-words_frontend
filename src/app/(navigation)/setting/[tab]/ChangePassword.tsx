@@ -11,6 +11,7 @@ const ChangePassword = () => {
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [isErrorToastOpen, setIsErrorToastOpen] = useState(false);
+    const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false); // State for confirmation modal
     const [toastMessage, setToastMessage] = useState(""); // State to hold toast message
 
     const handlePasswordChange = async (e: React.FormEvent) => {
@@ -21,6 +22,10 @@ const ChangePassword = () => {
             return;
         }
 
+        setIsConfirmModalOpen(true); // Show confirmation modal
+    };
+
+    const confirmChangePassword = async () => {
         try {
             await changePassword(currentPassword, newPassword);
             setIsSuccessModalOpen(true); // Open success modal upon successful change
@@ -30,6 +35,8 @@ const ChangePassword = () => {
         } catch (err) {
             setToastMessage("Failed to change password. Please try again."); // Set toast message for general error
             setIsErrorToastOpen(true); // Display error toast
+        } finally {
+            setIsConfirmModalOpen(false); // Close confirmation modal
         }
     };
 
@@ -68,9 +75,33 @@ const ChangePassword = () => {
                 <button type="submit">Save Changes</button>
             </form>
 
+            {/* Confirmation Modal */}
+            <Modal
+                className="confirmation-modal"
+                isOpen={isConfirmModalOpen}
+                onClose={() => setIsConfirmModalOpen(false)}
+                title="Confirm Change"
+                details="Are you sure you want to change your password?"
+                buttons={[
+                    <button
+                        key="cancel"
+                        onClick={() => setIsConfirmModalOpen(false)}
+                    >
+                        Cancel
+                    </button>,
+                    <button
+                        key="confirm"
+                        className="confirm" // Add class for confirmation button
+                        onClick={confirmChangePassword}
+                    >
+                        Confirm
+                    </button>,
+                ]}
+            />
+
             {/* Success Modal */}
             <Modal
-                className="change-passwordmodal"
+                className="success-modal"
                 isOpen={isSuccessModalOpen}
                 onClose={() => setIsSuccessModalOpen(false)}
                 title="Password Changed"
