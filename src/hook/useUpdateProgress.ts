@@ -20,7 +20,7 @@ const useUpdateProgress = () => {
 
         try {
             const response = await fetch(
-                `${BASE_URL}/tower_progress/update_user_progress?user_prog_id=${userProgress.userProgressID}`,
+                `${BASE_URL}/tower_progress/update_user_progress?userProgressID=${userProgress.userProgressID}`,
                 {
                     method: "PUT",
                     headers: {

@@ -387,9 +387,12 @@
             span {
                 height: 100%;
                 display: flex;
+                text-align: center;
                 justify-content: center;
                 align-items: center;
                 position: relative;
+                width: 95%;
+                overflow-y: auto;
             }
 
             .locked {
@@ -410,4 +413,16 @@
             }
         }
     }
+}
+
+.lives-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    margin-top: 10px;
+}
+.heart {
+    max-width: 20px;
 }

@@ -30,10 +30,6 @@
         justify-content: center;
         align-items: flex-start;
 
-        button {
-            margin-left: 2em;
-        }
-
         .reward-container {
             height: 100%;
             width: 100%;
@@ -43,7 +39,6 @@
             text-align: center;
 
             h1 {
-                margin-top: 1em;
                 color: #fff;
                 font-size: 2.5em;
                 text-shadow: -2px 2px 0 black, 2px -2px 0 black,
@@ -271,7 +266,6 @@
             text-align: center;
 
             h1 {
-                margin-top: 1em;
                 color: #fff;
                 font-size: 2.5em;
                 text-shadow: -2px 2px 0 black, 2px -2px 0 black,
@@ -290,6 +284,7 @@
                     flex-direction: column;
                     gap: 4em;
                     align-items: center;
+                    flex-wrap: wrap;
                 }
             }
         }
@@ -314,6 +309,8 @@
     align-items: flex-start;
     flex-direction: column;
     gap: 2em;
+    flex-wrap: wrap;
+    overflow-y: auto;
     h2 {
         color: #fff;
         font-size: 2em;
@@ -445,6 +442,13 @@
             color: #fff;
             border: 1px solid #000;
             cursor: pointer;
+        }
+
+        .active-section {
+            background-color: #ffc658;
+        }
+        .done-section {
+            // background-color: #ffc658;
         }
     }
 }

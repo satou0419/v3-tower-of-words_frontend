@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import { InputLine } from "@/app/component/Input/Input";
 import CardWord from "@/app/component/Card/CardWord/CardWord";
@@ -8,26 +10,48 @@ import {
 import useMerriam from "@/hook/useMerriam";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faVolumeUp } from "@fortawesome/free-solid-svg-icons";
+import Loading from "@/app/loading"; // Import the Loading component
 
 const Words = () => {
     const { archiveWords } = useArchiveWordStore();
     const [selectedWord, setSelectedWord] = useState<null | string>(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [filteredWords, setFilteredWords] = useState(archiveWords);
+    const [loading, setLoading] = useState(true);
 
     // Use the hook with the selectedWord to get Merriam data
     const wordData = useMerriam(selectedWord || "");
 
     useEffect(() => {
-        fetchAndSetArchiveWords();
+        const fetchWords = async () => {
+            try {
+                await fetchAndSetArchiveWords();
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchWords();
     }, []);
 
     useEffect(() => {
-        setFilteredWords(
-            archiveWords.filter((word) =>
-                word.word.toLowerCase().includes(searchTerm.toLowerCase())
-            )
+        const updatedFilteredWords = archiveWords.filter((word) =>
+            word.word.toLowerCase().includes(searchTerm.toLowerCase())
         );
+        setFilteredWords(updatedFilteredWords);
+
+        // If search results are found and no word is selected, select the first word
+        if (updatedFilteredWords.length > 0) {
+            if (
+                selectedWord === null ||
+                !updatedFilteredWords.some((word) => word.word === selectedWord)
+            ) {
+                setSelectedWord(updatedFilteredWords[0].word);
+            }
+        } else {
+            // Clear the selected word if no results
+            setSelectedWord(null);
+        }
     }, [searchTerm, archiveWords]);
 
     const handleWordClick = (word: string) => {
@@ -37,6 +61,10 @@ const Words = () => {
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
+
+    if (loading) {
+        // return <Loading />; // Render Loading component while data is being loaded
+    }
 
     return (
         <section className="wordarchive-container">
@@ -48,24 +76,30 @@ const Words = () => {
                         onChange={handleSearchChange}
                     />
                     <div className="word-list">
-                        {filteredWords.map((word) => (
-                            <span
-                                key={word.word}
-                                onClick={() => handleWordClick(word.word)}
-                                className={
-                                    selectedWord === word.word ? "active" : ""
-                                }
-                            >
-                                {word.word}
-                            </span>
-                        ))}
+                        {filteredWords.length > 0 ? (
+                            filteredWords.map((word) => (
+                                <span
+                                    key={word.word}
+                                    onClick={() => handleWordClick(word.word)}
+                                    className={
+                                        selectedWord === word.word
+                                            ? "active"
+                                            : ""
+                                    }
+                                >
+                                    {word.word}
+                                </span>
+                            ))
+                        ) : (
+                            <span className="no-results">No words found</span>
+                        )}
                     </div>
                 </div>
             </CardWord>
             <div className="wordarchive-spine"></div>
             <CardWord className="wordarchive-right">
                 <section className="right-container">
-                    {wordData ? (
+                    {selectedWord && wordData ? (
                         <>
                             <div className="word-control">
                                 <h1>{wordData.word}</h1>
@@ -101,7 +135,7 @@ const Words = () => {
                             </div>
                         </>
                     ) : (
-                        <span>Select a word to see details</span>
+                        <span className="no-data">No data available</span>
                     )}
                 </section>
             </CardWord>

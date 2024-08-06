@@ -1,13 +1,8 @@
 import BASE_URL from "@/util/baseUrl";
 
 interface Enemy {
-    id: number;
     imagePath: string;
-    words: SimulationWords[];
-}
-
-interface SimulationWords {
-    word: string;
+    words: number[];
 }
 
 interface Room {
@@ -21,7 +16,7 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
+    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -29,6 +24,7 @@ interface SimulationDetails {
 }
 
 const createGame = async (simulation: SimulationDetails) => {
+    console.log(simulation)
     try {
         const response = await fetch(`${BASE_URL}/simulation/create_simulation`, {
             method: "POST",
@@ -45,7 +41,7 @@ const createGame = async (simulation: SimulationDetails) => {
         console.log(data);
         return data;
     } catch (error) {
-        console.error("Error creating room:", error);
+        console.error("Error creating simulation:", error);
         throw error;
     }
 };

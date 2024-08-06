@@ -1,16 +1,24 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import "./trial.scss";
-import useMerriam from "@/hook/useMerriam";
-import getUserDetails from "@/lib/user-endpoint/getUserDetails";
-import useUserProgressStore from "@/store/userProgressStore";
-import useProgressEquippedStore from "@/store/progressEquippedStore";
-import useProgressDashboardStore from "@/store/progressDashboardStore";
-import useSimulationDetails from "@/hook/useSimulationDetails";
+import useFetchSimulationWords from "@/hook/useSimulationWord";
+import React from "react";
 
-export default function Trial() {
-    const simulationDetails = useSimulationDetails(4);
-    console.log("Enemies", simulationDetails.simulationDetails?.enemy);
+const SimulationWordsComponent = () => {
+    const simu = useFetchSimulationWords(1);
 
-    return <></>;
-}
+    return (
+        <div>
+            <h1>Simulation Words</h1>
+            <p>
+                <strong>Word:</strong> {simu.word}
+            </p>
+            <p>
+                <strong>Creator ID:</strong> {simu.creatorID}
+            </p>
+            <p>
+                <strong>Silent Index:</strong> {simu.silentIndex}
+            </p>
+        </div>
+    );
+};
+
+export default SimulationWordsComponent;

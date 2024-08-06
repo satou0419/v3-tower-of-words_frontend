@@ -1,0 +1,291 @@
+/* archive.scss */
+
+.main-wrapper {
+    height: 90%;
+    width: 98%;
+    justify-content: center;
+    align-items: flex-start;
+    display: flex;
+    flex-direction: column;
+
+    .wordassessment-button {
+        cursor: pointer;
+        color: #fff;
+        height: 3em;
+        width: 10em;
+        background-color: #fc5776;
+        border-radius: 8px;
+        padding: 0.5em 1em;
+        border: none;
+        border-top: 4px solid #fff;
+        box-shadow: 0 6px 12px rgba(252, 87, 118, 0.4),
+            0 3px 6px rgba(0, 0, 0, 0.1);
+    }
+}
+
+.content-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.archive-wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.teachersimulationwords-container {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+    align-items: center;
+    transition: all 0.3s ease;
+
+    .graph{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        flex-direction: column;
+        height: 80%;
+        width: 80%;
+
+        .cardtab {
+            width: 80%;
+            height: 60%;
+            align-self: center;
+            display: flex;
+        }
+
+        .wordassessment-x {
+            align-self: flex-end;
+            cursor: pointer;
+            color: #fff;
+            background-color: #fc5776;
+            border-radius: 8px;
+            padding: 0.4em 0.8em;
+            border: none;
+            border-top: 2px solid #fff;
+        }
+    }
+}
+
+.teachersimulationwords-left,
+.teachersimulationwords-right {
+    height: 90%;
+    width: 40%;
+
+    .cardword-card {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        transition: all 0.3s ease;
+
+        .outer {
+            height: 95%;
+            width: 95%;
+            transition: all 0.3s ease;
+
+            .inner {
+                height: 98%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                transition: all 0.3s ease;
+            }
+        }
+    }
+}
+
+.teachersimulationwords-left {
+    .left-container {
+        height: 90%;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        gap: 2em;
+        transition: all 0.3s ease;
+
+        input {
+            border-color: #fff;
+            color: #fff;
+            width: 50%;
+            padding-left: 0.5em;
+            transition: all 0.3s ease;
+
+            &::placeholder {
+                color: #fff;
+                opacity: 0.8;
+                transition: all 0.3s ease;
+            }
+        }
+
+        .word-list {
+            height: 100%;
+            color: #fff;
+            overflow: auto;
+            display: flex;
+            gap: 1em;
+            font-size: 1.3em;
+            flex-direction: column;
+            transition: all 0.3s ease;
+
+            span {
+                cursor: pointer;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    padding-left: 10px;
+                    border-radius: 10px;
+                }
+            }
+
+            .active {
+                font-size: 1.5em;
+                display: flex;
+                padding-left: 10px;
+                align-items: center;
+                border-radius: 10px;
+                background: linear-gradient(
+                    to left,
+                    transparent 0%,
+                    #f99417 100%
+                );
+                height: 1.5em;
+                width: 100%;
+                transition: all 0.3s ease;
+            }
+        }
+    }
+
+    .cardword-card {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+}
+
+.teachersimulationwords-spine {
+    height: 60%;
+    width: 1em;
+    background-color: #666666;
+    transition: all 0.3s ease;
+}
+
+.teachersimulationwords-right {
+    color: #fff;
+
+    .cardword-card {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+        transition: all 0.3s ease;
+    }
+
+    .right-container {
+        overflow: auto;
+
+        height: 98%;
+        width: 98%;
+        display: flex;
+        flex-direction: column;
+        gap: 2em;
+        transition: all 0.3s ease;
+
+        .word-control {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+
+            h1 {
+                font-size: 4em;
+                transition: all 0.3s ease;
+            }
+
+            .pronunciation {
+                font-size: 2em;
+                transition: all 0.3s ease;
+            }
+        }
+
+        .word-define {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 1em;
+            transition: all 0.3s ease;
+
+            .part-of-speech {
+                font-size: 1.5em;
+                transition: all 0.3s ease;
+            }
+
+            .definition {
+                margin-left: 2em;
+                transition: all 0.3s ease;
+            }
+        }
+
+        .graph-button{
+            width: 100%;
+            button {
+                align-self: flex-end;
+                cursor: pointer;
+                color: #fff;
+                width: 100%;
+                background-color: #fc5776;
+                border-radius: 8px;
+                padding: 0.4em 0.8em;
+                border: none;
+                border-top: 2px solid #fff;
+            }
+        }
+    }
+}
+
+.wordassessment-content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    gap: 2em;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    overflow: hidden;
+
+    .wordassessment-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        width: 40%;
+        height: 100%;
+        border-radius: 10px;
+        color: #fff;
+        overflow-y: scroll;
+
+        .wordassessment-data{
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            padding: 1.5em;
+            height: 100%;
+            background-color: var(--clr-violet_glass);
+            width: 100%;
+            border-radius: 10px;
+            color: #fff;
+        }
+    }
+
+    .wordassessment-graph {
+        border: 2px solid black;
+        width: 60%;
+        height: 100%;
+    }  
+}

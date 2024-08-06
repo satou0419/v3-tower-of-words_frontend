@@ -4,7 +4,7 @@ import "./cardshop.scss";
 interface CardShopProps {
     imgSrc: string;
     title: string;
-    price: number;
+    price: number | string;
     className?: string;
     onClick?: () => void;
 }

@@ -42,8 +42,8 @@ const AdventureGameplay = () => {
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
     const [isPronunciationLocked, setIsPronunciationLocked] = useState(true);
-    const [isDefinitionLocked, setIsDefinitionLocked] = useState(true);
-    const [isItemLocked] = useState(true);
+    const [isDefinitionLocked, setIsDefinitionLocked] = useState(false);
+    const [isItemLocked] = useState(false);
 
     const lockedPronunciation = isPronunciationLocked ? "locked" : "";
     const lockedDefinition = isDefinitionLocked ? "locked" : "";
@@ -68,6 +68,22 @@ const AdventureGameplay = () => {
 
         fetchUserItems();
     }, []);
+    const handleUnload = (event: BeforeUnloadEvent) => {
+        const message =
+            "Progress won't be saved. Are you sure you want to leave?";
+        event.returnValue = message; // Standard for most browsers
+        return message; // For some older browsers
+    };
+
+    useEffect(() => {
+        // Add event listener when the component mounts
+        window.addEventListener("beforeunload", handleUnload);
+
+        // Cleanup function to remove the event listener
+        return () => {
+            window.removeEventListener("beforeunload", handleUnload);
+        };
+    }, []); // Empty dependency array ensures this effect runs once on mount
 
     const { useItemFunction } = useItem();
 
@@ -435,6 +451,31 @@ const AdventureGameplay = () => {
         };
     }, [gameStarted, word]); // Trigger on gameStarted or word change
 
+    const renderHearts = () => {
+        const hearts = [];
+        for (let i = 0; i < lives; i++) {
+            hearts.push(
+                <img
+                    key={`heart-${i}`}
+                    className="heart"
+                    src="/assets/images/icon/ic-heart.png"
+                    alt="Heart"
+                />
+            );
+        }
+        for (let i = lives; i < 5; i++) {
+            hearts.push(
+                <img
+                    key={`lose-${i}`}
+                    className="heart"
+                    src="/assets/images/icon/ic-lose.png"
+                    alt="Lose"
+                />
+            );
+        }
+        return hearts;
+    };
+
     const [rangeValue, setRangeValue] = useState(0);
 
     const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -478,7 +519,7 @@ const AdventureGameplay = () => {
             {gameStarted && (
                 <section className="adventure-platform">
                     <div className="platform-indicator">Floor {floorId}</div>
-                    <p>Lives: {lives}</p>
+                    <div className="lives-container">{renderHearts()}</div>
 
                     <section className="enemy-track">
                         {enemyData.map((enemy, enemyIndex) => {
@@ -525,7 +566,6 @@ const AdventureGameplay = () => {
                             );
                         })}
                     </section>
-
                     <section className="sprite-holder">
                         {/* Character Sprite */}
                         <section
@@ -762,7 +802,7 @@ const AdventureGameplay = () => {
                 className="conquer-floor-modal"
                 isOpen={showConquerFloorModal}
                 title="Floor Conquered!"
-                details="Congratulations! You've conquered this floor. Would you like to proceed to the next floor or return to the main menu?"
+                details="Congratulations! You've conquered this floor.?"
                 buttons={[
                     <button
                         key="menu"

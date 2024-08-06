@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./carduser.scss";
+import useStudentInfo from "@/hook/useStudentInfo";
 
 interface CardUserProps {
-    username?: string;
-    time?: string;
+    username: number;
+    time?: string | null;
     score?: number;
     className?: string;
+    onClick?: () => void;
 }
 
 const CardUser: React.FC<CardUserProps> = ({
@@ -13,18 +15,28 @@ const CardUser: React.FC<CardUserProps> = ({
     time,
     score,
     className,
+    onClick,
 }) => {
+    const user = useStudentInfo(username);
+
+    console.log(user.studentInfo?.data?.username);
+
     return (
-        <section className={`carduser-card ${className || ""}`}>
+        <section className={`carduser-card ${className || ""}`} onClick={onClick}>
             <section className="carduser-container">
                 <section className="banner-container">
                     <div className="banner"></div>
 
-                    {username && time && (
+                    
                         <div className="details">
-                            <h1>{username}</h1>
+                            {username && (
+                                <h1>{user.studentInfo?.data?.username}</h1>
+                            )}
+                            {time && (
+                                <h4>{time}</h4>
+                            )}
                         </div>
-                    )}
+                    
                 </section>
 
                 {score !== undefined && (

@@ -15,7 +15,7 @@ const useFloorIncrement = () => {
 
         try {
             const response = await fetch(
-                `${BASE_URL}/user_details/increment_floor?ud_id=${userID}`,
+                `${BASE_URL}/user_details/increment_floor?userDetailsID=${userID}`,
                 {
                     method: "PATCH",
                     headers: {

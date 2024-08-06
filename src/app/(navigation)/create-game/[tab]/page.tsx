@@ -6,15 +6,20 @@ import "./creategame.scss";
 import SettingsTab from "./SettingsTab/SettingsTab";
 import WordsTab from "./WordsTab/WordsTab";
 import useTabManagement from "@/hook/useTab";
+import { useRoomStore } from "@/store/roomStore";
+import { useRouter } from "next/navigation";
+import useUserInfoStore from "@/store/userInfoStore";
 
 interface Enemy {
-    id: number;
     imagePath: string;
-    words: SimulationWords[];
+    words: number[];
 }
 
 interface SimulationWords {
+    //simulationWordsID: number;
+    creatorID: number;
     word: string;
+    silentIndex: string;
 }
 
 interface Room {
@@ -28,7 +33,7 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
+    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -37,26 +42,30 @@ interface SimulationDetails {
 
 export default function CreateGame() {
     const [enemies, setEnemies] = useState<Enemy[]>([]);
-    const [room, setRoom] = useState<Room>({roomID: 1});
-    const [settings, setSettings] = useState<SimulationDetails>(() => {
-        const savedSettings = localStorage.getItem("settings");
-        return savedSettings
-            ? JSON.parse(savedSettings)
-            : {
-                roomID: { roomID: 1 },
-                simulationType: "Spelling",
-                name: "",
-                deadline: "",
-                attackInterval: 20,
-                studentLife: 6,
-                numberOfAttempt: 1,
-                items: true,
-                description: true,
-                pronunciation: true,
-                enemy: [],
-            };
-    });
+    const { currentRoom } = useRoomStore();
     const [isClient, setIsClient] = useState(false);
+    const router = useRouter();
+    const { userType } = useUserInfoStore.getState();
+    
+    const [settings, setSettings] = useState<SimulationDetails>({
+        roomID: { roomID: currentRoom.roomID },
+        simulationType: "Spelling",
+        name: "",
+        deadline: "",
+        attackInterval: 20,
+        studentLife: 6,
+        // numberOfAttempt: 1,
+        items: true,
+        description: true,
+        pronunciation: true,
+        enemy: [],
+    });
+
+    useEffect(() => {
+        if(currentRoom.roomID == 0 && userType) {
+            router.push(`/${userType.toLowerCase()}-room`);
+        }
+    }, []);
 
     useEffect(() => {
         setIsClient(true);
@@ -79,30 +88,47 @@ export default function CreateGame() {
     }, [settings, isClient]);
 
     useEffect(() => {
-        setSettings((prevSettings) => ({
-            ...prevSettings,
-            roomID: room,
-            enemy: enemies,
-        }));
-    }, [room, enemies]);
+        if (isClient) {
+            setSettings((prevSettings) => ({
+                ...prevSettings,
+                roomID: currentRoom,
+                enemy: enemies,
+            }));
+        }
+    }, [currentRoom, enemies]);
 
     const { activeTab, handleTabChange } = useTabManagement(
         "/create-game",
-        "my-word"
+        `my-word`
     );
 
     const addEnemy = () => {
         const newEnemy: Enemy = {
-            id: enemies.length > 0 ? enemies[enemies.length - 1].id + 1 : 1,
-            imagePath:"dafuq",
-            words:[]
+            imagePath: "",
+            words: [],
         };
 
         setEnemies([...enemies, newEnemy]);
     };
 
+    const updateEnemyWords = (id: number, updatedWords: number[]) => {
+        setEnemies(
+            enemies.map((enemy, index) =>
+                index === id ? { ...enemy, words: updatedWords } : enemy
+            )
+        );
+    };
+
+    const updateEnemyImagePath = (id: number, imagePath: string) => {
+        setEnemies((prevEnemies) =>
+            prevEnemies.map((enemy, index) =>
+                index === id ? { ...enemy, imagePath } : enemy
+            )
+        );
+    };
+
     const removeEnemy = (id: number) => {
-        setEnemies(enemies.filter((enemy) => enemy.id !== id));
+        setEnemies(enemies.filter((enemy, index) => index !== id));
     };
 
     const updateSettings = (updatedSettings: Partial<SimulationDetails>) => {
@@ -112,18 +138,35 @@ export default function CreateGame() {
         }));
     };
 
-    console.log(enemies)
+    useEffect(() => {
+        if (!currentRoom) {
+            router.push(`/${userType.toLowerCase()}-room`)
+        }
+    }, [currentRoom]);
 
     const tabData = [
         {
             title: "Words",
-            id: "my-word",
-            content: <WordsTab enemies={enemies} addEnemy={addEnemy} removeEnemy={removeEnemy} />,
+            id: `my-word`,
+            content: (
+                <WordsTab
+                    enemies={enemies}
+                    addEnemy={addEnemy}
+                    removeEnemy={removeEnemy}
+                    updateEnemyWords={updateEnemyWords}
+                    updateEnemyImagePath={updateEnemyImagePath}
+                />
+            ),
         },
         {
             title: "Setting",
-            id: "setting",
-            content: <SettingsTab settings={settings} updateSettings={updateSettings} />,
+            id: `setting`,
+            content: (
+                <SettingsTab
+                    settings={settings}
+                    updateSettings={updateSettings}
+                />
+            ),
         },
     ];
 

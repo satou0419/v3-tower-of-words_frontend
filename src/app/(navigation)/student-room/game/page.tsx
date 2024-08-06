@@ -1,42 +1,57 @@
 "use client";
-import { useEffect } from "react";
+
+import { useEffect, useState } from "react";
 import { useSimulationStore } from "@/store/simulationStore";
+import { useRoomStore } from "@/store/roomStore";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./game.scss";
-import useUserInfoStore from "@/store/userInfoStore";
+import { useAuthStore } from "@/store/authStore";
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
-import { useSearchParams } from "next/navigation";
+import { viewRoom } from "@/lib/room-endpoint/viewRoom";
+import { useRouter, useSearchParams } from "next/navigation";
+import Loading from "@/app/loading";
+import useStudentInfo from "@/hook/useStudentInfo";
 
 export default function Game() {
-    const { userType } = useUserInfoStore.getState();
-    const { simulations, setSimulation } = useSimulationStore(); // Assuming you have a setSimulation method
-    const searchParams = useSearchParams(); // Get the search parameters
+    const { userID } = useAuthStore.getState();
+    const { currentRoom, setCurrentRoom } = useRoomStore();
+    const { simulations, setSimulation } = useSimulationStore();
+    const searchParams = useSearchParams();
+    const [loading, setLoading] = useState(true);
 
     const roomIDParam = searchParams.get("roomID");
     const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
+
+    const user = useStudentInfo(currentRoom.creatorID);
+
+    console.log(user.studentInfo?.data?.username);
 
     useEffect(() => {
         const fetchSimulations = async () => {
             try {
                 const data = await viewRoomSimulations(roomID);
+                const room = await viewRoom(roomID);
                 setSimulation(data);
+                setCurrentRoom(room);
+                setLoading(false); // Set loading to false after data is fetched
             } catch (error) {
                 console.error("Failed to fetch simulations:", error);
+                setLoading(false); // Set loading to false even if there's an error
             }
         };
 
         fetchSimulations();
-    }, [setSimulation]);
+    }, [setSimulation, roomID]);
+
+    const navigation = useRouter();
 
     const handleCardClick = (simulationID: number) => {
-        try {
-            // Implement functionality for card click
-            console.log(`Card clicked for simulation ID: ${simulationID}`);
-            // Additional logic can be added here
-        } catch (error) {
-            console.error("Failed to handle card click:", error);
-        }
+        navigation.push(`/gameplay/simulation?simulationID=${simulationID}`);
     };
+
+    if (loading) {
+        return <Loading />; // Render Loading component while fetching data
+    }
 
     return (
         <main className="game-wrapper">
@@ -52,20 +67,25 @@ export default function Game() {
 
                 <div className="game-room">
                     {simulations.length > 0 ? (
-                        simulations.map((simulation) => (
-                            <CardRoomGame
-                                key={simulation.simulationID}
-                                bannerClass="room-banner"
-                                title={simulation.name}
-                                description={`Teacher Name`} // Replace with actual data if available
-                                infoTitle="Score" // Replace with actual data if available
-                                counter={simulation.numberOfAttempt}
-                                glow={false}
-                                onClick={() =>
-                                    handleCardClick(simulation.simulationID)
-                                } // Pass simulationID to the handler
-                            />
-                        ))
+                        simulations.map((simulation) =>{
+                            const participant = simulation.participants.find(participant => participant.userID === userID);
+                            const score = participant ? participant.score : 0; // Get the score if participant found
+
+                            return (
+                                <CardRoomGame
+                                    key={simulation.simulationID}
+                                    bannerClass="room-banner"
+                                    title={simulation.name}
+                                    description={user.studentInfo?.data?.username ?? "Teacher"}
+                                    infoTitle="Score"
+                                    counter={score}
+                                    glow={false}
+                                    onClick={() =>
+                                        handleCardClick(simulation.simulationID)
+                                    }
+                                />
+                            );
+                        })
                     ) : (
                         <p>No simulations available</p>
                     )}
