@@ -8,9 +8,11 @@
     display: flex;
     flex-direction: column;
 
-    button {
+    .studentwordprogress-button {
         cursor: pointer;
         color: #fff;
+        height: 3em;
+        width: 10em;
         background-color: #fc5776;
         border-radius: 8px;
         padding: 0.5em 1em;
@@ -44,6 +46,34 @@
     gap: 2em;
     align-items: center;
     transition: all 0.3s ease;
+
+    .graph{
+        position: absolute;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        flex-direction: column;
+        height: 80%;
+        width: 80%;
+
+        .cardtab {
+            width: 80%;
+            height: 60%;
+            align-self: center;
+            display: flex;
+        }
+
+        .studentwordprogress-x {
+            align-self: flex-end;
+            cursor: pointer;
+            color: #fff;
+            background-color: #fc5776;
+            border-radius: 8px;
+            padding: 0.4em 0.8em;
+            border: none;
+            border-top: 2px solid #fff;
+        }
+    }
 }
 
 .studentwordprogress-left,
@@ -173,17 +203,6 @@
             align-items: center;
             transition: all 0.3s ease;
 
-            button {
-                align-self: flex-end;
-                cursor: pointer;
-                color: #fff;
-                background-color: #fc5776;
-                border-radius: 8px;
-                padding: 0.4em 0.8em;
-                border: none;
-                border-top: 2px solid #fff;
-            }
-
             h1 {
                 font-size: 4em;
                 transition: all 0.3s ease;
@@ -213,5 +232,60 @@
                 transition: all 0.3s ease;
             }
         }
+
+        .graph-button{
+            width: 100%;
+            button {
+                align-self: flex-end;
+                cursor: pointer;
+                color: #fff;
+                width: 100%;
+                background-color: #fc5776;
+                border-radius: 8px;
+                padding: 0.4em 0.8em;
+                border: none;
+                border-top: 2px solid #fff;
+            }
+        }
     }
+}
+
+.studentwordprogress-content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    gap: 2em;
+    justify-content: center;
+    align-items: center;
+    padding: 5px;
+    overflow: hidden;
+
+    .studentwordprogress-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        width: 40%;
+        height: 100%;
+        border-radius: 10px;
+        color: #fff;
+        overflow-y: scroll;
+
+        .studentwordprogress-data{
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            padding: 1.5em;
+            height: 100%;
+            background-color: var(--clr-violet_glass);
+            width: 100%;
+            border-radius: 10px;
+            color: #fff;
+        }
+    }
+
+    .studentwordprogress-graph {
+        border: 2px solid black;
+        width: 60%;
+        height: 100%;
+    }  
 }

@@ -20,7 +20,7 @@ interface SimulationParticipant {
     userID: number;
     score: number;
     duration: string | null;
-    attempts: number;
+    mistake: number;
     accuracy: number;
     wordsProgress: any[];
     done: boolean;
@@ -32,7 +32,7 @@ interface SimulationAssessment {
     simulationEnemyID: number;
     simulationWordID: number;
     accuracy: number;
-    attempts: number;
+    mistake: number;
     score: number;
     duration: number;
 }
@@ -44,7 +44,6 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;

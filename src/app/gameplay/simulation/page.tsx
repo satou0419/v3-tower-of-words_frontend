@@ -60,10 +60,41 @@ const SimulationGameplay = () => {
     const studentLife = simulationDetails?.simulationDetails?.studentLife ?? 0;
     const [lives, setLives] = useState<number>(studentLife);
 
+    const interval = simulationDetails?.simulationDetails?.attackInterval ?? 0;
+    const [timeLeft, setTimeLeft] = useState<number>(interval);
+
+    useEffect(() => {
+        setTimeLeft(interval);
+    }, [interval]);
+
+    useEffect(() => {
+        console.log(timeLeft)
+        if (timeLeft > 0) {
+            const timerId = setTimeout(() => {
+                setTimeLeft(timeLeft - 1);
+            }, 1000);
+    
+            return () => clearTimeout(timerId);
+        }
+    }, [timeLeft]);
+
+    useEffect(() => {
+        if (timeLeft === 0) {
+            console.log("Time's up!");
+            incrementMistake();
+            handleMissedAttack();
+            setTimeLeft(interval);
+            setTimeout(() => {
+                handleEnemyAttack();
+            }, (characterDetails.attackFrame / 12) * 2000);
+        }
+    }, [timeLeft]);
+
     // Set the initial state and update it if studentLife changes
     useEffect(() => {
         setLives(studentLife);
     }, [studentLife]);
+
     const addLives = (amount: number) => {
         setLives((prevLives) => prevLives + amount);
     };
@@ -453,6 +484,7 @@ const SimulationGameplay = () => {
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
                     ]);
+                    setTimeLeft(interval);
                     setCurrentEnemyIndex(currentEnemyIndex + 1);
                     setCurrentWordIndex(0);
                     setIsPronunciationLocked(true);
@@ -460,6 +492,7 @@ const SimulationGameplay = () => {
                     console.log(
                         `Proceeding to next word: Word ${currentWordIndex + 1}`
                     );
+                    setTimeLeft(interval);
                     setCurrentWordIndex(currentWordIndex + 1);
                     setIsPronunciationLocked(true);
                 }
@@ -469,6 +502,7 @@ const SimulationGameplay = () => {
             console.log("Incorrect word entered.");
             incrementMistake();
             handleMissedAttack();
+            setTimeLeft(interval);
             setTimeout(() => {
                 handleEnemyAttack();
             }, (characterDetails.attackFrame / 12) * 2000);
@@ -554,7 +588,7 @@ const SimulationGameplay = () => {
                         {simulationDetails.simulationDetails?.name}
                     </div>
                     <p>Lives: {lives}</p>
-
+                    <p>Time: {timeLeft}</p>
                     <section className="enemy-track">
                         {enemies.map((enemy, enemyIndex) => {
                             const enemyName = extractEnemyName(enemy.imagePath);

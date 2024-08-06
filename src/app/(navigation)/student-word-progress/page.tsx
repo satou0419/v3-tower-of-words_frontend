@@ -1,128 +1,84 @@
 "use client";
+
 import CardWord from "@/app/component/Card/CardWord/CardWord";
 import "./studentwordprogress.scss";
 import { InputLine } from "@/app/component/Input/Input";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSimulationStore } from "@/store/simulationStore";
 import useFetchAllSimulationWords from "@/hook/useAllSimulationWords";
+import useMerriam from "@/hook/useMerriam";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faVolumeUp } from "@fortawesome/free-solid-svg-icons";
+import CardTab from "@/app/component/Card/CardTab/CardTab";
+import viewStudentWordProgress from "@/lib/assessment-endpoint/viewStudentWordProgress";
+import { Bar } from "react-chartjs-2";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend } from "chart.js";
 
-const words = [
-    {
-        word: "Jump",
-        pronunciation: "[juhmp]",
-        partOfSpeech: "verb",
-        definition:
-            "to push oneself off a surface and into the air by using the muscles in one's legs and feet.",
-    },
-    {
-        word: "Run",
-        pronunciation: "[ruhn]",
-        partOfSpeech: "verb",
-        definition:
-            "move at a speed faster than a walk, never having both or all the feet on the ground at the same time.",
-    },
-    {
-        word: "House",
-        pronunciation: "[hous]",
-        partOfSpeech: "noun",
-        definition:
-            "a building for human habitation, especially one that is lived in by a family or small group of people.",
-    },
-    {
-        word: "Friend",
-        pronunciation: "[frend]",
-        partOfSpeech: "noun",
-        definition:
-            "a person whom one knows and with whom one has a bond of mutual affection, typically exclusive of sexual or family relations.",
-    },
-    {
-        word: "Water",
-        pronunciation: "[waw-ter]",
-        partOfSpeech: "noun",
-        definition:
-            "a colorless, transparent, odorless liquid that forms the seas, lakes, rivers, and rain and is the basis of the fluids of living organisms.",
-    },
-    {
-        word: "Happy",
-        pronunciation: "['ha-pe']",
-        partOfSpeech: "adjective",
-        definition: "feeling or showing pleasure or contentment.",
-    },
-    {
-        word: "Family",
-        pronunciation: "[fam-uh-lee]",
-        partOfSpeech: "noun",
-        definition:
-            "a group consisting of parents and children living together in a household.",
-    },
-    {
-        word: "Bicycle",
-        pronunciation: "[bahy-si-kuhl]",
-        partOfSpeech: "noun",
-        definition:
-            "a vehicle composed of two wheels held in a frame one behind the other, propelled by pedals and steered with handlebars attached to the front wheel.",
-    },
-    {
-        word: "Celebrate",
-        pronunciation: "[sel-uh-breyt]",
-        partOfSpeech: "verb",
-        definition:
-            "acknowledge (a significant or happy day or event) with a social gathering or enjoyable activity.",
-    },
-];
-
-interface SimulationWords {
-    simulationWordsID: number;
-    creatorID: number;
-    word: string;
-    silentIndex: string;
-}
+ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
 
 export default function StudentWordProgress() {
-    const { currentSimulation } = useSimulationStore();
+    const [assessmentData, setAssessmentData] = useState<any>(null);
     const [ simulationWordsID, setSimulationWordsID ] = useState<number[]>([]);
     const router = useRouter();
-    const pathname = usePathname();
-    const pathSegments = pathname.split("/");
-    const initialTab = pathSegments.length > 2 ? pathSegments[2] : "word-vocabulary";
-    const [activeTab, setActiveTab] = useState<string>(initialTab);
-    const [selectedWord, setSelectedWord] = useState(words[5]);
-    const [searchTerm, setSearchTerm] = useState("");
-    const [filteredWords, setFilteredWords] = useState(words);
-    const simulationWords = useFetchAllSimulationWords(simulationWordsID).simulationWords;
+    const [showGraph, setShowGraph] = useState(false); 
+    const searchParams = useSearchParams();
+    const simulationIDParam = searchParams.get("simulationID");
+    const simulationID = simulationIDParam ? parseInt(simulationIDParam, 10) : NaN;
 
-    console.log(simulationWords);
+    const studentIDParam = searchParams.get("studentID");
+    const studentID = studentIDParam ? parseInt(studentIDParam, 10) : NaN;
+
+    const [selectedWord, setSelectedWord] = useState<null | string>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const simulationWords = useFetchAllSimulationWords(simulationWordsID).simulationWords;
+    const [filteredWords, setFilteredWords] = useState(simulationWords);
+
+    const wordData = useMerriam(selectedWord || "");
+
+    console.log(assessmentData);
 
     useEffect(() => {
-        if (currentSimulation && currentSimulation.enemy) {
-            const wordsID = currentSimulation.enemy.flatMap(enemy => enemy.words);
+        const fetchSimulations = async () => {
+            try {
+                const simulation = await viewStudentWordProgress(simulationID, studentID);
+                if (Array.isArray(simulation)) {
+                    setAssessmentData(simulation);
+                } else {
+                    console.error("Unexpected response format:", simulation);
+                }
+            } catch (error) {
+                console.error("Failed to fetch simulations for the room:", error);
+            }
+        };
+        fetchSimulations();
+    }, [studentID, simulationID]);
+
+    useEffect(() => {
+        if (assessmentData) {
+            const wordsID = assessmentData.map((item: any) => item.simulationWordsID);
             setSimulationWordsID(wordsID);
         }
-    }, [currentSimulation]);
+    }, [assessmentData]);
 
     useEffect(() => {
-        const currentPathSegments = pathname.split("/");
-        const currentTab =
-            currentPathSegments.length > 2 ? currentPathSegments[2] : "archive";
-        setActiveTab(currentTab);
-    }, [pathname]);
-
-    useEffect(() => {
-        setFilteredWords(
-            words.filter((word) =>
-                word.word.toLowerCase().includes(searchTerm.toLowerCase())
-            )
+        const updatedFilteredWords = simulationWords.filter((word) =>
+            word.word.toLowerCase().includes(searchTerm.toLowerCase())
         );
-    }, [searchTerm]);
+        setFilteredWords(updatedFilteredWords);
+        if (updatedFilteredWords.length > 0) {
+            if (
+                selectedWord === null ||
+                !updatedFilteredWords.some((word) => word.word === selectedWord)
+            ) {
+                setSelectedWord(updatedFilteredWords[0].word);
+            }
+        } else {
+            setSelectedWord(null);
+        }
+    }, [searchTerm, simulationWords]);
 
-    const handleTabChange = (tab: string) => {
-        setActiveTab(tab);
-        router.push(`/archive/${tab}`);
-    };
-
-    const handleWordClick = (word: (typeof words)[0]) => {
+    const handleWordClick = (word: string) => {
         setSelectedWord(word);
     };
 
@@ -130,9 +86,39 @@ export default function StudentWordProgress() {
         setSearchTerm(event.target.value);
     };
 
+    const selectedWordID = simulationWords.find(word => word.word === selectedWord)?.simulationWordsID;
+
+    const selectedAssessment = assessmentData?.find(
+        (assessment: any) => assessment.simulationWordsID === selectedWordID
+    );
+
+    console.log(selectedAssessment)
+
+    const chartData = {
+        labels: selectedAssessment
+        ? [
+            `Accuracy: ${selectedAssessment.accuracy.toFixed(2)}`,
+            `Mistake: ${selectedAssessment.mistake}`,
+            `Duration: ${selectedAssessment.duration}`,
+            `Score: ${selectedAssessment.score}`,
+        ]
+        : ['Accuracy', 'Mistake', 'Duration', 'Score'],
+        datasets: [
+            {
+                label: 'Assessment Data',
+                data: selectedAssessment
+                    ? [selectedAssessment.accuracy, selectedAssessment.mistake, selectedAssessment.duration, selectedAssessment.score]
+                    : [],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+            },
+        ],
+    };
+
     return (
         <main className="main-wrapper">
-            <button onClick={() => router.back()} type="button">Back</button>
+            <button onClick={() => router.back()} type="button" className="studentwordprogress-button">Back</button>
             <section className="studentwordprogress-container">
                 <CardWord className="studentwordprogress-left">
                     <div className="left-container">
@@ -146,9 +132,9 @@ export default function StudentWordProgress() {
                             {filteredWords.map((word) => (
                                 <span
                                     key={word.word}
-                                    onClick={() => handleWordClick(word)}
+                                    onClick={() => handleWordClick(word.word)}
                                     className={
-                                        word.word === selectedWord.word
+                                        selectedWord === word.word
                                             ? "active"
                                             : ""
                                     }
@@ -161,25 +147,90 @@ export default function StudentWordProgress() {
                 </CardWord>
                 <CardWord className="studentwordprogress-right">
                     <section className="right-container">
-                        <div className="word-control">
-                            <button>Remove</button>
-                            <h1>{selectedWord.word}</h1>
-                            <span className="pronunciation">
-                                {selectedWord.pronunciation}
-                            </span>
-                            <span>Play</span>
-                        </div>
-
-                        <div className="word-define">
-                            <span className="part-of-speech">
-                                {selectedWord.partOfSpeech}
-                            </span>
-                            <span className="definition">
-                                {selectedWord.definition}
-                            </span>
-                        </div>
+                    {selectedWord && wordData ? (
+                        <>
+                            <div className="word-control">
+                                <h1>{wordData.word}</h1>
+                                {wordData.pronunciation && (
+                                    <span className="pronunciation">
+                                        {wordData.pronunciation}
+                                    </span>
+                                )}
+                                {wordData.audio && (
+                                    <FontAwesomeIcon
+                                        className="play-audio-icon"
+                                        icon={faVolumeUp}
+                                        onClick={() => wordData.playAudio()}
+                                    />
+                                )}
+                            </div>
+                            <div className="word-define">
+                                {wordData.partOfSpeech && (
+                                    <span className="part-of-speech">
+                                        {wordData.partOfSpeech}
+                                    </span>
+                                )}
+                                {wordData.definition && (
+                                    <span className="definition">
+                                        {wordData.definition}
+                                    </span>
+                                )}
+                                {wordData.message && (
+                                    <div className="message">
+                                        {wordData.message}
+                                    </div>
+                                )}
+                            </div>
+                            <div className="graph-button">
+                                <button
+                                    type="button"
+                                    onClick={() => setShowGraph(!showGraph)}
+                                    className="show-graph-button"
+                                >
+                                    {showGraph ? 'Hide Graph' : 'Show Graph'}
+                                </button>
+                            </div>
+                        </>
+                    ) : (
+                        <span className="no-data">No data available</span>
+                    )}
                     </section>
                 </CardWord>
+                {selectedAssessment && showGraph && (
+                    <div className="graph">
+                        <button onClick={() => setShowGraph(!showGraph)} type="button" className="studentwordprogress-x">X</button>
+                        <CardTab
+                            className="cardtab"
+                            title="Word Assessment"
+                            subtitle={selectedWord || undefined}
+                        >
+                            <section className="studentwordprogress-content">
+                                <section className="studentwordprogress-details">
+                                    <span className="studentwordprogress-data">
+                                        <div>Accuracy</div> 
+                                        <div>{selectedAssessment.accuracy}</div>
+                                    </span>
+                                    <span className="studentwordprogress-data">
+                                        <div>Mistake</div>
+                                        <div>{selectedAssessment.mistake}</div>
+                                    </span>
+                                    <span className="studentwordprogress-data">
+                                        <div>Duration</div>
+                                        <div>{selectedAssessment.duration}</div>
+                                    </span>
+                                    <span className="studentwordprogress-data">
+                                        <div>Score</div>
+                                        <div>{selectedAssessment.score}</div>
+                                    </span>
+                                </section>
+
+                                <section className="studentwordprogress-graph">
+                                    <Bar data={chartData} />
+                                </section>
+                            </section>
+                        </CardTab>
+                    </div>
+                )}
             </section>
         </main>
     );

@@ -9,8 +9,15 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { viewSimulation } from "@/lib/simulation-endpoint/viewSimulation";
 import cloneGame from "@/lib/simulation-endpoint/cloneGame";
 import Toast from "@/app/component/Toast/Toast";
+import { useRoomStore } from "@/store/roomStore";
+import useUserInfoStore from "@/store/userInfoStore";
+import editSimulation from "@/lib/simulation-endpoint/editSimulation";
 
 export default function Leaderboard() {
+    const {currentRoom} = useRoomStore();
+    const [newName, setNewName] = useState<string>("");
+    const [newDeadline, setNewDeadline] = useState<string>("");
+    const { userType } = useUserInfoStore.getState();
     const { currentSimulation, setCurrentSimulation } = useSimulationStore();
     const router = useRouter();
     const searchParams = useSearchParams();
@@ -43,7 +50,13 @@ export default function Leaderboard() {
         const isConfirmed = window.confirm("Are you sure you want to create a copy of this simulation?");
         if (isConfirmed) {
             try {
-                await cloneGame(simulation);
+                if(currentRoom.roomID == 0 && userType) {
+                    setToastMessage("Error cloning simulation");
+                    setToastType("error");
+                    router.push(`/${userType.toLowerCase()}-room`);
+                    return;  
+                }
+                await cloneGame(simulationID, currentRoom.roomID);
                 setToastMessage("Simulation cloned successfully");
                 setToastType("success");
             } catch (error) {
@@ -56,19 +69,82 @@ export default function Leaderboard() {
         }
     };
 
-
-    const handleSave = (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSave = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        console.log("Form submitted");
+
+        if (!newName && !newDeadline) {
+            setToastMessage("Input cannot be empty");
+            setToastType("warning");
+            return;
+        }
+
+        if (!newName) {
+            try {
+                await editSimulation({ simulationID, name: currentSimulation.name, deadline: newDeadline });
+                setToastMessage("Simulation updated successfully");
+                setToastType("success");
+            } catch (error) {
+                setToastMessage("Error updating simulation");
+                setToastType("error");
+            }
+        }
+
+        if (!newDeadline) {
+            try {
+                await editSimulation({ simulationID, name: newName, deadline: currentSimulation.deadline});
+                setToastMessage("Simulation updated successfully");
+                setToastType("success");
+            } catch (error) {
+                setToastMessage("Error updating simulation");
+                setToastType("error");
+            }
+        }
+
+        if (newDeadline && newName) {
+            try {
+                await editSimulation({ simulationID, name: newName, deadline: newDeadline});
+                setToastMessage("Simulation updated successfully");
+                setToastType("success");
+            } catch (error) {
+                setToastMessage("Error updating simulation");
+                setToastType("error");
+            }
+        }
     };
 
     const handleViewWordClick = () => {
         router.push(`/teacher-simulation-words?simulationID=${simulationID}`);
     };
 
+    const handleGameAssessment = () => {
+        router.push(`/game-assessment?simulationID=${simulationID}`);
+    };
+
+    const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNewName(event.target.value);
+    };
+
+    const handleDeadlineChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setNewDeadline(event.target.value);
+    };
+ 
+    const handleStudentClick = (studentID: number) => {
+        router.push(`/student-assessment?simulationID=${simulationID}&studentID=${studentID}`);
+    };
+
     const inputSetting = [
-        { type: "text", placeholder: "Update Simulation Name" },
-        { type: "datetime-local", placeholder: "Update Time" },
+        { 
+            type: "text", 
+            placeholder: "Update Simulation Name",
+            value: newName,
+            onChange: handleNameChange,
+        },
+        { 
+            type: "datetime-local", 
+            placeholder: "Update Time",
+            value: newDeadline,
+            onChange: handleDeadlineChange,
+        },
     ];
 
     return (
@@ -97,6 +173,7 @@ export default function Leaderboard() {
                                 time={participant.done ? participant.duration : "No Attempt!"}
                                 score={participant.score}
                                 className="custom-carduser"
+                                onClick={() => handleStudentClick(participant.userID)}
                             />
                         ))}
                     </CardTab>
@@ -108,7 +185,7 @@ export default function Leaderboard() {
                         </div>
 
                         <div className="button-group">
-                            <button type="button" >Game Assessment</button>
+                            <button type="button" onClick={handleGameAssessment}>Game Assessment</button>
                         </div>
                         <CardSetting
                             title="Settings"

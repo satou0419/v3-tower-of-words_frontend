@@ -1,32 +1,8 @@
 import BASE_URL from "@/util/baseUrl";
 
-interface Enemy {
-    imagePath: string;
-    words: number[];
-}
-
-interface Room {
-    roomID: number;
-}
-
-interface SimulationDetails {
-    roomID: Room;
-    simulationType: string;
-    name: string;
-    deadline: string;
-    attackInterval: number;
-    studentLife: number;
-    // numberOfAttempt: number;
-    items: boolean;
-    description: boolean;
-    pronunciation: boolean;
-    enemy: Enemy[];
-}
-
-const cloneGame = async (simulation: SimulationDetails) => {
-    console.log(simulation)
+const cloneGame = async (simulation: number, room: number) => {
     try {
-        const response = await fetch(`${BASE_URL}/simulation/clone_simulation`, {
+        const response = await fetch(`${BASE_URL}/simulation/clone_simulation/simulation/${simulation}/room/${room}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

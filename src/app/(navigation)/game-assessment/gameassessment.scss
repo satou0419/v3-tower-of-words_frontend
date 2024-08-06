@@ -16,6 +16,8 @@
         button[type="button"] {
             cursor: pointer;
             color: #fff;
+            height: 3em;
+            width: 10em;
             background-color: #fc5776;
             border-radius: 8px;
             padding: 0.5em 1em;
@@ -41,17 +43,30 @@
     gap: 2em;
     justify-content: center;
     align-items: center;
+    padding: 5px;
+    overflow: hidden;
 
     .gameassessment-details {
         display: flex;
         flex-direction: column;
         gap: 0.5em;
-        padding: 1.5em;
-        height: 100%;
-        background-color: var(--clr-violet_glass);
         width: 40%;
+        height: 100%;
         border-radius: 10px;
         color: #fff;
+        overflow-y: scroll;
+
+        .gameassessment-data{
+            display: flex;
+            flex-direction: column;
+            gap: 0.5em;
+            padding: 1.5em;
+            height: 100%;
+            background-color: var(--clr-violet_glass);
+            width: 100%;
+            border-radius: 10px;
+            color: #fff;
+        }
     }
 
     .gameassessment-graph {

@@ -88,16 +88,16 @@ export default function TeacherSimulationWords() {
         labels: selectedAssessment
         ? [
             `Accuracy: ${selectedAssessment.accuracy.toFixed(2)}`,
-            `Attempts: ${selectedAssessment.attempts}`,
+            `Mistake: ${selectedAssessment.mistake}`,
             `Duration: ${selectedAssessment.duration}`,
             `Score: ${selectedAssessment.score}`,
         ]
-        : ['Accuracy', 'Attempts', 'Duration', 'Score'],
+        : ['Accuracy', 'Mistake', 'Duration', 'Score'],
         datasets: [
             {
                 label: 'Assessment Data',
                 data: selectedAssessment
-                    ? [selectedAssessment.accuracy, selectedAssessment.attempts, selectedAssessment.duration, selectedAssessment.score]
+                    ? [selectedAssessment.accuracy, selectedAssessment.mistake, selectedAssessment.duration, selectedAssessment.score]
                     : [],
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
@@ -108,7 +108,7 @@ export default function TeacherSimulationWords() {
 
     return (
         <main className="main-wrapper">
-            <button onClick={() => router.back()} type="button">Back</button>
+            <button onClick={() => router.back()} type="button" className="wordassessment-button">Back</button>
             <section className="teachersimulationwords-container">
                 <CardWord className="teachersimulationwords-left">
                     <div className="left-container">
@@ -193,11 +193,11 @@ export default function TeacherSimulationWords() {
                 
                 {selectedAssessment && showGraph && (
                     <div className="graph">
-                        <button onClick={() => setShowGraph(!showGraph)} type="button">X</button>
+                        <button onClick={() => setShowGraph(!showGraph)} type="button" className="wordassessment-x">X</button>
                         <CardTab
                             className="cardtab"
                             title="Word Assessment"
-                            subtitle="Average"
+                            subtitle={selectedWord || undefined}
                         >
                             <section className="wordassessment-content">
                                 <section className="wordassessment-details">
@@ -206,8 +206,8 @@ export default function TeacherSimulationWords() {
                                         <div>{selectedAssessment.accuracy}</div>
                                     </span>
                                     <span className="wordassessment-data">
-                                        <div>Attempts</div>
-                                        <div>{selectedAssessment.attempts}</div>
+                                        <div>Mistake</div>
+                                        <div>{selectedAssessment.mistake}</div>
                                     </span>
                                     <span className="wordassessment-data">
                                         <div>Duration</div>
