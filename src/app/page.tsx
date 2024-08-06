@@ -1,14 +1,6 @@
 import Link from "next/link";
 import "./landing.scss";
-import { Metadata } from 'next';
- 
-export const metadata: Metadata = {
-  title: {
-    template: '%s | Tower of Words',
-    default: 'Tower of Words Dashboard',
-  },
-  description: 'The official site of Tower of Words.'
-};
+
 
 export default function Landing() {
     return (

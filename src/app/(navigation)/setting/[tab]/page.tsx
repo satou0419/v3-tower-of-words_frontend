@@ -2,8 +2,8 @@
 import Tab from "@/app/component/Tab/Tab";
 import React from "react";
 import "./setting.scss";
-import PersonalInformation from "./PersonalInformation";
-import ChangePassword from "./ChangePassword";
+import PersonalInformation from "./PersonalInformation/PersonalInformation";
+import ChangePassword from "./ChangePassword/ChangePassword";
 import useTabManagement from "@/hook/useTab";
 
 const Setting = () => {

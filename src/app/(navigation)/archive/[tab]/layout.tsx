@@ -9,6 +9,7 @@ export const metadata: Metadata = {
   description: 'The official site of Tower of Words.'
 };
 
-export default function ParentArchiveLayout() {
-    return <Archive />;
+export default function ParentArchiveLayout(){
+
+    return <Archive/>
 }
