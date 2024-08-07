@@ -7,6 +7,7 @@ interface RoomData {
     roomID: number;
     code: string;
     members: number[];
+    simulations: any[];
 }
 
 export const viewRoom = async (roomID: number): Promise<RoomData> => {

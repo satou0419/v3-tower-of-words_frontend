@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import viewSimulationAssessment from "@/lib/assessment-endpoint/viewSimulationAssessment";
 import { Bar } from "react-chartjs-2";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend } from "chart.js";
+import updateGameAssessment from "@/lib/assessment-endpoint/updateGameAssessment";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
 
@@ -26,6 +27,7 @@ export default function GameAssessment() {
             try {
                 setLoading(true);
                 const data = await viewSimulationAssessment(simulationID);
+                updateGameAssessment(simulationID);
                 console.log(data)
                 setAssessmentData(data);
                 setLoading(false);

@@ -217,7 +217,7 @@ const AdventureGameplay = () => {
     }, []);
     const characterDetails = useImageParse(userEquipped.equippedCharacter);
     const enemyDetails = useImageParse(
-        enemyData[currentEnemyIndex]?.imagePath || ""
+        enemies[currentEnemyIndex]?.imagePath || ""
     );
 
     useEffect(() => {
@@ -251,6 +251,8 @@ const AdventureGameplay = () => {
     };
 
     const handleEnemyAttack = () => {
+        setCharacterAttackType("");
+
         if (enemyDetails.attackType == "melee") {
             setEnemyAttackType("expand-width");
 
@@ -777,9 +779,10 @@ const AdventureGameplay = () => {
 
             {/* Game Over Modal */}
             <Modal
-                className="game-over-modal"
+                className="gameover-modal"
                 isOpen={showGameOverModal}
                 title="Game Over"
+                onClose={handleGameOverRestart}
                 details="Unfortunately, you have run out of lives. Would you like to restart the game?"
                 buttons={[
                     <button key="restart" onClick={handleGameOverRestart}>

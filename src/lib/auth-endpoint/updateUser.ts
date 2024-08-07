@@ -5,7 +5,7 @@ import { useAuthStore } from "@/store/authStore";
 const updateUser = async (firstname: string, lastname: string) => {
     const { userID } = useAuthStore.getState();
 
-    const url = `${BASE_URL}/user/update_user?uid=${userID}`;
+    const url = `${BASE_URL}/user/update_user?userID=${userID}`;
 
     const requestBody = {
         firstname: firstname,

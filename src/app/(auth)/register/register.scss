@@ -74,6 +74,7 @@
             border: 1px solid var(--clr-gray);
             border-radius: 5px;
             outline: none;
+            color: var(--clr-gray_dark);
         }
     }
 
@@ -148,5 +149,56 @@
 @media (max-width: 480px) {
     .register-form {
         padding: 0.5em; /* Further adjust padding */
+    }
+}
+
+/* Custom styles for register modal */
+.register-modal {
+    .modal-content {
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+    }
+
+    .modal-header {
+        h2 {
+            color: #333;
+        }
+    }
+
+    .modal-footer {
+        .button-wrapper {
+            button {
+                background-color: #28a745;
+
+                &:hover {
+                    background-color: #218838;
+                }
+            }
+        }
+    }
+}
+
+.register-modal {
+    .modal-content {
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+    }
+
+    .modal-header {
+        h2 {
+            color: #333;
+        }
+    }
+
+    .modal-footer {
+        .button-wrapper {
+            button {
+                background-color: #28a745;
+
+                &:hover {
+                    background-color: #218838;
+                }
+            }
+        }
     }
 }

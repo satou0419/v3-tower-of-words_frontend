@@ -15,7 +15,7 @@ interface SimulationProgress {
 }
 
 interface UseSimulationProgressResult {
-    data: SimulationProgress[] | null;
+    data: SimulationProgress;
     loading: boolean;
     error: string | null;
 }
@@ -24,7 +24,16 @@ const useSimulationProgress = (
     progressData: SimulationProgress
 ): UseSimulationProgressResult => {
     const { userID } = useAuthStore.getState();
-    const [data, setData] = useState<SimulationProgress[] | null>(null);
+    const [data, setData] = useState<SimulationProgress>({
+        studentWordProgressID: 0,
+        simulationWordsID: 0,
+        studentID: 0,
+        correct: false,
+        score: 0,
+        duration: 0,
+        accuracy: 0,
+        mistake: 0,
+    });
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
@@ -32,9 +41,9 @@ const useSimulationProgress = (
         const updateSimulationProgress = async () => {
             try {
                 const response = await fetch(
-                    `${BASE_URL}/student_word_progress/update`,
+                    `${BASE_URL}/student_word_progress/edit/wordProgress/${progressData?.studentWordProgressID}`,
                     {
-                        method: "PUT",
+                        method: "PATCH",
                         headers: {
                             "Content-Type": "application/json",
                         },

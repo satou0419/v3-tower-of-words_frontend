@@ -8,9 +8,9 @@ import "./joinroom.scss";
 
 export default function JoinRoom() {
     const [code, setCode] = useState("");
-
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
+    const [redirectAfterClose, setRedirectAfterClose] = useState(false);
     const router = useRouter();
 
     const handleJoinRoom = async (e: React.FormEvent) => {
@@ -19,7 +19,7 @@ export default function JoinRoom() {
         try {
             await joinRoom(code);
             setIsSuccessModalOpen(true); // Open success modal
-            router.push("/student-room"); // Redirect to the room page or any desired page
+            setRedirectAfterClose(true); // Set redirect flag
         } catch (err) {
             setIsErrorModalOpen(true); // Open error modal
         }
@@ -27,6 +27,9 @@ export default function JoinRoom() {
 
     const handleCloseSuccessModal = () => {
         setIsSuccessModalOpen(false);
+        if (redirectAfterClose) {
+            router.push("/student-room"); // Redirect to the room page or any desired page
+        }
     };
 
     const handleCloseErrorModal = () => {

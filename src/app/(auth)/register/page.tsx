@@ -6,6 +6,8 @@ import Link from "next/link";
 import registerUser from "@/lib/auth-endpoint/registerUser";
 import Toast from "@/app/component/Toast/Toast";
 import { useRouter } from "next/navigation";
+import Modal from "@/app/component/Modal/Modal";
+import Loading from "@/app/loading";
 
 interface FormData {
     username: string;
@@ -34,6 +36,8 @@ const Register: React.FC = () => {
         "success"
     );
     const [showToast, setShowToast] = useState<boolean>(false);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -58,12 +62,14 @@ const Register: React.FC = () => {
 
         const { confirmPassword, ...userData } = formData;
         try {
+            setLoading(true);
             const response = await registerUser(userData);
             console.log("User registered successfully:", response);
             setToastMessage("User registered successfully");
             setToastType("success");
             setShowToast(true);
-            route.push("/login");
+            setShowModal(true);
+            setLoading(false);
 
             // Handle successful registration (e.g., redirect to login)
         } catch (error) {
@@ -71,16 +77,33 @@ const Register: React.FC = () => {
             setToastMessage("Registration failed. Please try again.");
             setToastType("error");
             setShowToast(true);
+            setLoading(false);
         }
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        route.push("/login");
     };
 
     return (
         <main className="register-wrapper">
+            {loading && <Loading />}
             {showToast && (
                 <Toast
                     message={toastMessage}
                     type={toastType}
                     onClose={() => setShowToast(false)}
+                />
+            )}
+            {showModal && (
+                <Modal
+                    title="Account Created"
+                    details="Your account has been created successfully."
+                    buttons={[<button onClick={handleCloseModal}>OK</button>]}
+                    isOpen={showModal}
+                    onClose={handleCloseModal}
+                    className="register-modal"
                 />
             )}
             <section className="register-container">
@@ -153,7 +176,7 @@ const Register: React.FC = () => {
                             required
                         >
                             <option disabled value="">
-                                Select Type
+                                --Select Type--
                             </option>
                             <option value="Student">Student</option>
                             <option value="Teacher">Teacher</option>

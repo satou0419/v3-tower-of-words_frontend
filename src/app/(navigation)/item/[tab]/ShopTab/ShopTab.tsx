@@ -107,6 +107,7 @@ const ShopTab: React.FC = () => {
                 ))}
             </section>
             <Modal
+                className="confirmation-modal"
                 title="Confirm Purchase"
                 details={`Do you want to purchase ${selectedItem?.itemName} for ${selectedItem?.itemPrice} credits?`}
                 isOpen={isConfirmationOpen}
@@ -121,24 +122,26 @@ const ShopTab: React.FC = () => {
                 ]}
             />
             <Modal
+                className="confirm-modal"
                 title="Purchase Successful"
                 details={`You have successfully purchased ${purchasedItemName}!`}
                 isOpen={isSuccessOpen}
                 onClose={handleCloseSuccess}
                 buttons={[
                     <button key="ok" onClick={handleCloseSuccess}>
-                        OK
+                        Confirm
                     </button>,
                 ]}
             />
             <Modal
+                className="error-modal"
                 title="Insufficient Balance"
                 details={`You do not have enough credits to purchase ${selectedItem?.itemName}.`}
                 isOpen={isInsufficientBalanceOpen}
                 onClose={handleCloseInsufficientBalance}
                 buttons={[
                     <button key="ok" onClick={handleCloseInsufficientBalance}>
-                        OK
+                        Continue
                     </button>,
                 ]}
             />
