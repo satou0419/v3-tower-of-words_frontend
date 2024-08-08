@@ -21,6 +21,8 @@ import getUserItems from "@/lib/item-endpoint/getUserItem";
 import useItem from "@/hook/useItem";
 import { useGameplayStore } from "@/store/gameplayStore";
 import ConfettiWrapper from "@/app/component/Confetti/Confetti";
+import useIncrementFloor from "@/hook/useIncrementFloor";
+import { FaVolumeUp } from "react-icons/fa";
 
 interface Item {
     itemID: number;
@@ -352,6 +354,7 @@ const AdventureGameplay = () => {
     const { updateProgress, isLoading, error, data } = useUpdateProgress();
     const { redeemReward } = useRedeemReward();
     const { incrementFloor } = useFloorIncrement();
+    const updateFloor = useIncrementFloor();
 
     const { lives, subtractLives, addLives } = useGameplayStore();
     // Other state and hooks...
@@ -375,10 +378,12 @@ const AdventureGameplay = () => {
             // Archive the correctly spelled word
             if (isClear === "false") {
                 await addWord(currentWord);
+                updateFloor;
             }
 
             setTimeout(() => {
                 setIsCharacterAttacking(false);
+                setRangeValue(1);
 
                 if (currentWordIndex === currentEnemy.words.length - 1) {
                     // Last word for this enemy defeated
@@ -424,7 +429,7 @@ const AdventureGameplay = () => {
     //Play only the audio in gameType 1
 
     useEffect(() => {
-        if (gameStarted && word && word.playAudio) {
+        if (gameStarted && word && word.playAudio && gameType === "spelling") {
             // Play audio on word change
             const timer = setTimeout(() => {
                 word.playAudio();
@@ -440,7 +445,7 @@ const AdventureGameplay = () => {
         // Handle key down event for shift key to play audio
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Shift") {
-                if (word && word.playAudio) {
+                if (word && word.playAudio && gameType == "spelling") {
                     word.playAudio();
                 }
             }
@@ -478,7 +483,7 @@ const AdventureGameplay = () => {
         return hearts;
     };
 
-    const [rangeValue, setRangeValue] = useState(0);
+    const [rangeValue, setRangeValue] = useState(1);
 
     const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRangeValue(Number(event.target.value));
@@ -740,7 +745,7 @@ const AdventureGameplay = () => {
                                         type="button"
                                         onClick={word?.playAudio}
                                     >
-                                        🔉
+                                        <FaVolumeUp />
                                     </button>
                                     <InputBox
                                         type="text"

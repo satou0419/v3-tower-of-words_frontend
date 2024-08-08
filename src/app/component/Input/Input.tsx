@@ -1,4 +1,4 @@
-import React, { ReactNode, InputHTMLAttributes } from "react";
+import React, { ReactNode, InputHTMLAttributes, forwardRef } from "react";
 import "./input.scss";
 
 // Define the prop types for the main Input container
@@ -13,26 +13,39 @@ interface InputFieldProps extends InputHTMLAttributes<HTMLInputElement> {
     className?: string;
 }
 
-export default function Input({
-    children,
-    className = "",
-    ...props
-}: InputProps) {
+const Input = ({ children, className = "", ...props }: InputProps) => {
     return (
         <main className={`input-container ${className}`} {...props}>
             {children}
         </main>
     );
-}
+};
 
-export function InputBox({ className = "", ...props }: InputFieldProps) {
-    return (
-        <input type="text" className={`input-box ${className}`} {...props} />
-    );
-}
+const InputBox = forwardRef<HTMLInputElement, InputFieldProps>(
+    ({ className = "", ...props }, ref) => {
+        return (
+            <input
+                type="text"
+                className={`input-box ${className}`}
+                {...props}
+                ref={ref}
+            />
+        );
+    }
+);
 
-export function InputLine({ className = "", ...props }: InputFieldProps) {
-    return (
-        <input type="text" className={`input-line ${className}`} {...props} />
-    );
-}
+const InputLine = forwardRef<HTMLInputElement, InputFieldProps>(
+    ({ className = "", ...props }, ref) => {
+        return (
+            <input
+                type="text"
+                className={`input-line ${className}`}
+                {...props}
+                ref={ref}
+            />
+        );
+    }
+);
+
+export default Input;
+export { InputBox, InputLine };

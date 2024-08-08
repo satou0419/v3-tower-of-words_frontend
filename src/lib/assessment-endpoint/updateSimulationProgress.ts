@@ -13,13 +13,16 @@ interface SimulationProgress {
 
 const updateSimulationProgress = async (progressData: SimulationProgress) => {
     try {
-        const response = await fetch(`${BASE_URL}/student_word_progress/edit/wordProgress/${progressData?.studentWordProgressID}`, {
-            method: "PATCH",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(progressData),
-        });
+        const response = await fetch(
+            `${BASE_URL}/student_word_progress/edit/wordProgress/${progressData?.studentWordProgressID}`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(progressData),
+            }
+        );
 
         if (!response.ok) {
             throw new Error("Failed to edit simulation");

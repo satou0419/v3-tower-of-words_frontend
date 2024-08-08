@@ -21,6 +21,7 @@ const Spelling = () => {
     const [activeSection, setActiveSection] = useState<number | null>(null);
     const [enemyData, setEnemyData] = useState<any | null>(null); // Adjust this type as per your actual enemy data structure
     const [loading, setLoading] = useState(true); // Loading state
+    const [activeGameType, setActiveGameType] = useState<number | null>(null);
     const activeFloorRef = useRef<HTMLDivElement>(null);
     const navigation = useRouter();
 
@@ -48,6 +49,7 @@ const Spelling = () => {
             if (currentFloor) {
                 setActiveFloorId(currentFloor.towerFloorID);
                 setActiveSection(currentFloor.towerSection);
+                setActiveGameType(currentFloor.gameType); // Set the active game type
             }
         }
     }, [floors, userProgress.floorIDProgress]);
@@ -94,8 +96,6 @@ const Spelling = () => {
         }
     };
 
-    const [activeGameType, setActiveGameType] = useState<number | null>(null);
-
     const handleFloorClick = (
         floorId: number,
         section: number,
@@ -127,7 +127,6 @@ const Spelling = () => {
         };
     };
 
-    useEffect(() => {});
     const handleEnterClick = () => {
         if (activeFloorId && activeSection && enemyData) {
             const { nextFloorId, nextSection } = getNextFloorAndSection();

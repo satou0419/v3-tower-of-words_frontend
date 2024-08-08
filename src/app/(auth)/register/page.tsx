@@ -103,7 +103,7 @@ const Register: React.FC = () => {
                     buttons={[<button onClick={handleCloseModal}>OK</button>]}
                     isOpen={showModal}
                     onClose={handleCloseModal}
-                    className="register-modal"
+                    className="success-modal"
                 />
             )}
             <section className="register-container">

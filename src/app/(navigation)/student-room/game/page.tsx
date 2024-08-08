@@ -11,6 +11,8 @@ import { viewRoom } from "@/lib/room-endpoint/viewRoom";
 import { useRouter, useSearchParams } from "next/navigation";
 import Loading from "@/app/loading";
 import useStudentInfo from "@/hook/useStudentInfo";
+import useSimulationDetails from "@/hook/useSimulationDetails";
+import Modal from "@/app/component/Modal/Modal";
 
 export default function Game() {
     const { userID } = useAuthStore.getState();
@@ -24,8 +26,6 @@ export default function Game() {
 
     const user = useStudentInfo(currentRoom.creatorID);
 
-    console.log(user.studentInfo?.data?.username);
-
     useEffect(() => {
         const fetchSimulations = async () => {
             try {
@@ -33,10 +33,10 @@ export default function Game() {
                 const room = await viewRoom(roomID);
                 setSimulation(data);
                 setCurrentRoom(room);
-                setLoading(false); // Set loading to false after data is fetched
+                setLoading(false);
             } catch (error) {
                 console.error("Failed to fetch simulations:", error);
-                setLoading(false); // Set loading to false even if there's an error
+                setLoading(false);
             }
         };
 
@@ -44,13 +44,40 @@ export default function Game() {
     }, [setSimulation, roomID]);
 
     const navigation = useRouter();
+    const [selectedSimulationID, setSelectedSimulationID] = useState<
+        number | null
+    >(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const handleCardClick = (simulationID: number) => {
-        navigation.push(`/gameplay/simulation?simulationID=${simulationID}`);
+        console.log("Clicked Simulation ID:", simulationID);
+        setSelectedSimulationID(simulationID);
+        setIsModalOpen(true);
     };
 
+    const handleConfirm = () => {
+        if (selectedSimulationID !== null) {
+            const attackInterval =
+                simulationDetails.simulationDetails?.attackInterval || 0;
+            navigation.push(
+                `/gameplay/simulation?simulationID=${selectedSimulationID}&attackInterval=${attackInterval}`
+            );
+        }
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
+    const simulationDetails = useSimulationDetails(selectedSimulationID || 0);
+
+    useEffect(() => {
+        console.log("Simulation Details:", simulationDetails);
+    }, [simulationDetails]);
+
     if (loading) {
-        return <Loading />; // Render Loading component while fetching data
+        return <Loading />;
     }
 
     return (
@@ -67,16 +94,21 @@ export default function Game() {
 
                 <div className="game-room">
                     {simulations.length > 0 ? (
-                        simulations.map((simulation) =>{
-                            const participant = simulation.participants.find(participant => participant.userID === userID);
-                            const score = participant ? participant.score : 0; // Get the score if participant found
+                        simulations.map((simulation) => {
+                            const participant = simulation.participants.find(
+                                (participant) => participant.userID === userID
+                            );
+                            const score = participant ? participant.score : 0;
 
                             return (
                                 <CardRoomGame
                                     key={simulation.simulationID}
                                     bannerClass="room-banner"
                                     title={simulation.name}
-                                    description={user.studentInfo?.data?.username ?? "Teacher"}
+                                    description={
+                                        user.studentInfo?.data?.username ??
+                                        "Teacher"
+                                    }
                                     infoTitle="Score"
                                     counter={score}
                                     glow={false}
@@ -91,6 +123,23 @@ export default function Game() {
                     )}
                 </div>
             </section>
+
+            <Modal
+                title="Confirm Simulation Entry"
+                isOpen={isModalOpen}
+                onClose={handleCancel}
+                className="confirmation-modal"
+                buttons={[
+                    <button key="confirm" onClick={handleConfirm}>
+                        Confirm
+                    </button>,
+                    <button key="cancel" onClick={handleCancel}>
+                        Cancel
+                    </button>,
+                ]}
+            >
+                <p>Are you sure you want to enter this simulation?</p>
+            </Modal>
         </main>
     );
 }
