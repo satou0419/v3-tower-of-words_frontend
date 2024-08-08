@@ -310,7 +310,7 @@ const SimulationGameplay = () => {
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
                     setEnemyAttackType("shrink-width");
-                    subtractLives(1);
+
                     setCharacterHit("");
                     enemyInterval.start();
                 }, 500); // 500ms is the duration of the hit
@@ -321,6 +321,7 @@ const SimulationGameplay = () => {
             setTimeout(() => {
                 setIsEnemyAttacking(false);
                 setCharacterHit("hit");
+                subtractLives(1);
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
