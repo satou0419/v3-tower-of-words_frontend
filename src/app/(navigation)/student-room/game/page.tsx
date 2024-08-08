@@ -130,11 +130,11 @@ export default function Game() {
                 onClose={handleCancel}
                 className="confirmation-modal"
                 buttons={[
-                    <button key="confirm" onClick={handleConfirm}>
-                        Confirm
-                    </button>,
                     <button key="cancel" onClick={handleCancel}>
                         Cancel
+                    </button>,
+                    <button key="confirm" onClick={handleConfirm}>
+                        Confirm
                     </button>,
                 ]}
             >
