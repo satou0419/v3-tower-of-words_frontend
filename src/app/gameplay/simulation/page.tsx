@@ -592,6 +592,7 @@ const SimulationGameplay = () => {
                         console.log("All enemies defeated.");
                         setShowConfetti(true);
                         setShowConquerFloorModal(true); // Show the conquering floor modal
+                        updateParticipantAssessment(studentID, simulationID);
                     }, 500); // Add delay before showing confetti and modal
                 } else if (isLastWord) {
                     // Last word of current enemy but not the last enemy

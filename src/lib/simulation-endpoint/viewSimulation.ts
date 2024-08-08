@@ -42,9 +42,11 @@ interface SimulationDetails {
     assessment: SimulationAssessment[];
 }
 
-export const viewSimulation  = async (simulationID: number): Promise<SimulationDetails> => {
+export const viewSimulation = async (
+    simulationID: number
+): Promise<SimulationDetails> => {
     try {
-        console.log(simulationID)
+        console.log(simulationID);
         const response = await fetch(
             `${BASE_URL}/simulation/simulation_details/${simulationID}`
         );
@@ -52,7 +54,6 @@ export const viewSimulation  = async (simulationID: number): Promise<SimulationD
             throw new Error("Failed to fetch room details");
         }
         const data = await response.json();
-        console.log(data);
         return data.data;
     } catch (error) {
         console.error("Error fetching room details:", error);
