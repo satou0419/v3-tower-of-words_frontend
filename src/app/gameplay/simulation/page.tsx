@@ -73,7 +73,11 @@ const SimulationGameplay = () => {
 
     const interval = simulationDetails?.simulationDetails?.attackInterval ?? 0;
     const [timeLeft, setTimeLeft] = useState<number>(interval);
+    const [score, setScore] = useState(100);
 
+    const subtractScore = (amount: number) => {
+        setScore((prevScore) => Math.max(prevScore - amount, 0)); // Ensure lives don't go below 0
+    };
     // Set the initial state and update it if studentLife changes
     useEffect(() => {
         setLives(studentLife);
@@ -136,12 +140,17 @@ const SimulationGameplay = () => {
                 switch (name) {
                     case "Bandage":
                         addLives(1);
+                        subtractScore(score * 0.02);
                         break;
                     case "Medical Kit":
                         addLives(3);
+                        subtractScore(score * 0.02);
+
                         break;
                     case "Unusual Battery":
                         setIsPronunciationLocked(false);
+                        subtractScore(score * 0.02);
+
                         break;
                 }
                 // Fetch updated user items after successful use
@@ -374,6 +383,7 @@ const SimulationGameplay = () => {
     const [mistakes, setMistakes] = useState(0);
     const incrementMistake = () => {
         setMistakes((prevMistakes) => prevMistakes + 1);
+        subtractScore(score * 0.05);
     };
 
     const handleTimesUp = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -550,7 +560,7 @@ const SimulationGameplay = () => {
                 simulationWordsID: currentWordID,
                 studentID: userID,
                 correct: true,
-                score: 0,
+                score: score,
                 duration: time.getFormattedTimeInSeconds(),
                 accuracy: accuracy,
                 mistake: mistakes,
@@ -990,8 +1000,8 @@ const SimulationGameplay = () => {
             <Modal
                 className="conquer-floor-modal"
                 isOpen={showConquerFloorModal}
-                title="Floor Conquered!"
-                details="Congratulations! You've conquered this floor. Would you like to proceed to the next floor or return to the main menu?"
+                title="Simulation Conquered!"
+                details="Congratulations! You've conquered this Simulation."
                 buttons={[
                     <button
                         key="menu"

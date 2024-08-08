@@ -71,7 +71,7 @@ export default function StudentAssessment() {
                   `Accuracy: ${assessmentData.accuracy.toFixed(2)}`,
                   `Duration: ${assessmentData.duration.toFixed(2)}`,
                   `Mistakes: ${assessmentData.mistakes.toFixed(2)}`,
-                  `Score: ${assessmentData.score}`,
+                  `Score: ${assessmentData.score.toFixed(2)}`,
               ]
             : ["Accuracy", "Duration", "Mistakes", "Score "],
         datasets: [
@@ -80,7 +80,7 @@ export default function StudentAssessment() {
                 data: assessmentData
                     ? [
                           assessmentData.accuracy,
-                          assessmentData.mistake,
+                          assessmentData.mistakes,
                           assessmentData.duration,
                           assessmentData.score,
                       ]
@@ -139,7 +139,7 @@ export default function StudentAssessment() {
                                 <div>Accuracy</div>
                                 <div>
                                     {assessmentData
-                                        ? assessmentData.accuracy
+                                        ? assessmentData.accuracy.toFixed(2)
                                         : "0"}
                                 </div>
                             </span>
@@ -147,7 +147,7 @@ export default function StudentAssessment() {
                                 <div>Duration</div>
                                 <div>
                                     {assessmentData
-                                        ? assessmentData.duration
+                                        ? assessmentData.duration.toFixed(2)
                                         : "0"}
                                 </div>
                             </span>
@@ -155,7 +155,7 @@ export default function StudentAssessment() {
                                 <div>Mistake</div>
                                 <div>
                                     {assessmentData
-                                        ? assessmentData.mistake
+                                        ? assessmentData.mistakes.toFixed(2)
                                         : "0"}
                                 </div>
                             </span>
@@ -163,7 +163,7 @@ export default function StudentAssessment() {
                                 <div>Score</div>
                                 <div>
                                     {assessmentData
-                                        ? assessmentData.score
+                                        ? assessmentData.score.toFixed(2)
                                         : "0"}
                                 </div>
                             </span>
