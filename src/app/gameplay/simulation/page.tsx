@@ -201,17 +201,24 @@ const SimulationGameplay = () => {
     const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
     const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
 
+    const [total, setTotal] = useState(0);
     useEffect(() => {
         if (enemies.length > 0) {
             const initialSpelledWords: Record<number, boolean[]> = {};
+            let totalWords = 0; // Variable to store the total count of words
+
             enemies.forEach((enemy, index) => {
                 initialSpelledWords[index] = new Array(enemy.words.length).fill(
                     false
                 );
+                totalWords += enemy.words.length; // Add the number of words for each enemy to the total count
+                setTotal(total);
             });
+
             setSpelledWords(initialSpelledWords);
             console.log("Enemies", enemies);
             console.log("Initial", initialSpelledWords);
+            console.log("Total words", totalWords); // Log the total count of words
         }
     }, [enemies]);
 
@@ -386,6 +393,13 @@ const SimulationGameplay = () => {
         subtractScore(score * 0.05);
     };
 
+    const [myScore, setMyScore] = useState(0);
+    const [totalItems, setTotalItems] = useState(0);
+
+    const incrementTotalItem = () => {
+        setTotalItems((prevTotalItems) => prevTotalItems + 1);
+    };
+
     const handleTimesUp = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         const currentEnemy = enemies[currentEnemyIndex];
@@ -546,6 +560,7 @@ const SimulationGameplay = () => {
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
+            incrementTotalItem();
             console.log("Correct word entered.");
             enemyInterval.pause();
 
@@ -1001,7 +1016,7 @@ const SimulationGameplay = () => {
                 className="conquer-floor-modal"
                 isOpen={showConquerFloorModal}
                 title="Simulation Conquered!"
-                details="Congratulations! You've conquered this Simulation."
+                details={`Congratulations! You've conquered this Simulation.`}
                 buttons={[
                     <button
                         key="menu"
