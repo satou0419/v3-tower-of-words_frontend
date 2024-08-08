@@ -284,6 +284,7 @@ const AdventureGameplay = () => {
             }, (enemyDetails.attackFrame / 12) * 1000 + 800); // Main enemy attack duration
         } else {
             setIsEnemyAttacking(true);
+            subtractLives(1);
 
             setTimeout(() => {
                 setIsEnemyAttacking(false);
