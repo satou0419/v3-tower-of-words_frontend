@@ -279,6 +279,10 @@ const AdventureGameplay = () => {
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
                     setEnemyAttackType("shrink-width");
+
+                    setTimeout(() => {
+                        subtractLives(1);
+                    }, (enemyDetails.attackFrame / 12) * 1000);
                     setCharacterHit("");
                 }, 500); // 500ms is the duration of the hit
             }, (enemyDetails.attackFrame / 12) * 1000 + 800); // Main enemy attack duration
