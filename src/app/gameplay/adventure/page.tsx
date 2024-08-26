@@ -1,460 +1,472 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { InputBox } from "@/app/component/Input/Input";
-import { useEnemyStore } from "@/store/enemyStore";
-import Loading from "@/app/loading";
-import useImageParse from "@/hook/useImageParse";
-import "./adventure.scss"; // Make sure your SCSS file is imported correctly
-import "./animation.scss";
-import Modal from "@/app/component/Modal/Modal";
-import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
-import "./modals.scss";
-import useMerriam from "@/hook/useMerriam";
-import useAddWord from "@/hook/useAddWord"; // Import the custom hook
-import useProgressEquippedStore from "@/store/progressEquippedStore";
-import getUserDetails from "@/lib/user-endpoint/getUserDetails";
-import useUpdateProgress from "@/hook/useUpdateProgress";
-import useRedeemReward from "@/hook/useRedeemReward";
-import useFloorIncrement from "@/hook/useFloorIncrement";
-import getUserItems from "@/lib/item-endpoint/getUserItem";
-import useItem from "@/hook/useItem";
-import { useGameplayStore } from "@/store/gameplayStore";
-import ConfettiWrapper from "@/app/component/Confetti/Confetti";
+"use client"
+import React, { useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
+import { InputBox } from "@/app/component/Input/Input"
+import { useEnemyStore } from "@/store/enemyStore"
+import Loading from "@/app/loading"
+import useImageParse from "@/hook/useImageParse"
+import "./adventure.scss" // Make sure your SCSS file is imported correctly
+import "./animation.scss"
+import Modal from "@/app/component/Modal/Modal"
+import useAnimationKeyframes from "@/hook/useAnimationKeyframes"
+import "./modals.scss"
+import useMerriam from "@/hook/useMerriam"
+import useAddWord from "@/hook/useAddWord" // Import the custom hook
+import useProgressEquippedStore from "@/store/progressEquippedStore"
+import getUserDetails from "@/lib/user-endpoint/getUserDetails"
+import useUpdateProgress from "@/hook/useUpdateProgress"
+import useRedeemReward from "@/hook/useRedeemReward"
+import useFloorIncrement from "@/hook/useFloorIncrement"
+import getUserItems from "@/lib/item-endpoint/getUserItem"
+import useItem from "@/hook/useItem"
+import { useGameplayStore } from "@/store/gameplayStore"
+import ConfettiWrapper from "@/app/component/Confetti/Confetti"
+import useIncrementFloor from "@/hook/useIncrementFloor"
+import { FaVolumeUp } from "react-icons/fa"
 
 interface Item {
-    itemID: number;
-    name: string;
-    imagePath: string;
-    description: string;
-    price: number;
+    itemID: number
+    name: string
+    imagePath: string
+    description: string
+    price: number
 }
 
 interface UserItem {
-    userItemID: number;
-    quantity: number;
-    userID: number;
-    itemID: Item;
+    userItemID: number
+    quantity: number
+    userID: number
+    itemID: Item
 }
 
 const AdventureGameplay = () => {
-    const [loading, setLoading] = useState<boolean>(true);
-    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
-    const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
-    const [isPronunciationLocked, setIsPronunciationLocked] = useState(true);
-    const [isDefinitionLocked, setIsDefinitionLocked] = useState(false);
-    const [isItemLocked] = useState(false);
+    const [loading, setLoading] = useState<boolean>(true)
+    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true) // State for showing welcome modal
+    const [gameStarted, setGameStarted] = useState<boolean>(false) // State for tracking game start
+    const [isPronunciationLocked, setIsPronunciationLocked] = useState(true)
+    const [isDefinitionLocked, setIsDefinitionLocked] = useState(false)
+    const [isItemLocked] = useState(false)
 
-    const lockedPronunciation = isPronunciationLocked ? "locked" : "";
-    const lockedDefinition = isDefinitionLocked ? "locked" : "";
+    const lockedPronunciation = isPronunciationLocked ? "locked" : ""
+    const lockedDefinition = isDefinitionLocked ? "locked" : ""
 
-    const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
+    const [showConquerFloorModal, setShowConquerFloorModal] = useState(false)
 
     //#region  Item Logic
 
-    const [userItems, setUserItems] = useState<UserItem[]>([]);
+    const [userItems, setUserItems] = useState<UserItem[]>([])
     const [showConfirmationModal, setShowConfirmationModal] =
-        useState<boolean>(false);
+        useState<boolean>(false)
     const [itemToUse, setItemToUse] = useState<{
-        id: number;
-        name: string;
-    } | null>(null);
+        id: number
+        name: string
+    } | null>(null)
 
     useEffect(() => {
         const fetchUserItems = async () => {
-            const items = await getUserItems();
-            setUserItems(items);
-        };
+            const items = await getUserItems()
+            setUserItems(items)
+        }
 
-        fetchUserItems();
-    }, []);
+        fetchUserItems()
+    }, [])
     const handleUnload = (event: BeforeUnloadEvent) => {
         const message =
-            "Progress won't be saved. Are you sure you want to leave?";
-        event.returnValue = message; // Standard for most browsers
-        return message; // For some older browsers
-    };
+            "Progress won't be saved. Are you sure you want to leave?"
+        event.returnValue = message // Standard for most browsers
+        return message // For some older browsers
+    }
 
     useEffect(() => {
         // Add event listener when the component mounts
-        window.addEventListener("beforeunload", handleUnload);
+        window.addEventListener("beforeunload", handleUnload)
 
         // Cleanup function to remove the event listener
         return () => {
-            window.removeEventListener("beforeunload", handleUnload);
-        };
-    }, []); // Empty dependency array ensures this effect runs once on mount
+            window.removeEventListener("beforeunload", handleUnload)
+        }
+    }, []) // Empty dependency array ensures this effect runs once on mount
 
-    const { useItemFunction } = useItem();
+    const { useItemFunction } = useItem()
 
     const handleUseItem = (itemID: number, itemName: string) => {
         // Set the item to use and show the confirmation modal
-        setItemToUse({ id: itemID, name: itemName });
-        setShowConfirmationModal(true);
-    };
+        setItemToUse({ id: itemID, name: itemName })
+        setShowConfirmationModal(true)
+    }
 
     const confirmUseItem = async () => {
         if (itemToUse) {
-            const { id, name } = itemToUse;
+            const { id, name } = itemToUse
             try {
-                await useItemFunction(id);
-                console.log(name);
+                await useItemFunction(id)
+                console.log(name)
                 switch (name) {
                     case "Bandage":
-                        addLives(1);
-                        break;
+                        addLives(1)
+                        break
                     case "Medical Kit":
-                        addLives(3);
-                        break;
+                        addLives(3)
+                        break
                     case "Unusual Battery":
-                        setIsPronunciationLocked(false);
-                        break;
+                        setIsPronunciationLocked(false)
+                        break
                 }
                 // Fetch updated user items after successful use
-                const updatedItems = await getUserItems();
-                setUserItems(updatedItems);
+                const updatedItems = await getUserItems()
+                setUserItems(updatedItems)
             } catch (error) {
-                console.error("Failed to use item:", error);
+                console.error("Failed to use item:", error)
             } finally {
                 // Close the confirmation modal after processing
-                setShowConfirmationModal(false);
-                setItemToUse(null);
+                setShowConfirmationModal(false)
+                setItemToUse(null)
             }
         }
-    };
+    }
 
     const cancelUseItem = () => {
         // Close the confirmation modal without using the item
-        setShowConfirmationModal(false);
-        setItemToUse(null);
-    };
+        setShowConfirmationModal(false)
+        setItemToUse(null)
+    }
     //#endregion
 
     //#region Extracts data from URL
-    const searchParams = useSearchParams();
-    const floorIdParam = searchParams.get("floorId");
-    const sectionParam = searchParams.get("section");
-    const nextSectionParam = searchParams.get("nextSection");
-    const nextFloorIdParam = searchParams.get("nextFloorId");
-    const gameType = searchParams.get("gameType");
+    const searchParams = useSearchParams()
+    const floorIdParam = searchParams.get("floorId")
+    const sectionParam = searchParams.get("section")
+    const nextSectionParam = searchParams.get("nextSection")
+    const nextFloorIdParam = searchParams.get("nextFloorId")
+    const gameType = searchParams.get("gameType")
 
-    const isClear = searchParams.get("clear");
+    const isClear = searchParams.get("clear")
 
     // Convert parameters to numbers with fallback to NaN if conversion fails
-    const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN;
-    const section = sectionParam ? parseInt(sectionParam, 10) : NaN;
-    const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN;
-    const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN;
+    const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN
+    const section = sectionParam ? parseInt(sectionParam, 10) : NaN
+    const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN
+    const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN
 
     //#endRegion
 
-    const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
+    const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false)
 
     // Handler for restarting the game
     const handleGameOverRestart = () => {
         // Logic to restart the game
-        console.log("Restarting game...");
-        setShowGameOverModal(false);
-        window.location.reload();
+        console.log("Restarting game...")
+        setShowGameOverModal(false)
+        window.location.reload()
 
         // Add additional logic here to reset the game state
-    };
+    }
 
-    const { enemies, fetchEnemies } = useEnemyStore();
-    const [enemyData, setEnemyData] = useState<any[]>([]);
-    const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0);
-    const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
-    const [typedWord, setTypedWord] = useState<string>("");
+    const { enemies, fetchEnemies } = useEnemyStore()
+    const [enemyData, setEnemyData] = useState<any[]>([])
+    const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0)
+    const [currentWordIndex, setCurrentWordIndex] = useState<number>(0)
+    const [typedWord, setTypedWord] = useState<string>("")
 
-    const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
+    const [imagesLoaded, setImagesLoaded] = useState<boolean>(false)
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
-    );
-    const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
-    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
+    )
+    const [showConfetti, setShowConfetti] = useState<boolean>(false) // State for showing confetti
+    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([])
 
     const {
         addWord,
         isLoading: isAddingWord,
         error: addWordError,
-    } = useAddWord();
+    } = useAddWord()
 
     useEffect(() => {
         if (floorId) {
-            fetchEnemies(Number(floorId));
+            fetchEnemies(Number(floorId))
         }
-    }, [floorId, fetchEnemies]);
+    }, [floorId, fetchEnemies])
 
     useEffect(() => {
         if (enemies.length > 0) {
-            setEnemyData(enemies);
-            setLoading(false);
-            const initialSpelledWords: Record<number, boolean[]> = {};
+            setEnemyData(enemies)
+            setLoading(false)
+            const initialSpelledWords: Record<number, boolean[]> = {}
             enemies.forEach((enemy, index) => {
                 initialSpelledWords[index] = new Array(enemy.words.length).fill(
                     false
-                );
-            });
-            setSpelledWords(initialSpelledWords);
-            console.log("Enemy Data", enemyData);
+                )
+            })
+            setSpelledWords(initialSpelledWords)
+            console.log("Enemy Data", enemyData)
         }
-    }, [enemies]);
+    }, [enemies])
 
     const [isCharacterAttacking, setIsCharacterAttacking] =
-        useState<boolean>(false);
-    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false);
-    const [characterAttackType, setCharacterAttackType] = useState("");
-    const [enemyAttackType, setEnemyAttackType] = useState("");
-    const [enemyHit, setEnemyHit] = useState("");
-    const [characterHit, setCharacterHit] = useState("");
+        useState<boolean>(false)
+    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false)
+    const [characterAttackType, setCharacterAttackType] = useState("")
+    const [enemyAttackType, setEnemyAttackType] = useState("")
+    const [enemyHit, setEnemyHit] = useState("")
+    const [characterHit, setCharacterHit] = useState("")
 
     const userEquipped = useProgressEquippedStore(
         (state) => state.progressEquipped
-    );
+    )
 
     useEffect(() => {
-        getUserDetails();
-    }, []);
-    const characterDetails = useImageParse(userEquipped.equippedCharacter);
+        getUserDetails()
+    }, [])
+    const characterDetails = useImageParse(userEquipped.equippedCharacter)
     const enemyDetails = useImageParse(
         enemies[currentEnemyIndex]?.imagePath || ""
-    );
+    )
 
     useEffect(() => {
         if (characterDetails.name) {
-            const characterImage = new Image();
-            characterImage.src = `/assets/images/sprite/${characterDetails.name}.png`;
-            characterImage.onload = () => setImagesLoaded(true);
+            const characterImage = new Image()
+            characterImage.src = `/assets/images/sprite/${characterDetails.name}.png`
+            characterImage.onload = () => setImagesLoaded(true)
         }
-    }, [characterDetails.name]);
+    }, [characterDetails.name])
 
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
         characterDetails.name,
         characterDetails.idleFrame,
         characterDetails.attackFrame
-    );
+    )
 
     const enemyAnimation = useAnimationKeyframes(
         isEnemyAttacking ? "attack" : "idle",
         enemyDetails.name,
         enemyDetails.idleFrame,
         enemyDetails.attackFrame
-    );
+    )
 
-    const currentEnemy = enemyData[currentEnemyIndex];
-    const currentWord = currentEnemy?.words[currentWordIndex];
-    const word = useMerriam(currentWord); // Pass the currentWord to the custom hook
+    const currentEnemy = enemyData[currentEnemyIndex]
+    const currentWord = currentEnemy?.words[currentWordIndex]
+    const word = useMerriam(currentWord) // Pass the currentWord to the custom hook
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTypedWord(event.target.value);
-    };
+        setTypedWord(event.target.value)
+    }
 
     const handleEnemyAttack = () => {
-        setCharacterAttackType("");
+        setCharacterAttackType("")
 
         if (enemyDetails.attackType == "melee") {
-            setEnemyAttackType("expand-width");
+            setEnemyAttackType("expand-width")
 
             setTimeout(() => {
-                setIsEnemyAttacking(true);
+                setIsEnemyAttacking(true)
                 // playEnemyAttackSound(); // Play the attack sound when the enemy attacks
-            }, 800);
+            }, 800)
 
             setTimeout(() => {
-                setIsEnemyAttacking(false);
-                setCharacterHit("hit");
-                subtractLives(1); // Subtract 1 from lives on incorrect input
+                setIsEnemyAttacking(false)
+                setCharacterHit("hit")
+                subtractLives(1) // Subtract 1 from lives on incorrect input
 
-                setCharacterAttackType("");
+                setCharacterAttackType("")
 
                 setTimeout(() => {
                     if (lives === 1) {
-                        setShowGameOverModal(true);
+                        setShowGameOverModal(true)
                     }
-                }, 500);
+                }, 500)
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setEnemyAttackType("shrink-width");
-                    setCharacterHit("");
-                }, 500); // 500ms is the duration of the hit
-            }, (enemyDetails.attackFrame / 12) * 1000 + 800); // Main enemy attack duration
+                    setEnemyAttackType("shrink-width")
+
+                    setTimeout(() => {
+                        subtractLives(1)
+                    }, (enemyDetails.attackFrame / 12) * 1000)
+                    setCharacterHit("")
+                }, 500) // 500ms is the duration of the hit
+            }, (enemyDetails.attackFrame / 12) * 1000 + 800) // Main enemy attack duration
         } else {
-            setIsEnemyAttacking(true);
+            setIsEnemyAttacking(true)
+            subtractLives(1)
 
             setTimeout(() => {
-                setIsEnemyAttacking(false);
-                setCharacterHit("hit");
+                setIsEnemyAttacking(false)
+                setCharacterHit("hit")
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setCharacterHit("");
-                }, 500); // 500ms is the duration of the hit
-            }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
+                    setCharacterHit("")
+                }, 500) // 500ms is the duration of the hit
+            }, (enemyDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
         }
-    };
+    }
 
     const handleCharacterAttack = () => {
         if (characterDetails.attackType == "melee") {
-            setCharacterAttackType("expand-width");
+            setCharacterAttackType("expand-width")
 
             setTimeout(() => {
-                setIsCharacterAttacking(true);
-            }, 500);
+                setIsCharacterAttacking(true)
+            }, 500)
 
             setTimeout(() => {
-                setIsCharacterAttacking(false);
-                setCharacterAttackType("shrink-width");
-                setEnemyAttackType("");
-                setEnemyHit("hit");
+                setIsCharacterAttacking(false)
+                setCharacterAttackType("shrink-width")
+                setEnemyAttackType("")
+                setEnemyHit("hit")
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setEnemyHit("");
-                }, 500); // 500ms is the duration of the hit
-            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration
+                    setEnemyHit("")
+                }, 500) // 500ms is the duration of the hit
+            }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration
         } else {
-            setIsCharacterAttacking(true);
+            setIsCharacterAttacking(true)
 
             setTimeout(() => {
-                setIsCharacterAttacking(false);
-                setEnemyHit("hit");
+                setIsCharacterAttacking(false)
+                setEnemyHit("hit")
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setEnemyHit("");
-                }, 500); // 500ms is the duration of the hit
-            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
+                    setEnemyHit("")
+                }, 500) // 500ms is the duration of the hit
+            }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
         }
-    };
+    }
 
     const handleMissedAttack = () => {
         if (characterDetails.attackType == "melee") {
-            setCharacterAttackType("expand-width");
+            setCharacterAttackType("expand-width")
             setTimeout(() => {
-                setIsCharacterAttacking(true);
-            }, 500);
+                setIsCharacterAttacking(true)
+            }, 500)
 
             setTimeout(() => {
-                setIsCharacterAttacking(false);
-                setCharacterAttackType("shrink-width");
-                setEnemyAttackType("");
-            }, (characterDetails.attackFrame / 12) * 1000);
+                setIsCharacterAttacking(false)
+                setCharacterAttackType("shrink-width")
+                setEnemyAttackType("")
+            }, (characterDetails.attackFrame / 12) * 1000)
         } else {
-            setIsCharacterAttacking(true);
+            setIsCharacterAttacking(true)
 
             setTimeout(() => {
-                setIsCharacterAttacking(false);
-            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
+                setIsCharacterAttacking(false)
+            }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
         }
-    };
-    const { updateProgress, isLoading, error, data } = useUpdateProgress();
-    const { redeemReward } = useRedeemReward();
-    const { incrementFloor } = useFloorIncrement();
+    }
+    const { updateProgress, isLoading, error, data } = useUpdateProgress()
+    const { redeemReward } = useRedeemReward()
+    const { incrementFloor } = useFloorIncrement()
+    const updateFloor = useIncrementFloor()
 
-    const { lives, subtractLives, addLives } = useGameplayStore();
+    const { lives, subtractLives, addLives } = useGameplayStore()
     // Other state and hooks...
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        const currentEnemy = enemyData[currentEnemyIndex];
-        const currentWord = currentEnemy.words[currentWordIndex].toLowerCase();
+        event.preventDefault()
+        const currentEnemy = enemyData[currentEnemyIndex]
+        const currentWord = currentEnemy.words[currentWordIndex].toLowerCase()
         // Handle the game logic for correct answers
         if (
             typedWord.toLowerCase() === currentWord ||
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
-            setTypedWord("");
-            handleCharacterAttack();
+            setTypedWord("")
+            handleCharacterAttack()
 
-            const updatedSpelledWords = { ...spelledWords };
-            updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true;
-            setSpelledWords(updatedSpelledWords);
+            const updatedSpelledWords = { ...spelledWords }
+            updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true
+            setSpelledWords(updatedSpelledWords)
 
             // Archive the correctly spelled word
             if (isClear === "false") {
-                await addWord(currentWord);
+                await addWord(currentWord)
+                updateFloor
             }
 
             setTimeout(() => {
-                setIsCharacterAttacking(false);
+                setIsCharacterAttacking(false)
+                setRangeValue(0)
 
                 if (currentWordIndex === currentEnemy.words.length - 1) {
                     // Last word for this enemy defeated
                     setDefeatedEnemies((prevDefeatedEnemies) => [
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
-                    ]);
+                    ])
 
                     setTimeout(() => {
                         if (currentEnemyIndex === enemyData.length - 1) {
                             // All enemies defeated, show confetti
                             if (isClear === "false") {
-                                console.log("Now it is clear");
-                                updateProgress(nextFloorId, nextSection);
-                                redeemReward(floorId);
-                                incrementFloor();
+                                console.log("Now it is clear")
+                                updateProgress(nextFloorId, nextSection)
+                                redeemReward(floorId)
+                                incrementFloor()
                             } else {
-                                console.log("It is cleared previously");
+                                console.log("It is cleared previously")
                             }
-                            setShowConfetti(true);
-                            setShowConquerFloorModal(true); // Show the conquering floor modal
+                            setShowConfetti(true)
+                            setShowConquerFloorModal(true) // Show the conquering floor modal
                         } else {
-                            setCurrentEnemyIndex(currentEnemyIndex + 1);
-                            setCurrentWordIndex(0);
-                            setIsPronunciationLocked(true);
+                            setCurrentEnemyIndex(currentEnemyIndex + 1)
+                            setCurrentWordIndex(0)
+                            setIsPronunciationLocked(true)
                         }
-                    }, 500); // Add delay before switching to next enemy (adjust as needed)
+                    }, 500) // Add delay before switching to next enemy (adjust as needed)
                 } else {
-                    setCurrentWordIndex(currentWordIndex + 1);
-                    setIsPronunciationLocked(true);
+                    setCurrentWordIndex(currentWordIndex + 1)
+                    setIsPronunciationLocked(true)
                 }
-            }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
+            }, (characterDetails.attackFrame / 12) * 1000) // Adjust timing as needed
         } else {
             // Check if lives have reached 0
 
-            handleMissedAttack();
+            console.log("Missed attacked!!!")
+
+            handleMissedAttack()
             setTimeout(() => {
-                handleEnemyAttack();
-            }, (characterDetails.attackFrame / 12) * 2000);
+                handleEnemyAttack()
+            }, (characterDetails.attackFrame / 12) * 2000)
         }
-    };
+    }
 
     //Play only the audio in gameType 1
 
     useEffect(() => {
-        if (gameStarted && word && word.playAudio) {
+        if (gameStarted && word && word.playAudio && gameType === "spelling") {
             // Play audio on word change
             const timer = setTimeout(() => {
-                word.playAudio();
-            }, 1000);
+                word.playAudio()
+            }, 1000)
 
-            return () => clearTimeout(timer); // Clear the timeout if the component unmounts or word changes
+            return () => clearTimeout(timer) // Clear the timeout if the component unmounts or word changes
         }
-    }, [gameStarted, word]); // Trigger on gameStarted or word change
+    }, [gameStarted, word]) // Trigger on gameStarted or word change
 
     useEffect(() => {
-        if (!gameStarted) return; // Do nothing if the game hasn't started
+        if (!gameStarted) return // Do nothing if the game hasn't started
 
         // Handle key down event for shift key to play audio
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Shift") {
-                if (word && word.playAudio) {
-                    word.playAudio();
+                if (word && word.playAudio && gameType == "spelling") {
+                    word.playAudio()
                 }
             }
-        };
+        }
 
-        window.addEventListener("keydown", handleKeyDown);
+        window.addEventListener("keydown", handleKeyDown)
 
         return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-    }, [gameStarted, word]); // Trigger on gameStarted or word change
+            window.removeEventListener("keydown", handleKeyDown)
+        }
+    }, [gameStarted, word]) // Trigger on gameStarted or word change
 
     const renderHearts = () => {
-        const hearts = [];
+        const hearts = []
         for (let i = 0; i < lives; i++) {
             hearts.push(
                 <img
@@ -463,7 +475,7 @@ const AdventureGameplay = () => {
                     src="/assets/images/icon/ic-heart.png"
                     alt="Heart"
                 />
-            );
+            )
         }
         for (let i = lives; i < 5; i++) {
             hearts.push(
@@ -473,37 +485,47 @@ const AdventureGameplay = () => {
                     src="/assets/images/icon/ic-lose.png"
                     alt="Lose"
                 />
-            );
+            )
         }
-        return hearts;
-    };
+        return hearts
+    }
 
-    const [rangeValue, setRangeValue] = useState(0);
+    useEffect(() => {
+        console.log("Range", rangeValue)
+    })
+    const [rangeValue, setRangeValue] = useState(0)
+    useEffect(() => {
+        if (gameType !== "syllable") {
+            setRangeValue(0)
+        } else {
+            setRangeValue(1)
+        }
+    }, [gameType])
 
     const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRangeValue(Number(event.target.value));
-    };
+        setRangeValue(Number(event.target.value))
+    }
 
     const extractEnemyName = (imagePath: string) => {
         // Match the pattern of &attackType_name-a11-i12
-        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
-        return match ? match[1] : "unknown"; // Return the name or 'unknown' if not found
-    };
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/)
+        return match ? match[1] : "unknown" // Return the name or 'unknown' if not found
+    }
 
     const welcomeModalButtons = [
         <button
             key="start-game"
             onClick={() => {
-                setShowWelcomeModal(false);
-                setGameStarted(true); // Start the game when the modal is closed
+                setShowWelcomeModal(false)
+                setGameStarted(true) // Start the game when the modal is closed
             }}
         >
             Start Game
         </button>,
-    ];
+    ]
 
     if (!floorId || loading || !imagesLoaded) {
-        return <Loading />;
+        return <Loading />
     }
 
     return (
@@ -525,7 +547,7 @@ const AdventureGameplay = () => {
 
                     <section className="enemy-track">
                         {enemyData.map((enemy, enemyIndex) => {
-                            const enemyName = extractEnemyName(enemy.imagePath);
+                            const enemyName = extractEnemyName(enemy.imagePath)
 
                             return (
                                 <div
@@ -565,7 +587,7 @@ const AdventureGameplay = () => {
                                         )
                                     )}
                                 </div>
-                            );
+                            )
                         })}
                     </section>
                     <section className="sprite-holder">
@@ -740,7 +762,7 @@ const AdventureGameplay = () => {
                                         type="button"
                                         onClick={word?.playAudio}
                                     >
-                                        🔉
+                                        <FaVolumeUp />
                                     </button>
                                     <InputBox
                                         type="text"
@@ -818,7 +840,7 @@ const AdventureGameplay = () => {
                 ]}
             />
         </main>
-    );
-};
+    )
+}
 
-export default AdventureGameplay;
+export default AdventureGameplay

@@ -202,3 +202,72 @@
         }
     }
 }
+.input-with-tooltip {
+    position: relative;
+    width: 100%; /* Ensure the parent container spans full width */
+}
+
+.input-field {
+    width: 100%;
+    padding: 8px;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+// .input-box {
+//     width: 100%;
+//     padding: 8px;
+//     border: 2px solid #ccc;
+//     border-radius: 4px;
+//     font-size: 1rem;
+//     box-sizing: border-box;
+//     transition: border-color 0.3s ease;
+// }
+
+.input-box.valid-input {
+    border: 2px solid #4caf50 !important;
+}
+
+.input-box.invalid-input {
+    border-color: #f44336 !important; /* Red for invalid */
+}
+
+.tooltip {
+    position: absolute;
+    top: 100%; /* Position below the input field */
+    left: 0;
+    width: 100%; /* Tooltip spans full width of parent container */
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 0.875rem;
+    white-space: normal; /* Allow text to wrap */
+    z-index: 10;
+    margin-top: 5px;
+    opacity: 0.9;
+    box-sizing: border-box; /* Include padding in width calculation */
+}
+
+.tooltip::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: 10px; /* Adjust for better alignment */
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #333 transparent;
+}
+button:disabled {
+    background-color: #d3d3d3; /* Light gray background for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+    opacity: 0.7; /* Slightly transparent to indicate disabled state */
+}
+button:disabled:hover {
+    background-color: #d3d3d3; /* Light gray background for disabled state */
+    cursor: not-allowed; /* Change cursor to indicate disabled state */
+    opacity: 0.7; /* Slightly transparent to indicate disabled state */
+}
