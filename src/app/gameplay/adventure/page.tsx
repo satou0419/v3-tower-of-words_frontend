@@ -82,15 +82,15 @@ const AdventureGameplay = () => {
         return message // For some older browsers
     }
 
-    useEffect(() => {
-        // Add event listener when the component mounts
-        window.addEventListener("beforeunload", handleUnload)
+    // useEffect(() => {
+    //     // Add event listener when the component mounts
+    //     window.addEventListener("beforeunload", handleUnload)
 
-        // Cleanup function to remove the event listener
-        return () => {
-            window.removeEventListener("beforeunload", handleUnload)
-        }
-    }, []) // Empty dependency array ensures this effect runs once on mount
+    //     // Cleanup function to remove the event listener
+    //     return () => {
+    //         window.removeEventListener("beforeunload", handleUnload)
+    //     }
+    // }, []) // Empty dependency array ensures this effect runs once on mount
 
     const { useItemFunction } = useItem()
 

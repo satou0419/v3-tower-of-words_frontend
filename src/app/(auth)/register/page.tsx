@@ -335,7 +335,7 @@ const Register: React.FC = () => {
 
                     <div className="register-link_group">
                         <span>
-                            Don't have an account yet?
+                            Already have an account?
                             <Link href="/login" className="link-signup">
                                 Sign in
                             </Link>
