@@ -306,7 +306,11 @@
                 cursor: pointer;
             }
             button:disabled {
-                background-color: red;
+                background-color: #cccccc; /* Light gray background */
+                color: #666666; /* Dark gray text */
+                cursor: not-allowed; /* Change cursor to indicate it's disabled */
+                opacity: 0.6; /* Make it appear faded */
+                border: 1px solid #999999; /* Gray border */
             }
 
             input {

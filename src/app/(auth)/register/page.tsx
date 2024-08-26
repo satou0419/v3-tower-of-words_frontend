@@ -50,15 +50,14 @@ const Register: React.FC = () => {
         confirmPassword: "",
         userType: "",
     })
-
     const validateUsername = (username: string) => {
-        const usernameRegex = /^[a-z]+(\.[a-z]+)?$/
-        return usernameRegex.test(username)
+        const usernameRegex = /^[a-z][a-z._]*[a-z._]?$/
+        return usernameRegex.test(username) && username.length >= 3
     }
 
     const validatePassword = (password: string) => {
         const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
         return passwordRegex.test(password)
     }
 
@@ -267,8 +266,9 @@ const Register: React.FC = () => {
                             />
                             {showTooltip === "username" && (
                                 <div className="tooltip">
-                                    Username must be lowercase letters only,
-                                    with an optional '.'.
+                                    Username must be at least 3 characters long,
+                                    consist of lowercase letters only, and may
+                                    include periods (.) and/or underscores (_).
                                 </div>
                             )}
                         </div>
@@ -337,7 +337,7 @@ const Register: React.FC = () => {
                         <span>
                             Don't have an account yet?
                             <Link href="/login" className="link-signup">
-                                Sign up
+                                Sign in
                             </Link>
                         </span>
                         <span>

@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata: Metadata = {
     title: {
         template: "%s | Tower of Words",
-        default: "Tower of Words Dashboard",
+        default: "Tower of Words",
     },
     description: "The official site of Tower of Words.",
 }
