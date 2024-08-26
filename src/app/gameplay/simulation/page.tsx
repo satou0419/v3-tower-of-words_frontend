@@ -691,7 +691,7 @@ const SimulationGameplay = () => {
         };
     }, [gameStarted, word]); // Trigger on gameStarted or word change
 
-    const [rangeValue, setRangeValue] = useState(0);
+    const [rangeValue, setRangeValue] = useState(1);
 
     const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setRangeValue(Number(event.target.value));
