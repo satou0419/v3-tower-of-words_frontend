@@ -52,6 +52,11 @@ const AdventureGameplay = () => {
 
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false)
 
+    //#region Button state
+    const [isButtonDisabled, setIsButtonDisabled] = useState(false)
+
+    //#endRegion
+
     //#region  Item Logic
 
     const [userItems, setUserItems] = useState<UserItem[]>([])
@@ -77,15 +82,15 @@ const AdventureGameplay = () => {
         return message // For some older browsers
     }
 
-    useEffect(() => {
-        // Add event listener when the component mounts
-        window.addEventListener("beforeunload", handleUnload)
+    // useEffect(() => {
+    //     // Add event listener when the component mounts
+    //     window.addEventListener("beforeunload", handleUnload)
 
-        // Cleanup function to remove the event listener
-        return () => {
-            window.removeEventListener("beforeunload", handleUnload)
-        }
-    }, []) // Empty dependency array ensures this effect runs once on mount
+    //     // Cleanup function to remove the event listener
+    //     return () => {
+    //         window.removeEventListener("beforeunload", handleUnload)
+    //     }
+    // }, []) // Empty dependency array ensures this effect runs once on mount
 
     const { useItemFunction } = useItem()
 
@@ -266,7 +271,7 @@ const AdventureGameplay = () => {
             setTimeout(() => {
                 setIsEnemyAttacking(false)
                 setCharacterHit("hit")
-                subtractLives(1) // Subtract 1 from lives on incorrect input
+                // subtractLives(1) // Subtract 1 from lives on incorrect input
 
                 setCharacterAttackType("")
 
@@ -282,6 +287,8 @@ const AdventureGameplay = () => {
 
                     setTimeout(() => {
                         subtractLives(1)
+
+                        setIsButtonDisabled(false)
                     }, (enemyDetails.attackFrame / 12) * 1000)
                     setCharacterHit("")
                 }, 500) // 500ms is the duration of the hit
@@ -314,6 +321,12 @@ const AdventureGameplay = () => {
                 setIsCharacterAttacking(false)
                 setCharacterAttackType("shrink-width")
                 setEnemyAttackType("")
+
+                setTimeout(() => {
+                    if (gameType === "syllable") {
+                        setIsButtonDisabled(false)
+                    }
+                }, (characterDetails.attackFrame / 12) * 1200)
                 setEnemyHit("hit")
 
                 // Set character hit to "" after the hit duration
@@ -365,6 +378,8 @@ const AdventureGameplay = () => {
     // Other state and hooks...
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
+        setIsButtonDisabled(true)
+
         const currentEnemy = enemyData[currentEnemyIndex]
         const currentWord = currentEnemy.words[currentWordIndex].toLowerCase()
         // Handle the game logic for correct answers
@@ -373,7 +388,6 @@ const AdventureGameplay = () => {
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
-            setTypedWord("")
             handleCharacterAttack()
 
             const updatedSpelledWords = { ...spelledWords }
@@ -388,7 +402,7 @@ const AdventureGameplay = () => {
 
             setTimeout(() => {
                 setIsCharacterAttacking(false)
-                setRangeValue(0)
+                if (gameType === "syllable") setRangeValue(1)
 
                 if (currentWordIndex === currentEnemy.words.length - 1) {
                     // Last word for this enemy defeated
@@ -440,6 +454,9 @@ const AdventureGameplay = () => {
             // Play audio on word change
             const timer = setTimeout(() => {
                 word.playAudio()
+                setIsButtonDisabled(false)
+
+                setTypedWord("")
             }, 1000)
 
             return () => clearTimeout(timer) // Clear the timeout if the component unmounts or word changes
@@ -754,7 +771,12 @@ const AdventureGameplay = () => {
                                     <span className="range-value">
                                         {rangeValue}
                                     </span>
-                                    <button type="submit">Go!</button>
+                                    <button
+                                        type="submit"
+                                        disabled={isButtonDisabled}
+                                    >
+                                        Go!
+                                    </button>
                                 </>
                             ) : (
                                 <>
@@ -771,7 +793,12 @@ const AdventureGameplay = () => {
                                         placeholder="Type the word..."
                                         required
                                     />
-                                    <button type="submit">Go!</button>
+                                    <button
+                                        type="submit"
+                                        disabled={isButtonDisabled}
+                                    >
+                                        Go!
+                                    </button>
                                 </>
                             )}
                         </form>
