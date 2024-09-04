@@ -1,24 +1,17 @@
-"use client";
-import useFetchSimulationWords from "@/hook/useSimulationWord";
-import React from "react";
+"use client"
+import useRandomWord from "@/hook/useRandomWord"
+import React from "react"
 
-const SimulationWordsComponent = () => {
-    const simu = useFetchSimulationWords(1);
+const WordDisplay: React.FC = () => {
+    const { randomWord, loading, refresh } = useRandomWord()
 
     return (
         <div>
-            <h1>Simulation Words</h1>
-            <p>
-                <strong>Word:</strong> {simu.word}
-            </p>
-            <p>
-                <strong>Creator ID:</strong> {simu.creatorID}
-            </p>
-            <p>
-                <strong>Silent Index:</strong> {simu.silentIndex}
-            </p>
+            <h1>Random Word:</h1>
+            <p>{loading ? "Loading..." : randomWord}</p>
+            <button onClick={refresh}>Get New Random Word</button>
         </div>
-    );
-};
+    )
+}
 
-export default SimulationWordsComponent;
+export default WordDisplay

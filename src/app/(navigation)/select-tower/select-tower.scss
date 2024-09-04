@@ -1,0 +1,19 @@
+.select-tower-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 8em;
+    margin-top: 2em;
+
+    h1 {
+        color: #666666;
+    }
+
+    .select-tower-cards {
+        display: flex;
+        justify-content: center;
+        gap: 10em;
+        width: 100%;
+    }
+}

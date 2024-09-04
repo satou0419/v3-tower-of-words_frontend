@@ -16,13 +16,11 @@ import useProgressEquippedStore from "@/store/progressEquippedStore"
 import getUserDetails from "@/lib/user-endpoint/getUserDetails"
 import useUpdateProgress from "@/hook/useUpdateProgress"
 import useRedeemReward from "@/hook/useRedeemReward"
-import useFloorIncrement from "@/hook/useFloorIncrement"
-import getUserItems from "@/lib/item-endpoint/getUserItem"
-import useItem from "@/hook/useItem"
 import { useGameplayStore } from "@/store/gameplayStore"
-import ConfettiWrapper from "@/app/component/Confetti/Confetti"
 import useIncrementFloor from "@/hook/useIncrementFloor"
 import { FaVolumeUp } from "react-icons/fa"
+import useRandomEnemy from "@/hook/useRandomEnemy"
+import useRandomWord from "@/hook/useRandomWord"
 
 interface Item {
     itemID: number
@@ -39,121 +37,25 @@ interface UserItem {
     itemID: Item
 }
 
-const AdventureGameplay = () => {
+const PlaygroundGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true) // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false) // State for tracking game start
-    const [isPronunciationLocked, setIsPronunciationLocked] = useState(true)
-    const [isDefinitionLocked, setIsDefinitionLocked] = useState(false)
-    const [isItemLocked] = useState(false)
-
-    const lockedPronunciation = isPronunciationLocked ? "locked" : ""
-    const lockedDefinition = isDefinitionLocked ? "locked" : ""
+    const [isItemLocked] = useState(true)
 
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false)
 
     //#region Button state
     const [isButtonDisabled, setIsButtonDisabled] = useState(false)
-
-    //#endRegion
-
-    //#region  Item Logic
-
     const [userItems, setUserItems] = useState<UserItem[]>([])
-    const [showConfirmationModal, setShowConfirmationModal] =
-        useState<boolean>(false)
-    const [itemToUse, setItemToUse] = useState<{
-        id: number
-        name: string
-    } | null>(null)
-
-    useEffect(() => {
-        const fetchUserItems = async () => {
-            const items = await getUserItems()
-            setUserItems(items)
-        }
-
-        fetchUserItems()
-    }, [])
-    const handleUnload = (event: BeforeUnloadEvent) => {
-        const message =
-            "Progress won't be saved. Are you sure you want to leave?"
-        event.returnValue = message // Standard for most browsers
-        return message // For some older browsers
-    }
-
-    // useEffect(() => {
-    //     // Add event listener when the component mounts
-    //     window.addEventListener("beforeunload", handleUnload)
-
-    //     // Cleanup function to remove the event listener
-    //     return () => {
-    //         window.removeEventListener("beforeunload", handleUnload)
-    //     }
-    // }, []) // Empty dependency array ensures this effect runs once on mount
-
-    const { useItemFunction } = useItem()
-
-    const handleUseItem = (itemID: number, itemName: string) => {
-        // Set the item to use and show the confirmation modal
-        setItemToUse({ id: itemID, name: itemName })
-        setShowConfirmationModal(true)
-    }
-
-    const confirmUseItem = async () => {
-        if (itemToUse) {
-            const { id, name } = itemToUse
-            try {
-                await useItemFunction(id)
-                console.log(name)
-                switch (name) {
-                    case "Bandage":
-                        addLives(1)
-                        break
-                    case "Medical Kit":
-                        addLives(3)
-                        break
-                    case "Unusual Battery":
-                        setIsPronunciationLocked(false)
-                        break
-                }
-                // Fetch updated user items after successful use
-                const updatedItems = await getUserItems()
-                setUserItems(updatedItems)
-            } catch (error) {
-                console.error("Failed to use item:", error)
-            } finally {
-                // Close the confirmation modal after processing
-                setShowConfirmationModal(false)
-                setItemToUse(null)
-            }
-        }
-    }
-
-    const cancelUseItem = () => {
-        // Close the confirmation modal without using the item
-        setShowConfirmationModal(false)
-        setItemToUse(null)
-    }
-    //#endregion
 
     //#region Extracts data from URL
     const searchParams = useSearchParams()
-    const floorIdParam = searchParams.get("floorId")
-    const sectionParam = searchParams.get("section")
-    const nextSectionParam = searchParams.get("nextSection")
-    const nextFloorIdParam = searchParams.get("nextFloorId")
     const gameType = searchParams.get("gameType")
 
-    const isClear = searchParams.get("clear")
-
-    // Convert parameters to numbers with fallback to NaN if conversion fails
-    const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN
-    const section = sectionParam ? parseInt(sectionParam, 10) : NaN
-    const nextSection = nextSectionParam ? parseInt(nextSectionParam, 10) : NaN
-    const nextFloorId = nextFloorIdParam ? parseInt(nextFloorIdParam, 10) : NaN
-
     //#endRegion
+
+    const { randomWord, refresh } = useRandomWord()
 
     const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false)
 
@@ -167,6 +69,8 @@ const AdventureGameplay = () => {
         // Add additional logic here to reset the game state
     }
 
+    const { enemy, refetch } = useRandomEnemy()
+
     const { enemies, fetchEnemies } = useEnemyStore()
     const [enemyData, setEnemyData] = useState<any[]>([])
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0)
@@ -177,20 +81,12 @@ const AdventureGameplay = () => {
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
     )
-    const [showConfetti, setShowConfetti] = useState<boolean>(false) // State for showing confetti
-    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([])
 
     const {
         addWord,
         isLoading: isAddingWord,
         error: addWordError,
     } = useAddWord()
-
-    useEffect(() => {
-        if (floorId) {
-            fetchEnemies(Number(floorId))
-        }
-    }, [floorId, fetchEnemies])
 
     useEffect(() => {
         if (enemies.length > 0) {
@@ -223,9 +119,7 @@ const AdventureGameplay = () => {
         getUserDetails()
     }, [])
     const characterDetails = useImageParse(userEquipped.equippedCharacter)
-    const enemyDetails = useImageParse(
-        enemies[currentEnemyIndex]?.imagePath || ""
-    )
+    const enemyDetails = useImageParse(enemy || "")
 
     useEffect(() => {
         if (characterDetails.name) {
@@ -249,10 +143,10 @@ const AdventureGameplay = () => {
         enemyDetails.attackFrame
     )
 
-    const currentEnemy = enemyData[currentEnemyIndex]
-    const currentWord = currentEnemy?.words[currentWordIndex]
+    const currentWord = randomWord || ""
     const word = useMerriam(currentWord) // Pass the currentWord to the custom hook
 
+    console.log(word?.id)
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value)
     }
@@ -332,7 +226,9 @@ const AdventureGameplay = () => {
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
                     setEnemyHit("")
-                }, 500) // 500ms is the duration of the hit
+                    refetch()
+                    refresh()
+                }, 1500) // 500ms is the duration of the hit
             }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration
         } else {
             setIsCharacterAttacking(true)
@@ -369,19 +265,13 @@ const AdventureGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
         }
     }
-    const { updateProgress, isLoading, error, data } = useUpdateProgress()
-    const { redeemReward } = useRedeemReward()
-    const { incrementFloor } = useFloorIncrement()
-    const updateFloor = useIncrementFloor()
-
     const { lives, subtractLives, addLives } = useGameplayStore()
     // Other state and hooks...
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsButtonDisabled(true)
 
-        const currentEnemy = enemyData[currentEnemyIndex]
-        const currentWord = currentEnemy.words[currentWordIndex].toLowerCase()
+        const currentWord = word?.id
         // Handle the game logic for correct answers
         if (
             typedWord.toLowerCase() === currentWord ||
@@ -390,50 +280,9 @@ const AdventureGameplay = () => {
             // Correct word spelling
             handleCharacterAttack()
 
-            const updatedSpelledWords = { ...spelledWords }
-            updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true
-            setSpelledWords(updatedSpelledWords)
-
-            // Archive the correctly spelled word
-            if (isClear === "false") {
-                await addWord(currentWord)
-                updateFloor
-            }
-
             setTimeout(() => {
                 setIsCharacterAttacking(false)
                 if (gameType === "syllable") setRangeValue(1)
-
-                if (currentWordIndex === currentEnemy.words.length - 1) {
-                    // Last word for this enemy defeated
-                    setDefeatedEnemies((prevDefeatedEnemies) => [
-                        ...prevDefeatedEnemies,
-                        currentEnemyIndex,
-                    ])
-
-                    setTimeout(() => {
-                        if (currentEnemyIndex === enemyData.length - 1) {
-                            // All enemies defeated, show confetti
-                            if (isClear === "false") {
-                                console.log("Now it is clear")
-                                updateProgress(nextFloorId, nextSection)
-                                redeemReward(floorId)
-                                incrementFloor()
-                            } else {
-                                console.log("It is cleared previously")
-                            }
-                            setShowConfetti(true)
-                            setShowConquerFloorModal(true) // Show the conquering floor modal
-                        } else {
-                            setCurrentEnemyIndex(currentEnemyIndex + 1)
-                            setCurrentWordIndex(0)
-                            setIsPronunciationLocked(true)
-                        }
-                    }, 500) // Add delay before switching to next enemy (adjust as needed)
-                } else {
-                    setCurrentWordIndex(currentWordIndex + 1)
-                    setIsPronunciationLocked(true)
-                }
             }, (characterDetails.attackFrame / 12) * 1000) // Adjust timing as needed
         } else {
             // Check if lives have reached 0
@@ -450,7 +299,7 @@ const AdventureGameplay = () => {
     //Play only the audio in gameType 1
 
     useEffect(() => {
-        if (gameStarted && word && word.playAudio && gameType === "spelling") {
+        if (gameStarted && word && word.playAudio) {
             // Play audio on word change
             const timer = setTimeout(() => {
                 word.playAudio()
@@ -541,10 +390,6 @@ const AdventureGameplay = () => {
         </button>,
     ]
 
-    if (!floorId || loading || !imagesLoaded) {
-        return <Loading />
-    }
-
     return (
         <main className="adventure-wrapper">
             {/* Welcome Modal */}
@@ -559,7 +404,7 @@ const AdventureGameplay = () => {
             {/* Game Content */}
             {gameStarted && (
                 <section className="adventure-platform">
-                    <div className="platform-indicator">Floor {floorId}</div>
+                    <div className="platform-indicator">Playground</div>
                     <div className="lives-container">{renderHearts()}</div>
 
                     <section className="enemy-track">
@@ -575,13 +420,7 @@ const AdventureGameplay = () => {
                                         <div className="enemy-connector"></div>
                                     )}
 
-                                    <div
-                                        className={`enemy-track-profile ${
-                                            defeatedEnemies.includes(enemyIndex)
-                                                ? "defeated"
-                                                : ""
-                                        }`}
-                                    >
+                                    <div>
                                         <img
                                             src={`/assets/images/sprite/profile-${enemyName}.png`}
                                             alt={enemyName}
@@ -695,20 +534,6 @@ const AdventureGameplay = () => {
             {gameStarted && (
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
-                    <Modal
-                        className="confirmation-modal"
-                        isOpen={showConfirmationModal}
-                        title="Confirm Item Use"
-                        details={`Are you sure you want to use ${itemToUse?.name}?`}
-                        buttons={[
-                            <button key="confirm" onClick={confirmUseItem}>
-                                Yes, Use Item
-                            </button>,
-                            <button key="cancel" onClick={cancelUseItem}>
-                                Cancel
-                            </button>,
-                        ]}
-                    />
 
                     {/* Render items */}
 
@@ -734,12 +559,6 @@ const AdventureGameplay = () => {
                                 <div
                                     key={userItem.userItemID}
                                     className="item-box"
-                                    onClick={() =>
-                                        handleUseItem(
-                                            userItem.itemID.itemID,
-                                            userItem.itemID.name
-                                        )
-                                    }
                                 >
                                     <img
                                         src={`/assets/images/reward/${userItem.itemID.imagePath}`}
@@ -810,16 +629,12 @@ const AdventureGameplay = () => {
                         <section className="clue-container">
                             <span>Pronunciation</span>
                             <div className="clue-pronunciation ">
-                                <span className={`${lockedPronunciation}`}>
-                                    {word?.pronunciation}
-                                </span>
+                                <span>{word?.pronunciation}</span>
                             </div>
 
                             <span>Definition</span>
                             <div className="clue-definition">
-                                <span className={`${lockedDefinition}`}>
-                                    {word?.definition}
-                                </span>
+                                <span>{word?.definition}</span>
                             </div>
                         </section>
                     </section>
@@ -848,8 +663,6 @@ const AdventureGameplay = () => {
                 ]}
             />
 
-            <ConfettiWrapper showConfetti={showConfetti} />
-
             <Modal
                 className="conquer-floor-modal"
                 isOpen={showConquerFloorModal}
@@ -870,4 +683,4 @@ const AdventureGameplay = () => {
     )
 }
 
-export default AdventureGameplay
+export default PlaygroundGameplay

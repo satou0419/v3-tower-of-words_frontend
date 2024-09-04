@@ -1,0 +1,63 @@
+@keyframes expand-width {
+    0% {
+        width: 360px;
+    }
+
+    100% {
+        width: 90%;
+    }
+}
+
+@keyframes shrink-width {
+    0% {
+        width: 90%;
+    }
+
+    100% {
+        width: 360pxpx;
+    }
+}
+
+.expand-width {
+    animation: expand-width 0.5s forwards;
+}
+
+.shrink-width {
+    animation: shrink-width 0.5s forwards;
+}
+
+@keyframes blink {
+    0%,
+    20%,
+    60%,
+    100% {
+        filter: none;
+    }
+    10%,
+    50%,
+    90% {
+        filter: brightness(10);
+    }
+}
+
+@keyframes shake {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    50% {
+        transform: translateX(5px);
+    }
+    75% {
+        transform: translateX(-5px);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+.hit {
+    animation: blink 0.5s ease-in-out, shake 0.5s ease-in-out;
+}

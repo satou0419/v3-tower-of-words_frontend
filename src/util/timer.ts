@@ -85,7 +85,7 @@ const useTimer = () => {
     };
 
     const getFormattedTimeInSeconds = () => {
-        return Math.floor(getTime() / 1000).toString();
+        return Math.floor(getTime() / 1000);
     };
 
     return {

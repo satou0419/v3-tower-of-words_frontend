@@ -1,5 +1,5 @@
-import Link from "next/link";
-import "./landing.scss";
+import Link from "next/link"
+import "./landing.scss"
 
 export default function Landing() {
     return (
@@ -24,16 +24,14 @@ export default function Landing() {
                         <div className="landing__description">
                             <h1>What is Tower of Words?</h1>
                             <span>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua. Ut
-                                enim ad minim veniam, quis nostrud exercitation
-                                ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat. Duis aute irure dolor in
-                                reprehenderit in voluptate velit esse cillum
-                                dolore eu fugiat nulla pariatur. Excepteur sint
-                                occaecat cupidatat non proident, sunt in culpa
-                                qui officia deserunt mollit anim id est laborum.
+                                a web application gamified spelling activities
+                                for individual learners, aiming to enhance their
+                                literacy skills by implementing features such as
+                                audio pronunciation, vocabulary, and
+                                definitions, thus promoting an enjoyable
+                                learning environment. This application, which
+                                focuses on spelling activities, serves as an
+                                amplifier for their other literary skills.
                             </span>
                         </div>
                     </section>
@@ -44,12 +42,13 @@ export default function Landing() {
                         <div className="landing__description">
                             <h1>Adventure Mode</h1>
                             <span>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua. Ut
-                                enim ad minim veniam, quis nostrud exercitation
-                                ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat.
+                                Jump into an exciting adventure where you take
+                                on the floor guardian and tackle different
+                                tests. Boost your spelling and reading
+                                abilities, spot letters that are hidden, and
+                                take down all the cyborg guys to win on each
+                                floor. See how good you are and step up to the
+                                task!
                             </span>
                         </div>
                         <img
@@ -71,11 +70,11 @@ export default function Landing() {
                     <div className="landing__description">
                         <h1>Items to aid you</h1>
                         <span>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing
-                            elit, sed do eiusmod tempor incididunt ut labore et
-                            dolore magna aliqua. Ut enim ad minim veniam, quis
-                            nostrud exercitation ullamco laboris nisi ut aliquip
-                            ex ea commodo consequat.
+                            Did your opponent beat you? Don't worry! These items
+                            will give you an edge. Get your health back, find
+                            weak spots, and change the game to your advantage.
+                            Grab everything you can and jump back into the
+                            action tougher than before!
                         </span>
                     </div>
                 </section>
@@ -85,12 +84,12 @@ export default function Landing() {
                         <div className="landing__description">
                             <h1>Simulations</h1>
                             <span>
-                                Lorem ipsum dolor sit amet, consectetur
-                                adipiscing elit, sed do eiusmod tempor
-                                incididunt ut labore et dolore magna aliqua. Ut
-                                enim ad minim veniam, quis nostrud exercitation
-                                ullamco laboris nisi ut aliquip ex ea commodo
-                                consequat.
+                                Want to be in charge? Make your own spelling
+                                quests and test your students with tailor-made
+                                games. You craft the setting, come up with the
+                                tasks, and see your students take them on with
+                                the same fun gameplay you enjoy. Let's turn
+                                learning into an adventure that's all your own!
                             </span>
                         </div>
                         <img
@@ -143,7 +142,7 @@ export default function Landing() {
                             <div className="landing__title">
                                 <div className="landing__profile-img">
                                     <img
-                                        src="/assets/images/developer/#.png"
+                                        src="/assets/images/developer/lorenz.jpg"
                                         alt="Jhon Lorenz Pabroa"
                                     />
                                 </div>
@@ -158,7 +157,7 @@ export default function Landing() {
                             <div className="landing__title">
                                 <div className="landing__profile-img">
                                     <img
-                                        src="/assets/images/developer/#.png"
+                                        src="/assets/images/developer/mar.png"
                                         alt="Rey Mar Segalle"
                                     />
                                 </div>
@@ -210,5 +209,5 @@ export default function Landing() {
                 </footer>
             </section>
         </main>
-    );
+    )
 }

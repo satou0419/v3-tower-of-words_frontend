@@ -16,10 +16,15 @@
     width: 100%;
 }
 
+@media (max-width: 430px) {
+    .dashboard-cardmode {
+        flex-direction: column;
+    }
+}
+
 .dashboard-cardarchive {
     width: 60%;
     height: 100px;
-    outline: 2px solid green;
     background-color: aqua;
 }
 

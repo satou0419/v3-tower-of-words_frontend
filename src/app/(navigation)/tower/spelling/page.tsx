@@ -1,100 +1,98 @@
-"use client";
-import React, { useEffect, useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-import CardWord from "@/app/component/Card/CardWord/CardWord";
-import "./spelling.scss";
-import { useFloorStore } from "@/store/floorStore";
-import { RewardData } from "@/store/rewardStore";
-import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID";
-import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID";
-import useUserProgressStore from "@/store/userProgressStore";
-import Loading from "@/app/loading";
+"use client"
+import React, { useEffect, useState, useRef } from "react"
+import { useRouter } from "next/navigation"
+import CardWord from "@/app/component/Card/CardWord/CardWord"
+import "./spelling.scss"
+import { useFloorStore } from "@/store/floorStore"
+import { RewardData } from "@/store/rewardStore"
+import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID"
+import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID"
+import useUserProgressStore from "@/store/userProgressStore"
+import Loading from "@/app/loading"
 
 const Spelling = () => {
-    const { floors, getAllFloors } = useFloorStore();
-    const { userProgress } = useUserProgressStore();
-    const [uniqueTowerSections, setUniqueTowerSections] = useState<number[]>(
-        []
-    );
-    const [rewardData, setRewardData] = useState<RewardData | null>(null);
-    const [activeFloorId, setActiveFloorId] = useState<number | null>(null);
-    const [activeSection, setActiveSection] = useState<number | null>(null);
-    const [enemyData, setEnemyData] = useState<any | null>(null); // Adjust this type as per your actual enemy data structure
-    const [loading, setLoading] = useState(true); // Loading state
-    const activeFloorRef = useRef<HTMLDivElement>(null);
-    const navigation = useRouter();
+    const { floors, getAllFloors } = useFloorStore()
+    const { userProgress } = useUserProgressStore()
+    const [uniqueTowerSections, setUniqueTowerSections] = useState<number[]>([])
+    const [rewardData, setRewardData] = useState<RewardData | null>(null)
+    const [activeFloorId, setActiveFloorId] = useState<number | null>(null)
+    const [activeSection, setActiveSection] = useState<number | null>(null)
+    const [enemyData, setEnemyData] = useState<any | null>(null) // Adjust this type as per your actual enemy data structure
+    const [loading, setLoading] = useState(true) // Loading state
+    const [activeGameType, setActiveGameType] = useState<number | null>(null)
+    const activeFloorRef = useRef<HTMLDivElement>(null)
+    const navigation = useRouter()
 
     useEffect(() => {
         const fetchFloors = async () => {
-            await getAllFloors();
-            setLoading(false); // Set loading to false after data is fetched
-        };
-        fetchFloors();
-    }, [getAllFloors]);
+            await getAllFloors()
+            setLoading(false) // Set loading to false after data is fetched
+        }
+        fetchFloors()
+    }, [getAllFloors])
 
     useEffect(() => {
         const sections = Array.from(
             new Set(floors.map((floor) => floor.towerSection))
-        );
-        setUniqueTowerSections(sections);
-    }, [floors]);
+        )
+        setUniqueTowerSections(sections)
+    }, [floors])
 
     useEffect(() => {
         if (floors.length > 0 && userProgress.floorIDProgress) {
             // Automatically set the active floor ID if it exists in the floors array
             const currentFloor = floors.find(
                 (floor) => floor.towerFloorID === userProgress.floorIDProgress
-            );
+            )
             if (currentFloor) {
-                setActiveFloorId(currentFloor.towerFloorID);
-                setActiveSection(currentFloor.towerSection);
+                setActiveFloorId(currentFloor.towerFloorID)
+                setActiveSection(currentFloor.towerSection)
+                setActiveGameType(currentFloor.gameType) // Set the active game type
             }
         }
-    }, [floors, userProgress.floorIDProgress]);
+    }, [floors, userProgress.floorIDProgress])
 
     useEffect(() => {
         if (activeFloorRef.current) {
-            activeFloorRef.current.scrollIntoView({ behavior: "smooth" });
+            activeFloorRef.current.scrollIntoView({ behavior: "smooth" })
         }
-    }, [activeFloorId, floors, uniqueTowerSections]);
+    }, [activeFloorId, floors, uniqueTowerSections])
 
     useEffect(() => {
         if (activeFloorId) {
-            fetchRewardData(activeFloorId);
-            fetchEnemyData(activeFloorId);
+            fetchRewardData(activeFloorId)
+            fetchEnemyData(activeFloorId)
         }
-    }, [activeFloorId]);
+    }, [activeFloorId])
 
     const fetchRewardData = async (floorId: number) => {
         try {
-            const data = await getRewardByFloorId(floorId);
+            const data = await getRewardByFloorId(floorId)
             if (data) {
-                setRewardData(data);
+                setRewardData(data)
             } else {
                 console.error(
                     "Failed to fetch reward data for floor ID:",
                     floorId
-                );
+                )
             }
         } catch (error) {
-            console.error("Error fetching reward data:", error);
+            console.error("Error fetching reward data:", error)
         }
-    };
+    }
 
     const fetchEnemyData = async (floorId: number) => {
         try {
-            const data = await getEnemyByFloorID(floorId);
+            const data = await getEnemyByFloorID(floorId)
             if (data && data.length > 0) {
-                setEnemyData(data[0]); // Assuming you only expect one enemy per floor
+                setEnemyData(data[0]) // Assuming you only expect one enemy per floor
             } else {
-                console.error("No enemy data found for floor ID:", floorId);
+                console.error("No enemy data found for floor ID:", floorId)
             }
         } catch (error) {
-            console.error("Error fetching enemy data:", error);
+            console.error("Error fetching enemy data:", error)
         }
-    };
-
-    const [activeGameType, setActiveGameType] = useState<number | null>(null);
+    }
 
     const handleFloorClick = (
         floorId: number,
@@ -102,45 +100,44 @@ const Spelling = () => {
         gameType: number
     ) => {
         if (floorId <= userProgress.floorIDProgress) {
-            setActiveFloorId(floorId);
-            setActiveSection(section);
-            setActiveGameType(gameType); // Set the active game type
+            setActiveFloorId(floorId)
+            setActiveSection(section)
+            setActiveGameType(gameType) // Set the active game type
         }
-    };
+    }
 
     const getNextFloorAndSection = () => {
         // Find the next floor and its section based on the current user progress
         const currentFloorIndex = floors.findIndex(
             (floor) => floor.towerFloorID === userProgress.floorIDProgress
-        );
+        )
         if (
             currentFloorIndex === -1 ||
             currentFloorIndex === floors.length - 1
         ) {
-            return { nextFloorId: null, nextSection: null };
+            return { nextFloorId: null, nextSection: null }
         }
 
-        const nextFloor = floors[currentFloorIndex + 1];
+        const nextFloor = floors[currentFloorIndex + 1]
         return {
             nextFloorId: nextFloor.towerFloorID,
             nextSection: nextFloor.towerSection,
-        };
-    };
+        }
+    }
 
-    useEffect(() => {});
     const handleEnterClick = () => {
         if (activeFloorId && activeSection && enemyData) {
-            const { nextFloorId, nextSection } = getNextFloorAndSection();
-            const isCleared = activeFloorId < userProgress.floorIDProgress;
+            const { nextFloorId, nextSection } = getNextFloorAndSection()
+            const isCleared = activeFloorId < userProgress.floorIDProgress
 
             navigation.push(
                 `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
-            );
+            )
         }
-    };
+    }
 
     if (loading) {
-        return <Loading />; // Render Loading component while fetching data
+        return <Loading /> // Render Loading component while fetching data
     }
 
     return (
@@ -306,7 +303,7 @@ const Spelling = () => {
                 </section>
             </section>
         </main>
-    );
-};
+    )
+}
 
-export default Spelling;
+export default Spelling

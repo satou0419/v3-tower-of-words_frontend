@@ -1,3 +1,3 @@
-const BASE_URL = "https://api-tower-of-words.azurewebsites.net";
+const BASE_URL = "https://tow-api.onrender.com"
 //const BASE_URL = "http://localhost:8080";
-export default BASE_URL;
+export default BASE_URL
