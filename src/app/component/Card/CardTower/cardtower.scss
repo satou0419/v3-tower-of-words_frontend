@@ -1,0 +1,52 @@
+.cardtower-container {
+    height: 100%;
+    width: 100%;
+}
+
+.cardtower-card {
+    height: 20em;
+    width: 13em;
+    border: 1px solid #666666;
+    border-radius: 15px;
+    box-shadow: var(--shadow-gray);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+
+    transition: transform 0.3s ease-in-out;
+    &:hover {
+        transform: scale(1.1);
+    }
+
+    img {
+        width: 40%;
+    }
+
+    .cardtower-description {
+        background-color: var(--clr-violet);
+        width: 100%;
+        padding: 0.5em 1em;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5em;
+
+        h1 {
+            font-size: 1.2em;
+            color: #ffffff;
+        }
+
+        span {
+            font-size: 2.5em;
+            color: #ffcd6c;
+            text-shadow: var(--glow-yellow);
+        }
+    }
+
+    .title {
+        font-size: 1.5em;
+        padding: 1em;
+    }
+}

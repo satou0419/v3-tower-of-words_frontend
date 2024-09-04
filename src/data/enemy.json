@@ -1,0 +1,7 @@
+{
+    "enemies": [
+        "&melee_spring-a28-i11",
+        "&melee_crab-a20-i20",
+        "&range_battery-a21-i20"
+    ]
+}
