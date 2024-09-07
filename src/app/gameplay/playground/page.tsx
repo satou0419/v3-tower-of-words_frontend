@@ -21,6 +21,7 @@ import useIncrementFloor from "@/hook/useIncrementFloor"
 import { FaVolumeUp } from "react-icons/fa"
 import useRandomEnemy from "@/hook/useRandomEnemy"
 import useRandomWord from "@/hook/useRandomWord"
+import useRewardCredit from "@/hook/useRewardCredit"
 
 interface Item {
     itemID: number
@@ -81,6 +82,8 @@ const PlaygroundGameplay = () => {
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
     )
+
+    const { awardCredit } = useRewardCredit()
 
     const {
         addWord,
@@ -278,6 +281,9 @@ const PlaygroundGameplay = () => {
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
+
+            addWord(currentWord || "")
+            awardCredit(2)
             handleCharacterAttack()
 
             setTimeout(() => {
@@ -396,8 +402,8 @@ const PlaygroundGameplay = () => {
             <Modal
                 className="welcome-modal"
                 isOpen={showWelcomeModal}
-                title="Welcome to Adventure Game"
-                details="Defeat all the enemies to win!"
+                title="Welcome to Playground"
+                details="Survive!"
                 buttons={welcomeModalButtons}
             />
 

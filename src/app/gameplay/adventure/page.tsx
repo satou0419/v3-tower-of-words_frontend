@@ -323,7 +323,7 @@ const AdventureGameplay = () => {
                 setEnemyAttackType("")
 
                 setTimeout(() => {
-                    if (gameType === "syllable") {
+                    if (gameType === "Syllables") {
                         setIsButtonDisabled(false)
                     }
                 }, (characterDetails.attackFrame / 12) * 1200)
@@ -369,7 +369,14 @@ const AdventureGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
         }
     }
-    const { updateProgress, isLoading, error, data } = useUpdateProgress()
+    const {
+        updateSilentProgress,
+        updateSpellingProgress,
+        updateSyllableProgress,
+        isLoading,
+        error,
+        data,
+    } = useUpdateProgress()
     const { redeemReward } = useRedeemReward()
     const { incrementFloor } = useFloorIncrement()
     const updateFloor = useIncrementFloor()
@@ -402,7 +409,7 @@ const AdventureGameplay = () => {
 
             setTimeout(() => {
                 setIsCharacterAttacking(false)
-                if (gameType === "syllable") setRangeValue(1)
+                if (gameType === "Syllables") setRangeValue(1)
 
                 if (currentWordIndex === currentEnemy.words.length - 1) {
                     // Last word for this enemy defeated
@@ -416,9 +423,33 @@ const AdventureGameplay = () => {
                             // All enemies defeated, show confetti
                             if (isClear === "false") {
                                 console.log("Now it is clear")
-                                updateProgress(nextFloorId, nextSection)
-                                redeemReward(floorId)
-                                incrementFloor()
+
+                                if (gameType === "Syllables") {
+                                    updateSyllableProgress(
+                                        nextFloorId,
+                                        nextSection
+                                    )
+                                    redeemReward(floorId)
+                                    incrementFloor()
+                                }
+
+                                if (gameType === "Silent") {
+                                    updateSilentProgress(
+                                        nextFloorId,
+                                        nextSection
+                                    )
+                                    redeemReward(floorId)
+                                    incrementFloor()
+                                }
+
+                                if (gameType === "Spelling") {
+                                    updateSpellingProgress(
+                                        nextFloorId,
+                                        nextSection
+                                    )
+                                    redeemReward(floorId)
+                                    incrementFloor()
+                                }
                             } else {
                                 console.log("It is cleared previously")
                             }
@@ -450,7 +481,7 @@ const AdventureGameplay = () => {
     //Play only the audio in gameType 1
 
     useEffect(() => {
-        if (gameStarted && word && word.playAudio && gameType === "spelling") {
+        if (gameStarted && word && word.playAudio && gameType === "Spelling") {
             // Play audio on word change
             const timer = setTimeout(() => {
                 word.playAudio()
@@ -469,7 +500,7 @@ const AdventureGameplay = () => {
         // Handle key down event for shift key to play audio
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Shift") {
-                if (word && word.playAudio && gameType == "spelling") {
+                if (word && word.playAudio && gameType == "Spelling") {
                     word.playAudio()
                 }
             }
@@ -512,7 +543,7 @@ const AdventureGameplay = () => {
     })
     const [rangeValue, setRangeValue] = useState(0)
     useEffect(() => {
-        if (gameType !== "syllable") {
+        if (gameType !== "Syllables") {
             setRangeValue(0)
         } else {
             setRangeValue(1)
@@ -755,7 +786,7 @@ const AdventureGameplay = () => {
 
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
-                            {gameType === "syllable" ? (
+                            {gameType === "Syllables" ? (
                                 <>
                                     <p className="syllable-word">
                                         {currentWord}
@@ -858,9 +889,7 @@ const AdventureGameplay = () => {
                 buttons={[
                     <button
                         key="menu"
-                        onClick={() =>
-                            (window.location.href = "/tower/spelling")
-                        }
+                        onClick={() => (window.location.href = "/select-tower")}
                     >
                         Return to Main Menu
                     </button>,

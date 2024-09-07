@@ -1,16 +1,17 @@
 "use client"
 import useRandomWord from "@/hook/useRandomWord"
+import useUserProgressStore from "@/store/userProgressStore"
 import React from "react"
 
 const WordDisplay: React.FC = () => {
-    const { randomWord, loading, refresh } = useRandomWord()
+    const silentFloorID = useUserProgressStore(
+        (state) => state.userProgress.silentFloorID
+    )
 
     return (
-        <div>
-            <h1>Random Word:</h1>
-            <p>{loading ? "Loading..." : randomWord}</p>
-            <button onClick={refresh}>Get New Random Word</button>
-        </div>
+        <main>
+            <h1>{silentFloorID}</h1>
+        </main>
     )
 }
 

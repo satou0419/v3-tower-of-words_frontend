@@ -1,6 +1,6 @@
 "use client"
 import React, { useEffect, useState, useRef } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import CardWord from "@/app/component/Card/CardWord/CardWord"
 import "./spelling.scss"
 import { useFloorStore } from "@/store/floorStore"
@@ -11,7 +11,8 @@ import useUserProgressStore from "@/store/userProgressStore"
 import Loading from "@/app/loading"
 
 const Spelling = () => {
-    const { floors, getAllFloors } = useFloorStore()
+    const { floors, getSilentFloors, getSpellingFloors, getSyllableFloors } =
+        useFloorStore()
     const { userProgress } = useUserProgressStore()
     const [uniqueTowerSections, setUniqueTowerSections] = useState<number[]>([])
     const [rewardData, setRewardData] = useState<RewardData | null>(null)
@@ -19,17 +20,32 @@ const Spelling = () => {
     const [activeSection, setActiveSection] = useState<number | null>(null)
     const [enemyData, setEnemyData] = useState<any | null>(null) // Adjust this type as per your actual enemy data structure
     const [loading, setLoading] = useState(true) // Loading state
-    const [activeGameType, setActiveGameType] = useState<number | null>(null)
+    const [activeGameType, setActiveGameType] = useState<string | null>(null)
     const activeFloorRef = useRef<HTMLDivElement>(null)
     const navigation = useRouter()
 
+    const searchParams = useSearchParams()
+    const gameType = searchParams.get("gameType")
+
     useEffect(() => {
         const fetchFloors = async () => {
-            await getAllFloors()
-            setLoading(false) // Set loading to false after data is fetched
+            if (gameType === "Silent") {
+                await getSilentFloors()
+                setLoading(false) // Set loading to false after data is fetched
+            }
+
+            if (gameType === "Syllables") {
+                await getSyllableFloors()
+                setLoading(false) // Set loading to false after data is fetched
+            }
+
+            if (gameType === "Spelling") {
+                await getSpellingFloors()
+                setLoading(false) // Set loading to false after data is fetched
+            }
         }
         fetchFloors()
-    }, [getAllFloors])
+    }, [getSilentFloors, getSpellingFloors, getSyllableFloors])
 
     useEffect(() => {
         const sections = Array.from(
@@ -39,18 +55,50 @@ const Spelling = () => {
     }, [floors])
 
     useEffect(() => {
-        if (floors.length > 0 && userProgress.floorIDProgress) {
+        if (
+            gameType === "Syllables" &&
+            floors.length > 0 &&
+            userProgress.syllableFloorID
+        ) {
             // Automatically set the active floor ID if it exists in the floors array
             const currentFloor = floors.find(
-                (floor) => floor.towerFloorID === userProgress.floorIDProgress
+                (floor) => floor.towerFloorID === userProgress.syllableFloorID
             )
             if (currentFloor) {
                 setActiveFloorId(currentFloor.towerFloorID)
                 setActiveSection(currentFloor.towerSection)
-                setActiveGameType(currentFloor.gameType) // Set the active game type
+                setActiveGameType(gameType) // Set the active game type
+            }
+        } else if (
+            gameType === "Spelling" &&
+            floors.length > 0 &&
+            userProgress.spellingFloorID
+        ) {
+            // Handle Spelling game type
+            const currentFloor = floors.find(
+                (floor) => floor.towerFloorID === userProgress.spellingFloorID
+            )
+            if (currentFloor) {
+                setActiveFloorId(currentFloor.towerFloorID)
+                setActiveSection(currentFloor.towerSection)
+                setActiveGameType(gameType)
+            }
+        } else if (
+            gameType === "Silent" &&
+            floors.length > 0 &&
+            userProgress.silentFloorID
+        ) {
+            // Handle Silent game type
+            const currentFloor = floors.find(
+                (floor) => floor.towerFloorID === userProgress.silentFloorID
+            )
+            if (currentFloor) {
+                setActiveFloorId(currentFloor.towerFloorID)
+                setActiveSection(currentFloor.towerSection)
+                setActiveGameType(gameType)
             }
         }
-    }, [floors, userProgress.floorIDProgress])
+    }, [floors, userProgress, gameType])
 
     useEffect(() => {
         if (activeFloorRef.current) {
@@ -97,19 +145,41 @@ const Spelling = () => {
     const handleFloorClick = (
         floorId: number,
         section: number,
-        gameType: number
+        gameType: string | null // Allow null for gameType
     ) => {
-        if (floorId <= userProgress.floorIDProgress) {
+        if (gameType === null) {
+            console.error("Game type is not set.")
+            return
+        }
+
+        if (
+            gameType === "Syllables" &&
+            floorId <= userProgress.syllableFloorID
+        ) {
             setActiveFloorId(floorId)
             setActiveSection(section)
-            setActiveGameType(gameType) // Set the active game type
+            setActiveGameType(gameType)
+        } else if (
+            gameType === "Spelling" &&
+            floorId <= userProgress.spellingFloorID
+        ) {
+            setActiveFloorId(floorId)
+            setActiveSection(section)
+            setActiveGameType(gameType)
+        } else if (
+            gameType === "Silent" &&
+            floorId <= userProgress.silentFloorID
+        ) {
+            setActiveFloorId(floorId)
+            setActiveSection(section)
+            setActiveGameType(gameType)
         }
     }
 
     const getNextFloorAndSection = () => {
         // Find the next floor and its section based on the current user progress
         const currentFloorIndex = floors.findIndex(
-            (floor) => floor.towerFloorID === userProgress.floorIDProgress
+            (floor) => floor.towerFloorID === activeFloorId
         )
         if (
             currentFloorIndex === -1 ||
@@ -128,7 +198,7 @@ const Spelling = () => {
     const handleEnterClick = () => {
         if (activeFloorId && activeSection && enemyData) {
             const { nextFloorId, nextSection } = getNextFloorAndSection()
-            const isCleared = activeFloorId < userProgress.floorIDProgress
+            const isCleared = activeFloorId < activeFloorId
 
             navigation.push(
                 `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
@@ -252,7 +322,7 @@ const Spelling = () => {
                                                 handleFloorClick(
                                                     floor.towerFloorID,
                                                     floor.towerSection,
-                                                    floor.gameType // Pass gameType here
+                                                    gameType // Pass gameType here
                                                 )
                                             }
                                             className={
@@ -264,8 +334,19 @@ const Spelling = () => {
                                         >
                                             <span
                                                 className={
+                                                    gameType === "Syllables" &&
                                                     floor.towerFloorID >
-                                                    userProgress.floorIDProgress
+                                                        userProgress.syllableFloorID
+                                                        ? "locked"
+                                                        : gameType ===
+                                                              "Spelling" &&
+                                                          floor.towerFloorID >
+                                                              userProgress.spellingFloorID
+                                                        ? "locked"
+                                                        : gameType ===
+                                                              "Silent" &&
+                                                          floor.towerFloorID >
+                                                              userProgress.silentFloorID
                                                         ? "locked"
                                                         : ""
                                                 }
@@ -289,8 +370,17 @@ const Spelling = () => {
                                     className={`section ${
                                         activeSection === section
                                             ? "active-section"
-                                            : userProgress.floorIDProgress >
-                                              section
+                                            : gameType === "Syllables" &&
+                                              userProgress.syllableFloorID >
+                                                  section
+                                            ? "done-section"
+                                            : gameType === "Spelling" &&
+                                              userProgress.spellingFloorID >
+                                                  section
+                                            ? "done-section"
+                                            : gameType === "Silent" &&
+                                              userProgress.silentFloorID >
+                                                  section
                                             ? "done-section"
                                             : ""
                                     }`}
