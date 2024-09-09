@@ -20,7 +20,13 @@
 
 .cardarchive-details_container {
     display: flex;
+    justify-content: space-evenly;
+    align-items: center;
     width: 80%;
+}
+
+.badge-display{
+    width: 50%;
 }
 
 .cardarchive-details {

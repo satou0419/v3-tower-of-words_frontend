@@ -5,7 +5,6 @@ import { useRoomStore } from "@/store/roomStore";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./studentroom.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
-import Link from "next/link";
 import useUserInfoStore from "@/store/userInfoStore";
 import viewStudentRoom from "@/lib/room-endpoint/viewStudentRoom";
 import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";

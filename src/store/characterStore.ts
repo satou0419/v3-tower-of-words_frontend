@@ -12,7 +12,7 @@ interface Character {
 interface UserCharacter {
     userCharacterID: number;
     userID: number;
-    characterID: number; // Changed to number
+    characterID: Character; // Changed to number
     owned: boolean;
 }
 

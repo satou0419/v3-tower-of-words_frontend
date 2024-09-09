@@ -1,0 +1,103 @@
+.cardcharacter-card {
+    max-height: 28em;
+
+    min-width: 15em;
+    max-width: 15em;
+
+    border: 1px solid #666666;
+    border-radius: 25px;
+
+    background-color: #fff;
+    box-shadow: var(--shadow-burst);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.cardcharacter-container {
+    height: 22em;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    overflow: hidden;
+    position: relative;
+}
+
+.equip-banner {
+    width: 255px;
+    height: 55px;
+    top: 30px;
+    right: -70px;
+    transform: rotate(45deg);
+    background: #52CC28;
+    border: 5px #00A441 solid;
+    position: absolute;
+    opacity: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 20px;
+}
+
+.sold-banner {
+    width: 400px;
+    height: 70px;
+    top: 100px;
+    right: -80px;
+    transform: rotate(30deg);
+    background: #EF997D;
+    border: 5px #a84b2cff solid;
+    position: absolute;
+    opacity: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 20px;
+}
+
+.cardcharacter-banner {
+    width: 100%;
+    height: 60%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+
+    .banner-container {
+        width: 90%;
+        border-radius: 15px;
+    }
+}
+
+.cardinfo-inventory {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color:var(--clr-violet);
+    padding: 1em;
+    margin-bottom: 1em;
+}
+
+.cardinfo-shop {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #FFCD6C;
+    padding: 1em;
+    margin-bottom: 1em;
+
+    button {
+        width: 90%;
+        height: 3.5em;
+        background-color: var(--clr-violet);
+        outline: none;
+        border: none;
+        color: #fff;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,103 @@
+.cardcharacterpreview-card {
+    max-height: 28em;
+
+    min-width: 15em;
+    max-width: 15em;
+
+    border: 1px solid #666666;
+    border-radius: 25px;
+
+    background-color: #fff;
+    box-shadow: var(--shadow-burst);
+
+    display: flex;
+    flex-direction: column;
+}
+
+.cardcharacterpreview-container {
+    height: 22em;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.equip-banner {
+    width: 255px;
+    height: 55px;
+    top: 30px;
+    right: -70px;
+    transform: rotate(45deg);
+    background: #52CC28;
+    border: 5px #00A441 solid;
+    position: absolute;
+    opacity: 0.8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 20px;
+}
+
+.cardcharacterpreview-banner {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .banner-container {
+        width: 100%;
+        border-radius: 15px;
+
+        .character-container {
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 200px;
+            height: 200px;
+
+            // animation: expand-width 0.5s forwards, shrink-width 2s 4s forwards; /* Apply expand and shrink animations */
+        }
+    }
+}
+
+.attack-button {
+    color: #fff;
+    background-color: #ffaf40;
+    border: none;
+    width: 8em;
+    height: 3em;
+    border-top: 4px solid #fff;
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+}
+
+.equip-button {
+    color: #fff;
+    background-color: #662B9A;
+    border: none;
+    width: 8em;
+    height: 3em;
+    border-top: 4px solid #fff;
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+}
+
+.equipped-button {
+    color: #fff;
+    background-color: #635372;
+    border: none;
+    width: 8em;
+    height: 3em;
+    border-top: 4px solid #fff;
+    border-radius: 10px;
+    outline: none;
+    cursor: pointer;
+}
