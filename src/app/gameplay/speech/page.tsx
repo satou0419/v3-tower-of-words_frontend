@@ -22,6 +22,7 @@ import { FaVolumeUp } from "react-icons/fa"
 import useRandomEnemy from "@/hook/useRandomEnemy"
 import useRandomWord from "@/hook/useRandomWord"
 import useRewardCredit from "@/hook/useRewardCredit"
+import { useSpeechRecognition } from "@/hook/useSpeechRecognition"
 
 interface Item {
     itemID: number
@@ -38,13 +39,23 @@ interface UserItem {
     itemID: Item
 }
 
-const PlaygroundGameplay = () => {
+const SpeechGameplay = () => {
     const [loading, setLoading] = useState<boolean>(true)
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true) // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false) // State for tracking game start
     const [isItemLocked] = useState(true)
 
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false)
+    const { transcript, startListening, stopListening, isListening } =
+        useSpeechRecognition()
+    const handleListenClick = () => {
+        if (isListening) {
+            stopListening()
+        } else {
+            startListening()
+        }
+    }
+
     const {
         randomWord,
         loading: wordLoading,
@@ -163,7 +174,7 @@ const PlaygroundGameplay = () => {
 
     console.log(word?.id)
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTypedWord(event.target.value)
+        setTypedWord(transcript)
     }
 
     const handleEnemyAttack = () => {
@@ -285,14 +296,19 @@ const PlaygroundGameplay = () => {
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsButtonDisabled(true)
+        stopListening()
+        console.log(transcript.toLowerCase())
 
         const currentWord = word?.id
         // Handle the game logic for correct answers
         if (
-            typedWord.toLowerCase() === currentWord ||
+            transcript.toLowerCase() === currentWord ||
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
+
+            console.log("transcript", currentWord)
+            console.log("currentWord", transcript.toLowerCase())
 
             addWord(currentWord || "")
             awardCredit(2)
@@ -613,16 +629,21 @@ const PlaygroundGameplay = () => {
                                     </button>
                                     <InputBox
                                         type="text"
-                                        value={typedWord}
+                                        value={transcript.toLocaleLowerCase()}
                                         onChange={handleInputChange}
                                         placeholder="Type the word..."
-                                        required
                                     />
                                     <button
                                         type="submit"
                                         disabled={isButtonDisabled}
                                     >
                                         Go!
+                                    </button>
+                                    <button
+                                        onClick={handleListenClick}
+                                        type="button"
+                                    >
+                                        {isListening ? "Stop" : "Start"}
                                     </button>
                                 </>
                             )}
@@ -689,4 +710,4 @@ const PlaygroundGameplay = () => {
     )
 }
 
-export default PlaygroundGameplay
+export default SpeechGameplay
