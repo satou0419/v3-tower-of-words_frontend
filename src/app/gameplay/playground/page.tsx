@@ -21,6 +21,7 @@ import useIncrementFloor from "@/hook/useIncrementFloor"
 import { FaVolumeUp } from "react-icons/fa"
 import useRandomEnemy from "@/hook/useRandomEnemy"
 import useRandomWord from "@/hook/useRandomWord"
+import useRewardCredit from "@/hook/useRewardCredit"
 
 interface Item {
     itemID: number
@@ -44,6 +45,22 @@ const PlaygroundGameplay = () => {
     const [isItemLocked] = useState(true)
 
     const [showConquerFloorModal, setShowConquerFloorModal] = useState(false)
+    const {
+        randomWord,
+        loading: wordLoading,
+        refresh: refreshWord,
+    } = useRandomWord()
+    const {
+        enemy,
+        loading: enemyLoading,
+        refetch: refetchEnemy,
+    } = useRandomEnemy()
+
+    useEffect(() => {
+        if (!enemyLoading && !wordLoading) {
+            setLoading(false)
+        }
+    }, [enemyLoading, wordLoading])
 
     //#region Button state
     const [isButtonDisabled, setIsButtonDisabled] = useState(false)
@@ -54,8 +71,6 @@ const PlaygroundGameplay = () => {
     const gameType = searchParams.get("gameType")
 
     //#endRegion
-
-    const { randomWord, refresh } = useRandomWord()
 
     const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false)
 
@@ -69,8 +84,6 @@ const PlaygroundGameplay = () => {
         // Add additional logic here to reset the game state
     }
 
-    const { enemy, refetch } = useRandomEnemy()
-
     const { enemies, fetchEnemies } = useEnemyStore()
     const [enemyData, setEnemyData] = useState<any[]>([])
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0)
@@ -81,6 +94,8 @@ const PlaygroundGameplay = () => {
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
     )
+
+    const { awardCredit } = useRewardCredit()
 
     const {
         addWord,
@@ -226,8 +241,8 @@ const PlaygroundGameplay = () => {
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
                     setEnemyHit("")
-                    refetch()
-                    refresh()
+                    refetchEnemy()
+                    refreshWord()
                 }, 1500) // 500ms is the duration of the hit
             }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration
         } else {
@@ -278,6 +293,9 @@ const PlaygroundGameplay = () => {
             rangeValue === word?.syllable
         ) {
             // Correct word spelling
+
+            addWord(currentWord || "")
+            awardCredit(2)
             handleCharacterAttack()
 
             setTimeout(() => {
@@ -396,13 +414,13 @@ const PlaygroundGameplay = () => {
             <Modal
                 className="welcome-modal"
                 isOpen={showWelcomeModal}
-                title="Welcome to Adventure Game"
-                details="Defeat all the enemies to win!"
+                title="Welcome to Playground"
+                details="Survive!"
                 buttons={welcomeModalButtons}
             />
 
             {/* Game Content */}
-            {gameStarted && (
+            {gameStarted && !loading && (
                 <section className="adventure-platform">
                     <div className="platform-indicator">Playground</div>
                     <div className="lives-container">{renderHearts()}</div>
@@ -410,7 +428,6 @@ const PlaygroundGameplay = () => {
                     <section className="enemy-track">
                         {enemyData.map((enemy, enemyIndex) => {
                             const enemyName = extractEnemyName(enemy.imagePath)
-
                             return (
                                 <div
                                     key={enemyIndex}
@@ -419,7 +436,6 @@ const PlaygroundGameplay = () => {
                                     {enemyIndex > 0 && (
                                         <div className="enemy-connector"></div>
                                     )}
-
                                     <div>
                                         <img
                                             src={`/assets/images/sprite/profile-${enemyName}.png`}
@@ -462,8 +478,8 @@ const PlaygroundGameplay = () => {
                                     bottom: 0,
                                     right: 0,
                                     backgroundImage: `url("/assets/images/sprite/${characterDetails.name}.png")`,
-                                    width: `360px`,
-                                    height: `360px`,
+                                    width: "360px",
+                                    height: "360px",
                                     animation: `${
                                         isCharacterAttacking
                                             ? `attack-${characterDetails.name}`
@@ -479,11 +495,7 @@ const PlaygroundGameplay = () => {
                                     }) infinite`,
                                 }}
                             >
-                                <style>
-                                    {`
-                    ${characterAnimation}
-                    `}
-                                </style>
+                                <style>{characterAnimation}</style>
                             </div>
                         </section>
 
@@ -502,8 +514,8 @@ const PlaygroundGameplay = () => {
                                     bottom: 0,
                                     left: 0,
                                     backgroundImage: `url("/assets/images/sprite/${enemyDetails.name}.png")`,
-                                    width: `360px`,
-                                    height: `360px`,
+                                    width: "360px",
+                                    height: "360px",
                                     animation: `${
                                         isEnemyAttacking
                                             ? `attack-${enemyDetails.name}`
@@ -519,11 +531,7 @@ const PlaygroundGameplay = () => {
                                     }) infinite`,
                                 }}
                             >
-                                <style>
-                                    {`
-            ${enemyAnimation}
-            `}
-                                </style>
+                                <style>{enemyAnimation}</style>
                             </div>
                         </section>
                     </section>
@@ -536,7 +544,6 @@ const PlaygroundGameplay = () => {
                     <img src="/assets/images/background/bg-border_large.webp" />
 
                     {/* Render items */}
-
                     <section
                         className={`control-item ${
                             isItemLocked ? "item-locked" : "item-unlocked"
@@ -553,7 +560,6 @@ const PlaygroundGameplay = () => {
                             }
                             alt={isItemLocked ? "Locked" : "Unlocked"}
                         />
-
                         {userItems.length > 0 ? (
                             userItems.map((userItem) => (
                                 <div

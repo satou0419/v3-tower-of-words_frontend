@@ -1,36 +1,64 @@
-import { create } from "zustand";
+import { create } from "zustand"
 
 interface UserProgress {
-    userProgressID: number;
-    towerSectionProgress: number;
-    floorIDProgress: number;
+    userProgressID: number
+    spellingSectionProgress: number
+    syllableSectionProgress: number
+    silentSectionProgress: number
+    spellingFloorID: number
+    syllableFloorID: number
+    silentFloorID: number
 }
 
 interface UserProgressState {
-    userProgress: UserProgress;
-    setUserProgressID: (userProgressID: number) => void;
-    setTowerSectionProgress: (towerSectionProgress: number) => void;
-    setFloorIDProgress: (floorIDProgress: number) => void;
+    userProgress: UserProgress
+    setUserProgressID: (userProgressID: number) => void
+    setSpellingSectionProgress: (spellingSectionProgress: number) => void
+    setSyllableSectionProgress: (syllableSectionProgress: number) => void
+    setSilentSectionProgress: (silentSectionProgress: number) => void
+    setSpellingFloorID: (spellingFloorID: number) => void
+    setSyllableFloorID: (syllableFloorID: number) => void
+    setSilentFloorID: (silentFloorID: number) => void
 }
 
 const useUserProgressStore = create<UserProgressState>((set) => ({
     userProgress: {
         userProgressID: 0,
-        towerSectionProgress: 0,
-        floorIDProgress: 0,
+        spellingSectionProgress: 0,
+        syllableSectionProgress: 0,
+        silentSectionProgress: 0,
+        spellingFloorID: 0,
+        syllableFloorID: 0,
+        silentFloorID: 0,
     },
     setUserProgressID: (userProgressID) =>
         set((state) => ({
             userProgress: { ...state.userProgress, userProgressID },
         })),
-    setTowerSectionProgress: (towerSectionProgress) =>
+    setSpellingSectionProgress: (spellingSectionProgress) =>
         set((state) => ({
-            userProgress: { ...state.userProgress, towerSectionProgress },
+            userProgress: { ...state.userProgress, spellingSectionProgress },
         })),
-    setFloorIDProgress: (floorIDProgress) =>
+    setSyllableSectionProgress: (syllableSectionProgress) =>
         set((state) => ({
-            userProgress: { ...state.userProgress, floorIDProgress },
+            userProgress: { ...state.userProgress, syllableSectionProgress },
         })),
-}));
+    setSilentSectionProgress: (silentSectionProgress) =>
+        set((state) => ({
+            userProgress: { ...state.userProgress, silentSectionProgress },
+        })),
+    setSpellingFloorID: (spellingFloorID) =>
+        set((state) => ({
+            userProgress: { ...state.userProgress, spellingFloorID },
+        })),
+    setSyllableFloorID: (syllableFloorID) =>
+        set((state) => ({
+            userProgress: { ...state.userProgress, syllableFloorID },
+        })),
+    setSilentFloorID: (silentFloorID) =>
+        set((state) => ({
+            userProgress: { ...state.userProgress, silentFloorID },
+        })),
+}))
 
-export default useUserProgressStore;
+export default useUserProgressStore

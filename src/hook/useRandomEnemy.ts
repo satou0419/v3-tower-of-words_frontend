@@ -8,13 +8,16 @@ interface EnemyData {
 
 const useRandomEnemy = () => {
     const [enemy, setEnemy] = useState<string | null>(null)
+    const [loading, setLoading] = useState<boolean>(true)
 
     // Function to get a random enemy
     const getRandomEnemy = useCallback(() => {
+        setLoading(true)
         const data: EnemyData = enemyData
         const enemies = data.enemies
         const randomIndex = Math.floor(Math.random() * enemies.length)
         setEnemy(enemies[randomIndex])
+        setLoading(false)
     }, [])
 
     // Call getRandomEnemy to initialize the enemy
@@ -22,7 +25,7 @@ const useRandomEnemy = () => {
         getRandomEnemy()
     }, [getRandomEnemy])
 
-    return { enemy, refetch: getRandomEnemy }
+    return { enemy, loading, refetch: getRandomEnemy }
 }
 
 export default useRandomEnemy

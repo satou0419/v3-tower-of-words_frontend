@@ -58,7 +58,7 @@ export default function Dashboard() {
                     progressValue={userDashboard.floorCount}
                     modeTitle="Adventure"
                     modeDescription="This is a custom description for the adventure."
-                    link="/tower/spelling"
+                    link="/select-tower"
                     className="dashboard-card"
                 />
 
@@ -78,7 +78,7 @@ export default function Dashboard() {
                     progressValue={userDashboard.floorCount}
                     modeTitle="Playground"
                     modeDescription="This is a custom description for the adventure."
-                    link="/tower/spelling"
+                    link="/gameplay/playground"
                     className="dashboard-card"
                 />
             </section>
