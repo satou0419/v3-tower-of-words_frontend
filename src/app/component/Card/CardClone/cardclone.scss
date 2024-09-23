@@ -1,0 +1,134 @@
+.cardclone-card {
+    width: 70%;
+    height: 15em;
+    border: 1px solid #000;
+    border-radius: 10px;
+    box-shadow: var(--shadow-burst);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 1em;
+
+    &.selected {
+        background-color: #BDA4D4; // The background color when selected
+    }
+}
+
+.cardclone-card-top {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+
+    .cardclone-card-name {
+        width: 50%;
+        font-size: 32px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #D5C2E6;
+        color: white;
+        border-radius: 5px;
+        box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    .cardclone-card-code {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #D5C2E6;
+        color: white;
+        border-radius: 5px;
+        box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
+    }
+}
+
+.line {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    position: relative;
+}
+  
+.line-text {
+    position: relative;
+    padding: 0 10px;
+    background-color: white;
+
+    &.selected {
+        background-color: #BDA4D4; // The background color when selected
+    }
+}
+  
+.line::before {
+    content: "";
+    flex: 1;
+    border-top: 1px solid black;
+    margin-right: 10px;
+}
+
+.line::after {
+    content: "";
+    flex: 2; /* Makes the line extend to the right */
+    border-top: 1px solid black; /* The line after the text */
+    margin-left: 10px; /* Adds space between the text and the line */
+}
+
+.cardclone-card-bottom {
+    height: 50%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1rem;
+
+    .cardclone-card-room-top{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        flex-direction: row;
+        width: 100%;
+        
+        .cardclone-card-room-name {
+            width: 50%;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #D5C2E6;
+            color: #662B9A;
+            border-radius: 5px;
+            box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
+        }
+    }
+    
+
+    .cardclone-card-room-bottom{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        flex-direction: row;
+        width: 100%;
+
+        .cardclone-card-room-code {
+            width: 50%;
+            font-size: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #D5C2E6;
+            color: #662B9A;
+            border-radius: 5px;
+            box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
+        }
+    }
+}
+

@@ -1,9 +1,11 @@
 // SettingsTab.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { InputBox } from "@/app/component/Input/Input";
 import Toggle from "@/app/component/Toggle/Toggle";
 import createGame from "@/lib/simulation-endpoint/createGame";
 import { useRouter } from "next/navigation";
+import Toast from "@/app/component/Toast/Toast";
+import Modal from "@/app/component/Modal/Modal";
 
 interface Enemy {
     imagePath: string;
@@ -21,7 +23,6 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -29,7 +30,7 @@ interface SimulationDetails {
 }
 
 interface SettingsTabProps {
-    settings: SimulationDetails;
+    settings?: SimulationDetails | null;
     updateSettings: (updatedSettings: Partial<SimulationDetails>) => void;
 }
 
@@ -37,8 +38,12 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
     settings,
     updateSettings,
 }) => {
-    const [isEnabled, setIsEnabled] = useState(false);
     const router = useRouter();
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [toastType, setToastType] = useState<"success" | "error" | "warning">(
+        "success"
+    );
+    const [showPopup, setShowPopup] = useState(false);
 
     const handleToggle =
         (field: keyof SimulationDetails) => (state: boolean) => {
@@ -53,93 +58,112 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     ? (event.target as HTMLInputElement).checked
                     : event.target.value;
             updateSettings({ [field]: value });
-        };
+    };
 
-    const validateSettings = (settings: SimulationDetails) => {
-        const errors: string[] = [];
-
-        if (!settings.name.trim()) {
-            errors.push("Simulation name is required.");
-        }
-
-        if (!settings.deadline) {
-            errors.push("Deadline is required.");
-        } else {
-            const deadlineDate = new Date(settings.deadline);
-            if (isNaN(deadlineDate.getTime())) {
-                errors.push("Deadline must be a valid date.");
-            }
-        }
-
-        const validIntervals = [15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
-        if (!validIntervals.includes(settings.attackInterval)) {
-            errors.push("Attack Interval must be a valid option.");
-        }
-
-        if (settings.studentLife < 1 || settings.studentLife > 8) {
-            errors.push("Student Life must be between 1 and 8.");
-        }
-
-        return errors;
+    const handleCloseModal = () => {
+        setShowPopup(false);
     };
 
     const handleCreateGame = () => {
-        if (!settings.name) {
-            alert("Simulation name is required.");
+        if (!settings?.name) {
+            setToastMessage("Simulation name is required.");
+            setToastType("warning");
             return;
         }
 
-        if (!settings.deadline) {
-            alert("Deadline is required.");
+        if (!settings?.deadline) {
+            setToastMessage("Deadline is required.");
+            setToastType("warning");
             return;
         }
 
         const deadlineDate = new Date(settings.deadline);
         if (isNaN(deadlineDate.getTime())) {
-            alert("Deadline must be a valid date.");
+            setToastMessage("Deadline must be a valid date.");
+            setToastType("warning");
             return;
         }
 
-        if(settings.attackInterval == 0){
-            alert("Select Attack Interval");
+        const currentDate = new Date();
+        currentDate.setHours(0, 0, 0, 0); 
+
+        if (deadlineDate < currentDate) {
+            setToastMessage("Deadline cannot be in the past.");
+            setToastType("warning");
             return;
         }
 
-        if(settings.studentLife == 0){
-            alert("Select Student Life");
+        if(settings.attackInterval === 0 || settings.attackInterval === undefined ){
+            setToastMessage("Attack Interval must be a valid option.");
+            setToastType("warning");
             return;
         }
 
-        const confirmation = window.confirm("Are you sure you want to create this game?");
-        if (confirmation) {
-            console.log("Creating game with settings:", settings);
-            createGame(settings);
-            router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
-            localStorage.removeItem("enemies");
-            localStorage.removeItem("settings");
+        if(settings.studentLife === 0 || settings.studentLife === undefined ){
+            setToastMessage("Student Life must be between 1 and 8..");
+            setToastType("warning");
+            return;
         }
+
+        if (!settings.enemy || settings.enemy.length === 0) {
+            setToastMessage("At least one enemy must be defined.");
+            setToastType("warning");
+            return;
+        }
+
+        for (const enemy of settings.enemy) {
+            if (!enemy.words || enemy.words.length === 0) {
+                setToastMessage("Each enemy must have at least one word.");
+                setToastType("warning");
+                return;
+            }
+        }
+
+        setShowPopup(true);
     };
+
+    const handleConfirmCreateGame = () => {
+        if (!settings) {
+            setToastMessage("Settings are not set.");
+            setToastType("error");
+            return;
+        }
+    
+        createGame(settings);
+        router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
+        localStorage.removeItem("enemies");
+        localStorage.removeItem("settings");
+        setShowPopup(false);
+    };
+
     console.log(settings);
 
     return (
         <main className="setting-wrapper">
+            {toastMessage && (
+                <Toast
+                    message={toastMessage}
+                    type={toastType}
+                    onClose={() => setToastMessage(null)}
+                />
+            )}
             <section className="setting">
                 <InputBox
                     type="text"
                     placeholder="Enter Simulation Name"
-                    value={settings.name}
+                    value={settings?.name}
                     onChange={handleChange("name")}
                 />
                 <InputBox
                     type="datetime-local"
-                    value={settings.deadline}
+                    value={settings?.deadline}
                     onChange={handleChange("deadline")}
                 />
                 <select
-                    value={settings.attackInterval}
+                    value={settings?.attackInterval}
                     onChange={handleChange("attackInterval")}
                 >
-                    <option className="select-display" value="">
+                    <option value={0}>
                         Attack Interval
                     </option>
                     <option value={15}>15</option>
@@ -154,10 +178,10 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     <option value={60}>60</option>
                 </select>
                 <select
-                    value={settings.studentLife}
+                    value={settings?.studentLife}
                     onChange={handleChange("studentLife")}
                 >
-                    <option className="select-display" value="">
+                    <option value={0}>
                         Student Life
                     </option>
                     <option value={1}>1</option>
@@ -169,39 +193,42 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     <option value={7}>7</option>
                     <option value={8}>8</option>
                 </select>
-                {/* <select
-                    value={settings.numberOfAttempt}
-                    onChange={handleChange("numberOfAttempt")}
-                >
-                    <option className="select-display" disabled value="">
-                        Number of Attempts
-                    </option>
-                    <option value={1}>1</option>
-                    <option value={2}>2</option>
-                    <option value={3}>3</option>
-                    <option value={4}>4</option>
-                    <option value={5}>5</option>
-                </select> */}
                 <Toggle
                     className="toggle"
                     label="Items"
-                    isEnabled={settings.items}
+                    isEnabled={settings?.items}
                     onToggle={handleToggle("items")}
                 />
                 <Toggle
                     className="toggle"
                     label="Description"
-                    isEnabled={settings.description}
+                    isEnabled={settings?.description}
                     onToggle={handleToggle("description")}
                 />
                 <Toggle
                     className="toggle"
                     label="Pronunciation"
-                    isEnabled={settings.pronunciation}
+                    isEnabled={settings?.pronunciation}
                     onToggle={handleToggle("pronunciation")}
                 />
                 <button onClick={handleCreateGame}> Create Game </button>
             </section>
+            {showPopup && (
+                <Modal
+                    className="confirmation-modal"
+                    title="Confirm Create Game?"
+                    isOpen={showPopup}
+                    onClose={handleCloseModal}
+                    buttons={[
+                        <button key="confirm" onClick={handleConfirmCreateGame}>
+                            Yes
+                        </button>,
+                        <button key="No" onClick={handleCloseModal}>
+                            Cancel
+                        </button>,
+                    ]}
+                />
+            )}
         </main>
     );
 };

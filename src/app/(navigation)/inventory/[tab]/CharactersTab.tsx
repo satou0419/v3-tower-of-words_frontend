@@ -34,10 +34,10 @@ const CharactersTab: React.FC = () => {
     const { userID } = useAuthStore.getState();
     const character = equipped();
     const { setEquippedCharacter } = useProgressEquippedStore();
+    const { equipCharacter } = useEquipCharacter();
     const [isCharacterAttacking, setIsCharacterAttacking] =
         useState<boolean>(false)
     const characterDetails = useImageParse(selectedCharacter.imagePath)
-    const { equipCharacter } = useEquipCharacter();
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
         characterDetails.name,
@@ -77,7 +77,7 @@ const CharactersTab: React.FC = () => {
         setIsEquipConfirmationOpen(true);
         try {
             const result = await equipCharacter(selectedCharacter.characterID);
-            console.log("Character purchased successfully:", result);
+            console.log("Character equipped successfully:", result);
             setEquippedCharacter(selectedCharacter.imagePath);
         } catch (error) {
             console.error("Error purchasing character:", error);
@@ -99,17 +99,23 @@ const CharactersTab: React.FC = () => {
         setIsEquipped(false);
     };
 
+    const characterName = (imagePath: string) => {
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
+        return match ? match[1] : "unknown";
+    };
+
     return (
         <section className="character-wrapper">
             <section className="character-container">
                 {userCharacters.filter(userCharacter => userCharacter.owned).map((userCharacter) => {
                     const character = userCharacter.characterID;
+                    const profile = characterName(character.imagePath);
                     if (!character) return null;
 
                     return (
                         <CardCharacter
                             key={character.characterID}
-                            bannerClass={`/assets/images/reward/${character.imagePath}`}
+                            bannerClass={`/assets/images/sprite/profile-${profile}.png`}
                             directory="Inventory"
                             equip={(equip === character.imagePath)}
                             infoTitle={character.name}
@@ -121,7 +127,7 @@ const CharactersTab: React.FC = () => {
             <section className="selected-character-container">
             {selectedCharacter ? (
                 <CardCharacterPreview
-                    bannerClass={`/assets/images/reward/${selectedCharacter.imagePath}`}
+                    bannerClass={`${selectedCharacter.imagePath}`}
                     equip={(equip === selectedCharacter.imagePath)}
                     animation={characterAnimation}
                     character={characterDetails}

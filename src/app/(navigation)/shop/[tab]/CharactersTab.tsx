@@ -127,17 +127,23 @@ const CharactersTab: React.FC = () => {
         setIsInsufficientBalanceOpen(false);
     };
 
+    const characterName = (imagePath: string) => {
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
+        return match ? match[1] : "unknown";
+    };
+
     return (
         <section className="character-wrapper">
             <section className="character-container">
                 {userCharacters.map((userCharacter) => {
                     const character = userCharacter.characterID;
+                    const profile = characterName(character.imagePath);
                     if (!character) return null;
 
                     return (
                         <CardCharacter
                             key={userCharacter.characterID.characterID}
-                            bannerClass={`/assets/images/reward/${userCharacter.characterID.imagePath}`}
+                            bannerClass={`/assets/images/sprite/profile-${profile}.png`}
                             directory="Shop"
                             owned={(userCharacter.owned)}
                             infoTitle={userCharacter.characterID.name}
@@ -151,7 +157,7 @@ const CharactersTab: React.FC = () => {
             <section className="selected-character-container">
                 {selectedCharacter.characterID != 0 ? (
                     <CardCharacterPreview
-                        bannerClass={`/assets/images/reward/${selectedCharacter.imagePath}`}
+                        bannerClass={`${selectedCharacter.imagePath}`}
                         animation={characterAnimation}
                         character={characterDetails}
                         onAttackClick={handleAttack}

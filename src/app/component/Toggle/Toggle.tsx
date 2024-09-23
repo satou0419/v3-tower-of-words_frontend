@@ -5,7 +5,7 @@ import "./toggle.css";
 
 interface ToggleProps {
     label: string;
-    isEnabled: boolean;
+    isEnabled?: boolean;
     onToggle: (state: boolean) => void;
     className?: string; // Optional className prop
 }

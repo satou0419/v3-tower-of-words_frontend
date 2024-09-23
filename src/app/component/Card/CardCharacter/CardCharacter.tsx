@@ -43,7 +43,9 @@ const CardCharacter: React.FC<CardCharacterProps> = ({
                 {directory === "Shop" && (
                     <section className="cardinfo-shop">
                         {infoTitle}
-                        <button className="buy-button" onClick={onBuyClick} disabled={owned}>{price}</button>
+                        <button className="buy-button" onClick={onBuyClick} disabled={owned}>
+                            <img src="/assets/images/reward/reward-currency.webp" className="icon"></img>
+                            {price}</button>
                     </section>
                 )}
             </section>

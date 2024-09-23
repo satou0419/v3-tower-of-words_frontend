@@ -16,7 +16,6 @@ interface Enemy {
 }
 
 interface SimulationWords {
-    //simulationWordsID: number;
     creatorID: number;
     word: string;
     silentIndex: string;
@@ -33,7 +32,6 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -47,25 +45,15 @@ export default function CreateGame() {
     const router = useRouter();
     const { userType } = useUserInfoStore.getState();
     
-    const [settings, setSettings] = useState<SimulationDetails>({
-        roomID: { roomID: currentRoom.roomID },
-        simulationType: "Spelling",
-        name: "",
-        deadline: "",
-        attackInterval: 20,
-        studentLife: 6,
-        // numberOfAttempt: 1,
-        items: true,
-        description: true,
-        pronunciation: true,
-        enemy: [],
-    });
+    const [settings, setSettings] = useState<SimulationDetails | null>(null);
 
     useEffect(() => {
-        if(currentRoom.roomID == 0 && userType) {
-            router.push(`/${userType.toLowerCase()}-room`);
+        if(currentRoom.roomID === 0  || settings?.roomID.roomID === 0) {
+            if(userType){
+                router.push(`/${userType.toLowerCase()}-room`);
+            }
         }
-    }, []);
+    }, [userType]);
 
     useEffect(() => {
         setIsClient(true);
@@ -96,11 +84,15 @@ export default function CreateGame() {
 
     useEffect(() => {
         if (isClient) {
-            setSettings((prevSettings) => ({
-                ...prevSettings,
-                roomID: currentRoom,
-                enemy: enemies,
-            }));
+            setSettings((prevSettings: SimulationDetails | null) => {
+                if (!prevSettings) {
+                    return null;
+                }
+                return {
+                    ...prevSettings,
+                    enemy: enemies,
+                };
+            });
         }
     }, [currentRoom, enemies]);
 
@@ -139,10 +131,15 @@ export default function CreateGame() {
     };
 
     const updateSettings = (updatedSettings: Partial<SimulationDetails>) => {
-        setSettings((prevSettings) => ({
-            ...prevSettings,
-            ...updatedSettings,
-        }));
+        setSettings((prevSettings) => {
+            if (!prevSettings) {
+                return null; // Return null if prevSettings is null
+            }
+            return {
+                ...prevSettings,
+                ...updatedSettings,
+            };
+        });
     };
 
     useEffect(() => {
@@ -179,6 +176,11 @@ export default function CreateGame() {
 
     return (
         <main className="creategame-wrapper">
+            <section className="buttons-container">
+                <button onClick={() => router.back()} className="back-button">
+                    Back
+                </button>
+            </section>
             <Tab
                 tabs={tabData}
                 currentTab={activeTab}

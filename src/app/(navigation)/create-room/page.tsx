@@ -77,7 +77,7 @@ export default function CreateRoom() {
     const handleCopyToClipboard = () => {
         navigator.clipboard.writeText(code).then(
             () => {
-                setIsCopied(true); // Set the copy status to true
+                setIsCopied(true);
                 setToastMessage("Room code copied to clipboard!");
                 setToastType("success");
             },

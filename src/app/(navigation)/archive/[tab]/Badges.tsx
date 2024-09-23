@@ -5,6 +5,9 @@ import CardAchievement from "@/app/component/Card/CardAchievement/CardAchievemen
 import useAchievementStore from "@/store/useAchievementStore";
 import Modal from "@/app/component/Modal/Modal";
 import { useAuthStore } from "@/store/authStore";
+import useEquipBadge from "@/hook/useEquipBadge";
+import useProgressEquippedStore from "@/store/progressEquippedStore";
+import equipped from "@/store/progressEquippedStore";
 
 interface Achievement {
     achievementID: number;
@@ -20,9 +23,24 @@ const Badges = () => {
     const { userAchievements, fetchUserAchievements, fetchAllAchievements } = useAchievementStore();
     const { userID } = useAuthStore.getState();
   
-    const [selectedBadge, setSelectedBadge] = useState<Achievement | null>(null); // To store selected badge
+    const [selectedBadge, setSelectedBadge] = useState<Achievement>({
+        achievementID: 0,
+        name: "",
+        description: "",
+        imagePath: "",
+        totalUnlocked: 0,
+        criteria: 0,
+        achievementType: "", 
+    });
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
     const [isEquipped, setIsEquipped] = useState(false); // For equipment confirmation
+
+    const { setEquippedBadge } = useProgressEquippedStore();
+    const { equipBadge } = useEquipBadge();
+
+    const badges = equipped();
+
+    const equip = badges.progressEquipped.equippedBadge;
 
     useEffect(() => {
         fetchAllAchievements();
@@ -32,14 +50,34 @@ const Badges = () => {
     console.log(userAchievements)
 
     const handleBadgeClick = (achievement: Achievement) => {
+        if (selectedBadge.achievementID === achievement.achievementID) {
+            setSelectedBadge({
+                achievementID: 0,
+                name: "",
+                description: "",
+                imagePath: "",
+                totalUnlocked: 0,
+                criteria: 0,
+                achievementType: "",
+            }); 
+        } else {
+            setSelectedBadge(achievement);
+        }
         setSelectedBadge(achievement); // Set the selected badge
         setIsModalOpen(true); // Open the modal for confirmation
     };
 
-    const handleConfirmEquip = () => {
+    const handleConfirmEquip = async () => {
         // Logic to equip the badge or perform an action
         setIsEquipped(true);
-        setIsModalOpen(false); // Close the confirmation modal
+        setIsModalOpen(false);
+        try {
+            const result = await equipBadge(selectedBadge?.achievementID);
+            console.log("Character equipped successfully:", result);
+            setEquippedBadge(selectedBadge.imagePath);
+        } catch (error) {
+            console.error("Error Equip character:", error);
+        }
     };
 
     const handleCloseModal = () => {
@@ -53,14 +91,14 @@ const Badges = () => {
     return (
         <section className="badges-container">
             {userAchievements
-                .filter((userAchievement) => userAchievement.unlocked == false)
+                .filter((userAchievement) => userAchievement.unlocked)
                 .map((userAchievement) => {
                     const badge = userAchievement.achievementID
 
                     return (
                         <CardAchievement
                             key={userAchievement.archiveAchievementID}
-                            equip={true}
+                            equip={equip == badge.imagePath}
                             Badge={badge}
                             onClick={() => handleBadgeClick(badge)}
                         />

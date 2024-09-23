@@ -1,18 +1,19 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
 import "./teacherroom.scss";
 import CardNew from "@/app/component/Card/CardNew/CardNew";
 import { useRoomStore } from "@/store/roomStore";
 import { useSimulationStore } from "@/store/simulationStore";
 import { useRouter } from "next/navigation";
-import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom"; // Assuming this endpoint fetches rooms for teachers
+import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
 
 export default function TeacherRoom() {
     const { rooms, setRoom, setCurrentRoom } = useRoomStore();
     const { setSimulation } = useSimulationStore();
+    const [isClicked, setIsClicked] = useState(false);
     const router = useRouter();
 
     useEffect(() => {
@@ -29,6 +30,9 @@ export default function TeacherRoom() {
     }, [setRoom]);
 
     const handleCardClick = async (room: any) => {
+        if (isClicked) return;
+        setIsClicked(true);
+
         try {
             const roomSimulation = await viewRoomSimulations(room.roomID);
             router.push(`teacher-room/game?roomID=${room.roomID}`);
@@ -38,6 +42,8 @@ export default function TeacherRoom() {
             console.log(room);
         } catch (error) {
             console.error("Failed to fetch simulations for the room:", error);
+        } finally {
+            setIsClicked(false);
         }
     };
 
@@ -63,7 +69,7 @@ export default function TeacherRoom() {
                             infoTitle="Game"
                             counter={
                                 room.simulations ? room.simulations.length : 0
-                            } // Provide a fallback value
+                            }
                             glow={false}
                             onClick={() => handleCardClick(room)}
                         />

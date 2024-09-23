@@ -21,6 +21,7 @@ const CardAchievement: React.FC<CardAchievementProps> = ({ Badge, equip, onClick
     return (
         <div className="cardachievement-card" onClick={onClick}>
             <section className="cardachievement-container">
+                {equip && <div className="equip-banner">Equipped</div>}
                 <div className="banner-container">
                     <img src={Badge.imagePath} alt={Badge.name} className="badge-image" />
                 </div>

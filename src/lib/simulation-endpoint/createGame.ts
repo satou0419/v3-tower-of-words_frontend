@@ -16,7 +16,6 @@ interface SimulationDetails {
     deadline: string;
     attackInterval: number;
     studentLife: number;
-    // numberOfAttempt: number;
     items: boolean;
     description: boolean;
     pronunciation: boolean;
@@ -25,13 +24,35 @@ interface SimulationDetails {
 
 const createGame = async (simulation: SimulationDetails) => {
     console.log(simulation)
+
+    const filteredEnemies = simulation.enemy.map((enemy) => ({
+        imagePath: enemy.imagePath,
+        words: enemy.words,
+    }));
+
+    const filteredSimulation: SimulationDetails = {
+        roomID: simulation.roomID,
+        simulationType: simulation.simulationType,
+        name: simulation.name,
+        deadline: simulation.deadline,
+        attackInterval: simulation.attackInterval,
+        studentLife: simulation.studentLife,
+        items: simulation.items,
+        description: simulation.description,
+        pronunciation: simulation.pronunciation,
+        enemy: filteredEnemies,
+    };
+
+
+    console.log(filteredSimulation)
+
     try {
         const response = await fetch(`${BASE_URL}/simulation/create_simulation`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify(simulation),
+            body: JSON.stringify(filteredSimulation),
         });
         if (!response.ok) {
             throw new Error("Failed to create simulation");

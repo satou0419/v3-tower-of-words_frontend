@@ -24,6 +24,9 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
     onAttackClick,
     onEquipClick,
 }) => {
+    if (!character.name || !bannerClass) {
+        return null;
+    }
     return (
         <div className="cardcharacterpreview-card">
             <section className="cardcharacterpreview-container">

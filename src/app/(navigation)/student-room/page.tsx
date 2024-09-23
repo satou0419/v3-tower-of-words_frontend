@@ -15,8 +15,8 @@ import Loading from "@/app/loading";
 export default function StudentRoom() {
     const { rooms, setRoom } = useRoomStore();
     const { userType } = useUserInfoStore.getState();
-    const [loading, setLoading] = useState(true); // Loading state
-
+    const [loading, setLoading] = useState(true);
+    const [isClicked, setIsClicked] = useState(false);
     const navigation = useRouter();
 
     useEffect(() => {
@@ -24,16 +24,16 @@ export default function StudentRoom() {
             try {
                 let roomData;
                 if (userType.toLowerCase() === "teacher") {
-                    roomData = await viewCreatedRoom(); // Fetch data for teachers
+                    roomData = await viewCreatedRoom();
                 } else {
-                    roomData = await viewStudentRoom(); // Fetch data for students
+                    roomData = await viewStudentRoom();
                 }
-                setRoom(roomData); // Update Zustand store with fetched data
-                setLoading(false); // Set loading to false after data is fetched
+                setRoom(roomData);
+                setLoading(false);
             } catch (error) {
                 console.error("Failed to fetch rooms:", error);
-                setRoom([]); // Optionally clear the rooms if fetching fails
-                setLoading(false); // Set loading to false even if there's an error
+                setRoom([]);
+                setLoading(false);
             }
         };
 
@@ -41,9 +41,11 @@ export default function StudentRoom() {
     }, [setRoom, userType]);
 
     const handleCardClick = async (room: any) => {
+        if (isClicked) return;
+        setIsClicked(true);
+
         try {
             const { roomID } = room;
-            // Fetch simulations or details for the clicked room
             const simulationData = await viewRoomSimulations(roomID);
             navigation.push(`student-room/game?roomID=${roomID}`);
 
@@ -51,11 +53,13 @@ export default function StudentRoom() {
             console.log(roomID);
         } catch (error) {
             console.error("Failed to fetch simulations for the room:", error);
+        } finally {
+            setIsClicked(false);
         }
     };
 
     if (loading) {
-        return <Loading />; // Render Loading component while fetching data
+        return <Loading />;
     }
 
     return (
