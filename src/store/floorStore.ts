@@ -63,6 +63,7 @@ export const useFloorStore = create<FloorState>((set) => ({
             const data = await response.json()
             const floors: Floor[] = data.data
             set({ floors })
+            console.log("Silent Data", data)
         } catch (error) {
             console.error("Error fetching all floors:", error)
         }

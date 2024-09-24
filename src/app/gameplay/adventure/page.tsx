@@ -167,7 +167,8 @@ const AdventureGameplay = () => {
         // Add additional logic here to reset the game state
     }
 
-    const { enemies, fetchEnemies } = useEnemyStore()
+    const { enemies, fetchEnemies, fetchSilentEnemies, fetchSyllableEnemies } =
+        useEnemyStore()
     const [enemyData, setEnemyData] = useState<any[]>([])
     const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0)
     const [currentWordIndex, setCurrentWordIndex] = useState<number>(0)
@@ -188,22 +189,41 @@ const AdventureGameplay = () => {
 
     useEffect(() => {
         if (floorId) {
-            fetchEnemies(Number(floorId))
+            fetchSilentEnemies(Number(floorId))
         }
     }, [floorId, fetchEnemies])
 
     useEffect(() => {
-        if (enemies.length > 0) {
-            setEnemyData(enemies)
-            setLoading(false)
-            const initialSpelledWords: Record<number, boolean[]> = {}
-            enemies.forEach((enemy, index) => {
-                initialSpelledWords[index] = new Array(enemy.words.length).fill(
-                    false
-                )
-            })
-            setSpelledWords(initialSpelledWords)
-            console.log("Enemy Data", enemyData)
+        if (gameType === "Syllable" || gameType === "Spelling") {
+            if (enemies.length > 0) {
+                setEnemyData(enemies)
+                setLoading(false)
+                const initialSpelledWords: Record<number, boolean[]> = {}
+                enemies.forEach((enemy, index) => {
+                    initialSpelledWords[index] = new Array(
+                        enemy.words.length
+                    ).fill(false)
+                })
+                setSpelledWords(initialSpelledWords)
+                console.log("Enemy Data", enemyData)
+            }
+        }
+    }, [enemies])
+
+    useEffect(() => {
+        if (gameType === "Silent") {
+            if (enemies.length > 0) {
+                setEnemyData(enemies)
+                setLoading(false)
+                const initialSpelledWords: Record<number, boolean[]> = {}
+                enemies.forEach((enemy, index) => {
+                    initialSpelledWords[index] = new Array(
+                        enemy.words.length
+                    ).fill(false)
+                })
+                setSpelledWords(initialSpelledWords)
+                console.log("Enemy Data", enemyData)
+            }
         }
     }, [enemies])
 
@@ -250,11 +270,25 @@ const AdventureGameplay = () => {
     )
 
     const currentEnemy = enemyData[currentEnemyIndex]
-    const currentWord = currentEnemy?.words[currentWordIndex]
+    const currentWord = currentEnemy?.words[currentWordIndex].word
     const word = useMerriam(currentWord) // Pass the currentWord to the custom hook
+
+    const [selection, setSelection] = useState(
+        "0".repeat(word?.word.length || 0)
+    )
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value)
+    }
+    const handleClick = (index: any) => {
+        const newSelection = selection
+            .split("")
+            .map((char, idx) =>
+                idx === index ? (char === "0" ? "1" : "0") : char
+            )
+            .join("")
+        setSelection(newSelection)
+        console.log(newSelection)
     }
 
     const handleEnemyAttack = () => {
@@ -538,9 +572,6 @@ const AdventureGameplay = () => {
         return hearts
     }
 
-    useEffect(() => {
-        console.log("Range", rangeValue)
-    })
     const [rangeValue, setRangeValue] = useState(0)
     useEffect(() => {
         if (gameType !== "Syllables") {
@@ -809,7 +840,7 @@ const AdventureGameplay = () => {
                                         Go!
                                     </button>
                                 </>
-                            ) : (
+                            ) : gameType === "Spelling" ? (
                                 <>
                                     <button
                                         type="button"
@@ -831,7 +862,43 @@ const AdventureGameplay = () => {
                                         Go!
                                     </button>
                                 </>
-                            )}
+                            ) : gameType === "Silent" ? (
+                                <>
+                                    <button
+                                        type="button"
+                                        onClick={word?.playAudio}
+                                    >
+                                        <FaVolumeUp />
+                                    </button>
+
+                                    <section className="silent-container">
+                                        {word?.word
+                                            .split("")
+                                            .map((letter, index) => (
+                                                <div
+                                                    key={index}
+                                                    onClick={() =>
+                                                        handleClick(index)
+                                                    }
+                                                    className={`silent-index ${
+                                                        selection[index] === "1"
+                                                            ? "selected"
+                                                            : "unselected"
+                                                    }`}
+                                                >
+                                                    {letter}
+                                                </div>
+                                            ))}
+                                    </section>
+
+                                    <button
+                                        type="submit"
+                                        disabled={isButtonDisabled}
+                                    >
+                                        Go!
+                                    </button>
+                                </>
+                            ) : null}
                         </form>
                     </section>
 
