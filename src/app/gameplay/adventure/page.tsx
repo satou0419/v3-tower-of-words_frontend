@@ -484,7 +484,7 @@ const AdventureGameplay = () => {
 
             // Archive the correctly spelled word
             if (isClear === "false") {
-                await addWord(currentWord)
+                await addWord(currentWord || "")
                 updateFloor
             }
 
