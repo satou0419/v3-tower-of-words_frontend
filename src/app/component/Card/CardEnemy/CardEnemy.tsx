@@ -135,12 +135,13 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                                 X
                             </button>
                             <div
-                                onClick={() =>
+                                onClick={() =>{
                                     updateEnemyImagePath(
                                         index,
                                         "&melee_spring-a28-i11"
-                                    )
-                                }
+                                    );
+                                    togglePopup();
+                                }}
                                 className="cardenemy-assgin"
                             >
                                 <img
@@ -150,12 +151,13 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                                 <button>Spring</button>
                             </div>
                             <div
-                                onClick={() =>
+                                onClick={() => {
                                     updateEnemyImagePath(
                                         index,
                                         "&melee_crab-a20-i20"
-                                    )
-                                }
+                                    );
+                                    togglePopup();
+                                }}
                                 className="cardenemy-assgin"
                             >
                                 <img
@@ -165,12 +167,13 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                                 <button>Crab</button>
                             </div>
                             <div
-                                onClick={() =>
+                                onClick={() => {
                                     updateEnemyImagePath(
                                         index,
                                         "&range_battery-a21-i20"
-                                    )
-                                }
+                                    );
+                                    togglePopup();
+                                }}
                                 className="cardenemy-assgin"
                             >
                                 <img

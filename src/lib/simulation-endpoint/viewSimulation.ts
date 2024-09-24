@@ -28,6 +28,7 @@ interface SimulationAssessment {
 }
 
 interface SimulationDetails {
+    roomID: any;
     simulationID: number;
     simulationType: string;
     name: string;

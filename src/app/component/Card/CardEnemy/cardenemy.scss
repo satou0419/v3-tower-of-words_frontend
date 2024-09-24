@@ -126,6 +126,18 @@
     display: flex;
     gap: 1em;
 
+    .close-popup {
+        background-color: #ff5a79;
+        color: #fff;
+        border: none;
+        outline: none;
+        height: 1.5em;
+        width: 1.5em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     .cardenemy-assgin{
         display: flex;
         flex-direction: column;
@@ -141,15 +153,6 @@
         width: 5em;
         height: 2em;
         border-radius: .5em;
-    }
-
-    .close-popup {
-        width: 10px;
-        background: none;
-        border: none;
-        font-size: 16px;
-        cursor: pointer;
-        color: #000;
     }
 
     img {

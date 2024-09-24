@@ -4,8 +4,8 @@ import Link from "next/link";
 
 interface CardInfoProps {
     className?: string;
-    title: string;
-    counter: number;
+    title?: string;
+    counter?: number;
     glow?: boolean;
     link?: string;
     variant?: "default" | "alternate";

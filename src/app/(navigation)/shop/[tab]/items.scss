@@ -1,19 +1,17 @@
 .shop-wrapper {
     height: 100%;
     width: 100%;
-
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: auto;
 }
 
 .shop-container {
-    height: 100%;
-    width: 90%;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
+    height: 90%;
+    width: 100%;
     gap: 2em;
-    overflow: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    overflow: scroll;
 }

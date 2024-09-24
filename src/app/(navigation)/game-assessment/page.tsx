@@ -46,7 +46,7 @@ export default function GameAssessment() {
     const chartData = {
         labels: assessmentData
         ? [
-            `Number of Participants: ${assessmentData.numberOfParticipants.toFixed(2)}`,
+            `Number of Participants: ${assessmentData.numberOfParticipants}`,
             `Number of Missed Participants: ${assessmentData.missedTakers}`,
             `Simulation Accuracy Rate: ${assessmentData.simulationAccruracyRate}`,
             `Simulation Duration Average: ${assessmentData.simulationDurationAverage}`,
@@ -56,7 +56,7 @@ export default function GameAssessment() {
             {
                 label: 'Assessment Data',
                 data: assessmentData
-                    ? [assessmentData.accuracy, assessmentData.mistake, assessmentData.duration, assessmentData.score]
+                    ? [assessmentData.numberOfParticipants, assessmentData.missedTakers, assessmentData.simulationAccruracyRate, assessmentData.simulationDurationAverage]
                     : [],
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',

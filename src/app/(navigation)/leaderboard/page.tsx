@@ -15,8 +15,6 @@ import editSimulation from "@/lib/simulation-endpoint/editSimulation";
 
 export default function Leaderboard() {
     const { currentRoom } = useRoomStore();
-    const [newName, setNewName] = useState<string>("");
-    const [newDeadline, setNewDeadline] = useState<string>("");
     const { userType } = useUserInfoStore.getState();
     const { currentSimulation, setCurrentSimulation } = useSimulationStore();
     const router = useRouter();
@@ -25,7 +23,8 @@ export default function Leaderboard() {
     const [toastType, setToastType] = useState<"success" | "error" | "warning">(
         "success"
     );
-
+    const [newName, setNewName] = useState<string>(currentSimulation.name);
+    const [newDeadline, setNewDeadline] = useState<string>(currentSimulation.deadline);
     const simulationIDParam = searchParams.get("simulationID");
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
@@ -180,7 +179,7 @@ export default function Leaderboard() {
                 />
             )}
             <section className="leaderboard-container">
-                <h1>Student Progress</h1>
+                <h1>Simulation ID: {simulationID} | Simulation Name: {currentSimulation.name}</h1>
 
                 <section className="leaderboard-content">
                     <CardTab
@@ -220,15 +219,47 @@ export default function Leaderboard() {
                             >
                                 Create a Copy
                             </button>
-                        </div>
-
-                        <div className="button-group">
                             <button
                                 type="button"
                                 onClick={handleGameAssessment}
                             >
                                 Game Assessment
                             </button>
+                        </div>
+
+                        <div className="uneditable-settings">
+                            <div className="setting-item">
+                                <span>Attack Interval: </span>
+                                <span>{currentSimulation.attackInterval}</span>
+                            </div>
+                            <div className="setting-item">
+                                <span>Student Life: </span>
+                                <span>{currentSimulation.studentLife}</span>
+                            </div>
+                            <div className="setting-item">
+                                <span>Items: </span>
+                                <input 
+                                    type="checkbox" 
+                                    checked={currentSimulation.items} 
+                                    readOnly 
+                                />
+                            </div>
+                            <div className="setting-item">
+                                <span>Description: </span>
+                                <input 
+                                    type="checkbox" 
+                                    checked={currentSimulation.description} 
+                                    readOnly 
+                                />
+                            </div>
+                            <div className="setting-item">
+                                <span>Pronunciation: </span>
+                                <input 
+                                    type="checkbox" 
+                                    checked={currentSimulation.pronunciation} 
+                                    readOnly 
+                                />
+                            </div>
                         </div>
                         <CardSetting
                             title="Settings"

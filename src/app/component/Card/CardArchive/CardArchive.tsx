@@ -19,7 +19,9 @@ const CardArchive: React.FC<CardArchiveProps> = ({
             <section className="cardarchive-container">
                 <section className="cardarchive-card">
                     <section className="cardarchive-details_container">
-                        <CardWord />
+                        <CardWord className="badge-display">
+                            <img></img>
+                        </CardWord>
                         <CardDetails
                             className="additional-class"
                             title="Archive"

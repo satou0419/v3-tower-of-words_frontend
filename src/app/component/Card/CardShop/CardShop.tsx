@@ -29,7 +29,10 @@ const CardShop: React.FC<CardShopProps> = ({
                             <img src={imgSrc} alt={title} />
                         </div>
                         <h1>{title}</h1>
-                        <button onClick={onClick}>{price}</button>
+                        <button onClick={onClick}>
+                            <img src="/assets/images/reward/reward-currency.webp" className="icon"></img>
+                            {price}
+                        </button>
                     </section>
                 </section>
             </section>

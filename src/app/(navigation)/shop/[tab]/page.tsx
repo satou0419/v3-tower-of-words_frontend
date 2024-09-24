@@ -2,18 +2,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import "./item.scss";
-import "./shop.scss";
+import "./items.scss";
+import "./characters.scss";
 import Tab from "@/app/component/Tab/Tab";
-import InventoryTab from "./InventoryTab";
-import ShopTab from "./ShopTab";
+import ItemsTab from "./ItemsTab";
+import CharactersTab from "./CharactersTab";
 import useTabManagement from "@/hook/useTab";
 import Loading from "@/app/loading"; // Import the Loading component
 
-export default function Item() {
+export default function Shop() {
     const { activeTab, handleTabChange } = useTabManagement(
-        "/item",
-        "inventory"
+        "/shop",
+        "items"
     );
     const [loading, setLoading] = useState(true); // Loading state
 
@@ -35,14 +35,14 @@ export default function Item() {
 
     const tabData = [
         {
-            title: "Inventory",
-            id: "inventory",
-            content: <InventoryTab />,
+            title: "Items",
+            id: "items",
+            content: <ItemsTab />,
         },
         {
-            title: "Shop",
-            id: "shop",
-            content: <ShopTab />,
+            title: "Characters",
+            id: "characters",
+            content: <CharactersTab />,
         },
     ];
 
@@ -51,7 +51,7 @@ export default function Item() {
     }
 
     return (
-        <main className="item-wrapper">
+        <main className="shop-wrapper">
             <Tab
                 tabs={tabData}
                 currentTab={activeTab}

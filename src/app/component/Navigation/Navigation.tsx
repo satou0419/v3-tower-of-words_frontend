@@ -151,8 +151,8 @@ const Navigation = () => {
                 <div className="profile">{getInitial(username)}</div>
                 {showList && (
                     <section className="drop-list">
-                        <Link href="/item/inventory">Inventory</Link>{" "}
-                        <Link href="/item/shop">Shop</Link>
+                        <Link href="/inventory/items">Inventory</Link>{" "}
+                        <Link href="/shop/items">Shop</Link>
                         <Link href="/setting/personal-information">
                             Settings
                         </Link>

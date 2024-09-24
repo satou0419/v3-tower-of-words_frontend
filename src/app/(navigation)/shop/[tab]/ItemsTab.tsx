@@ -16,7 +16,7 @@ interface Item {
     quantity: number;
 }
 
-const ShopTab: React.FC = () => {
+const ItemsTab: React.FC = () => {
     const { items, setItems } = useItemStore();
     const [selectedItem, setSelectedItem] = useState<Item | null>(null);
     const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
@@ -148,4 +148,4 @@ const ShopTab: React.FC = () => {
     );
 };
 
-export default ShopTab;
+export default ItemsTab;

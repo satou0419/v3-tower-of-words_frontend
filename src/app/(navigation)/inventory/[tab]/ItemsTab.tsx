@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useItemStore } from "@/store/itemStore";
 import getAllItems from "@/lib/item-endpoint/getAllItem";
 
-const InventoryTab: React.FC = () => {
+const ItemsTab: React.FC = () => {
     const { items, setItems } = useItemStore();
     const router = useRouter();
     const pathname = usePathname();
@@ -36,8 +36,8 @@ const InventoryTab: React.FC = () => {
         const currentTab =
             currentPathSegments.length > 2
                 ? currentPathSegments[2]
-                : "inventory";
-        router.push(`/item/${currentTab}`);
+                : "items";
+        router.push(`/inventory/${currentTab}`);
     }, [pathname, router]);
 
     const handleItemClick = (item: any) => {
@@ -89,4 +89,4 @@ const InventoryTab: React.FC = () => {
     );
 };
 
-export default InventoryTab;
+export default ItemsTab;
