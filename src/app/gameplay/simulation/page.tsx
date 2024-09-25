@@ -241,7 +241,7 @@ const SimulationGameplay = () => {
     useEffect(() => {
         getUserDetails()
     }, [])
-    const characterDetails = useImageParse(userEquipped.equippedCharacter)
+    const characterDetails = useImageParse("&range_cannon-a22-i17")
     const enemyDetails = useImageParse(
         enemies[currentEnemyIndex]?.imagePath || ""
     )
@@ -279,6 +279,7 @@ const SimulationGameplay = () => {
         currentWordID
     )
 
+    const [isLastEnem, setIsLastEnem] = useState(false)
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value)
     }
@@ -338,6 +339,7 @@ const SimulationGameplay = () => {
     const handleCharacterAttack = () => {
         if (characterDetails.attackType == "melee") {
             setCharacterAttackType("expand-width")
+            console.log("Attack is Melee")
 
             setTimeout(() => {
                 setIsCharacterAttacking(true)
@@ -355,10 +357,14 @@ const SimulationGameplay = () => {
                 }, 500) // 500ms is the duration of the hit
             }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration
         } else {
+            console.log("Attack is Range")
+
             setIsCharacterAttacking(true)
 
             setTimeout(() => {
                 setIsCharacterAttacking(false)
+                setEnemyAttackType("")
+
                 setEnemyHit("hit")
 
                 // Set character hit to "" after the hit duration
@@ -418,6 +424,7 @@ const SimulationGameplay = () => {
 
         const isLastWord = currentWordIndex === currentEnemy.words.length - 1
         const isLastEnemy = currentEnemyIndex === enemies.length - 1
+        setIsLastEnem(isLastEnemy)
 
         if (
             enemyInterval.time === 0 &&
@@ -522,6 +529,22 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 2500)
         }
     }
+
+    useEffect(() => {
+        if (lives === 0 && timeLeft !== 0) {
+            console.log("hurot")
+            setTimeout(() => {
+                console.log("Start nako")
+                setLives(studentLife)
+                enemyInterval.reset()
+                console.log(
+                    `Proceeding to next word: Word ${currentWordIndex + 1}`
+                )
+                setCurrentWordIndex(currentWordIndex + 1) // Move to next word
+                setIsPronunciationLocked(true)
+            }, (characterDetails.attackFrame / 12) * 1500)
+        }
+    })
 
     const handleDummySubmit = async () => {
         const dummyEvent = {
