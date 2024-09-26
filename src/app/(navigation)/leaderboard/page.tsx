@@ -12,6 +12,7 @@ import Toast from "@/app/component/Toast/Toast";
 import { useRoomStore } from "@/store/roomStore";
 import useUserInfoStore from "@/store/userInfoStore";
 import editSimulation from "@/lib/simulation-endpoint/editSimulation";
+import Modal from "@/app/component/Modal/Modal";
 
 export default function Leaderboard() {
     const { currentRoom } = useRoomStore();
@@ -23,6 +24,7 @@ export default function Leaderboard() {
     const [toastType, setToastType] = useState<"success" | "error" | "warning">(
         "success"
     );
+    const [showPopup, setShowPopup] = useState(false);
     const [newName, setNewName] = useState<string>(currentSimulation.name);
     const [newDeadline, setNewDeadline] = useState<string>(currentSimulation.deadline);
     const simulationIDParam = searchParams.get("simulationID");
@@ -51,27 +53,21 @@ export default function Leaderboard() {
     };
 
     const handleClone = async (simulation: any) => {
-        const isConfirmed = window.confirm(
-            "Are you sure you want to create a copy of this simulation?"
-        );
-        if (isConfirmed) {
-            try {
-                if (currentRoom.roomID == 0 && userType) {
-                    setToastMessage("Error cloning simulation");
-                    setToastType("error");
-                    router.push(`/${userType.toLowerCase()}-room`);
-                    return;
-                }
-                await cloneGame(simulationID, currentRoom.roomID);
-                setToastMessage("Simulation cloned successfully");
-                setToastType("success");
-            } catch (error) {
+        try {
+            if (currentRoom.roomID == 0 && userType) {
                 setToastMessage("Error cloning simulation");
                 setToastType("error");
+                router.push(`/${userType.toLowerCase()}-room`);
+                return;
             }
-        } else {
-            setToastMessage("Clone action canceled");
-            setToastType("warning");
+            await cloneGame(simulationID, currentRoom.roomID);
+            setToastMessage("Simulation cloned successfully");
+            setToastType("success");
+        } catch (error) {
+            setToastMessage("Error cloning simulation");
+            setToastType("error");
+        } finally {
+            setShowPopup(false);
         }
     };
 
@@ -154,6 +150,10 @@ export default function Leaderboard() {
         );
     };
 
+    const handleCloseModal = () => {
+        setShowPopup(false);
+    };
+
     const inputSetting = [
         {
             type: "text",
@@ -215,7 +215,7 @@ export default function Leaderboard() {
                             </button>
                             <button
                                 type="button"
-                                onClick={() => handleClone(currentSimulation)}
+                                onClick={() => setShowPopup(true)}
                             >
                                 Create a Copy
                             </button>
@@ -273,6 +273,22 @@ export default function Leaderboard() {
                     </section>
                 </section>
             </section>
+            {showPopup && (
+                <Modal
+                    className="confirmation-modal"
+                    title="Confirm Clone Simulation?"
+                    isOpen={showPopup}
+                    onClose={handleCloseModal}
+                    buttons={[
+                        <button key="confirm" onClick={handleClone}>
+                            Yes
+                        </button>,
+                        <button key="No" onClick={handleCloseModal}>
+                            Cancel
+                        </button>,
+                    ]}
+                />
+            )}
         </main>
     );
 }
