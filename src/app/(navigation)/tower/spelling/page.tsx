@@ -23,6 +23,7 @@ const Spelling = () => {
     const [activeGameType, setActiveGameType] = useState<string | null>(null)
     const activeFloorRef = useRef<HTMLDivElement>(null)
     const navigation = useRouter()
+    const [bannerImage, setBannerImage] = useState("")
 
     const searchParams = useSearchParams()
     const gameType = searchParams.get("gameType")
@@ -30,6 +31,7 @@ const Spelling = () => {
     useEffect(() => {
         const fetchFloors = async () => {
             if (gameType === "Silent") {
+                setBannerImage("/assets/images/banner/silent-floor-banner.webp")
                 await getSilentFloors()
                 setLoading(false) // Set loading to false after data is fetched
             }
@@ -37,11 +39,17 @@ const Spelling = () => {
             if (gameType === "Syllables") {
                 await getSyllableFloors()
                 setLoading(false) // Set loading to false after data is fetched
+                setBannerImage(
+                    "/assets/images/banner/syllable-floor-banner.webp"
+                )
             }
 
             if (gameType === "Spelling") {
                 await getSpellingFloors()
                 setLoading(false) // Set loading to false after data is fetched
+                setBannerImage(
+                    "/assets/images/banner/spelling-floor-banner.webp"
+                )
             }
         }
         fetchFloors()
@@ -304,7 +312,12 @@ const Spelling = () => {
                         </CardWord>
                     </section>
                     <section className="tower">
-                        <section className="spelling-banner">
+                        <section
+                            className="spelling-banner"
+                            style={{
+                                backgroundImage: `url(${bannerImage})`,
+                            }}
+                        >
                             <section className="floor-container">
                                 {floors
                                     .slice()

@@ -12,18 +12,21 @@ export default function SelectTower() {
                     modeTitle="Spelling"
                     link="/tower/spelling?gameType=Spelling"
                     className="dashboard-card"
+                    bannerSrc="/assets/images/banner/spelling-tower-banner.webp"
                 />
                 <CardTower
                     progressValue={1}
                     modeTitle="Syllable"
                     link="/tower/spelling?gameType=Syllables"
                     className="dashboard-card"
+                    bannerSrc="/assets/images/banner/syllable-tower-banner.webp"
                 />
                 <CardTower
                     progressValue={1}
                     modeTitle="Silent Letters"
                     link="/tower/spelling?gameType=Silent"
                     className="dashboard-card"
+                    bannerSrc="/assets/images/banner/silent-tower-banner.webp"
                 />
             </section>
         </main>

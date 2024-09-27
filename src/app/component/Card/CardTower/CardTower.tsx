@@ -14,7 +14,7 @@ interface CardModeProps {
 
 const CardTower: React.FC<CardModeProps> = ({
     className,
-    bannerSrc = "/assets/images/banner/banner-adventure_large.webp",
+    bannerSrc = "",
     progressValue = 1,
     modeTitle = "Adventure",
     link = "#",
@@ -23,7 +23,7 @@ const CardTower: React.FC<CardModeProps> = ({
         <main className={`${className ? className : ""}`}>
             <section className="cardtower-container">
                 <Link href={link} className="cardtower-card">
-                    <img src="/assets/images/banner/banner-tower.png" />
+                    <img src={bannerSrc} />
 
                     <section className="cardtower-description">
                         <h1>Floor Completed</h1>
