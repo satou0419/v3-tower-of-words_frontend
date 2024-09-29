@@ -270,7 +270,9 @@ const AdventureGameplay = () => {
     useEffect(() => {
         getUserDetails()
     }, [])
-    const characterDetails = useImageParse(userEquipped.equippedCharacter)
+    // const characterDetails = useImageParse(userEquipped.equippedCharacter)
+    const characterDetails = useImageParse("&melee_gloves-a24-i24")
+
     const enemyDetails = useImageParse(
         enemies[currentEnemyIndex]?.imagePath || ""
     )

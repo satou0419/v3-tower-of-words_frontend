@@ -377,6 +377,7 @@ const SimulationGameplay = () => {
 
     const handleMissedAttack = () => {
         if (characterDetails.attackType == "melee") {
+            console.log("Missed Melee Attack")
             setCharacterAttackType("expand-width")
             setTimeout(() => {
                 setIsCharacterAttacking(true)
@@ -388,6 +389,7 @@ const SimulationGameplay = () => {
                 setEnemyAttackType("")
             }, (characterDetails.attackFrame / 12) * 1000)
         } else {
+            console.log("Missed Range Attack")
             setIsCharacterAttacking(true)
 
             setTimeout(() => {
