@@ -2,7 +2,7 @@ import React from "react";
 import "./cardachievement.scss";
 
 interface Badges {
-    achievementID?: number;
+    achievementID: number;
     name: string;
     description: string;
     imagePath: string;
@@ -12,27 +12,38 @@ interface Badges {
 }
 
 interface CardAchievementProps {
-    Badge: Badges;
+    badge: Badges;
     equip: boolean;
+    owned: boolean;
     onClick: () => void;
 }
 
-const CardAchievement: React.FC<CardAchievementProps> = ({ Badge, equip, onClick }) => {
+const CardAchievement: React.FC<CardAchievementProps> = ({
+    badge,
+    equip,
+    owned,
+    onClick,
+}) => {
     return (
-        <div className="cardachievement-card" onClick={onClick}>
+        <div
+            className={`cardachievement-card ${owned ? "" : "gray-scale"}`}
+            onClick={onClick}
+        >
             <section className="cardachievement-container">
                 {equip && <div className="equip-banner">Equipped</div>}
                 <div className="banner-container">
-                    <img src={Badge.imagePath} alt={Badge.name} className="badge-image" />
+                    <img
+                        src={badge.imagePath}
+                        alt={badge.name}
+                        className="badge-image"
+                    />
                 </div>
-                
+
                 <section className="cardachievement-cardinfo">
-                    <div className="badge-name">
-                        {Badge?.name}
-                    </div>
+                    <div className="badge-name">{badge?.name}</div>
                     <div className="line-separate"></div>
                     <div className="badge-description">
-                        {Badge?.description}
+                        {badge?.description}
                     </div>
                 </section>
             </section>

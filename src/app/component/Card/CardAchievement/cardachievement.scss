@@ -7,7 +7,7 @@
     border: 1px solid #666666;
     border-radius: 25px;
 
-    background-color: #FFDA93;
+    background-color: #ffda93;
     box-shadow: var(--shadow-burst);
 
     display: flex;
@@ -16,6 +16,12 @@
     align-items: center;
 
     padding: 1rem;
+
+    &.gray-scale {
+        filter: grayscale(100%);
+        opacity: 0.5;
+        pointer-events: none; // Disable interaction if not owned (optional)
+    }
 }
 
 .cardachievement-container {
@@ -28,9 +34,9 @@
     position: relative;
     background-color: #593796;
     border-radius: 15px;
-    
+
     .banner-container {
-        background-color: #BEB6ED;
+        background-color: #beb6ed;
         height: 50%;
         border-top-left-radius: 15px;
         border-top-right-radius: 15px;
@@ -48,8 +54,8 @@
     top: 30px;
     right: -70px;
     transform: rotate(45deg);
-    background: #52CC28;
-    border: 5px #00A441 solid;
+    background: #52cc28;
+    border: 5px #00a441 solid;
     position: absolute;
     opacity: 0.8;
     display: flex;
@@ -68,13 +74,13 @@
     gap: 1rem;
 
     .badge-name {
-        color: #FFC658;
+        color: #ffc658;
     }
 
     .line-separate {
         width: 90%;
-        height: 1px; 
-        background-color: #4A2053; 
+        height: 1px;
+        background-color: #4a2053;
     }
 
     .badge-description {

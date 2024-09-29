@@ -58,7 +58,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     ? (event.target as HTMLInputElement).checked
                     : event.target.value;
             updateSettings({ [field]: value });
-    };
+        };
 
     const handleCloseModal = () => {
         setShowPopup(false);
@@ -85,7 +85,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         }
 
         const currentDate = new Date();
-        currentDate.setHours(0, 0, 0, 0); 
+        currentDate.setHours(0, 0, 0, 0);
 
         if (deadlineDate < currentDate) {
             setToastMessage("Deadline cannot be in the past.");
@@ -93,13 +93,16 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             return;
         }
 
-        if(settings.attackInterval === 0 || settings.attackInterval === undefined ){
+        if (
+            settings.attackInterval === 0 ||
+            settings.attackInterval === undefined
+        ) {
             setToastMessage("Attack Interval must be a valid option.");
             setToastType("warning");
             return;
         }
 
-        if(settings.studentLife === 0 || settings.studentLife === undefined ){
+        if (settings.studentLife === 0 || settings.studentLife === undefined) {
             setToastMessage("Student Life must be between 1 and 8..");
             setToastType("warning");
             return;
@@ -107,6 +110,16 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
 
         if (!settings.enemy || settings.enemy.length === 0) {
             setToastMessage("At least one enemy must be defined.");
+            setToastType("warning");
+            return;
+        }
+
+        const invalidEnemies = settings.enemy.filter(
+            (enemy) => !enemy.imagePath || enemy.imagePath.trim() === ""
+        );
+
+        if (invalidEnemies.length > 0) {
+            setToastMessage("Please Select an Enemy!");
             setToastType("warning");
             return;
         }
@@ -128,7 +141,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
             setToastType("error");
             return;
         }
-    
+
         createGame(settings);
         router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
         localStorage.removeItem("enemies");
@@ -163,9 +176,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     value={settings?.attackInterval}
                     onChange={handleChange("attackInterval")}
                 >
-                    <option value={0}>
-                        Attack Interval
-                    </option>
+                    <option value={0}>Attack Interval</option>
                     <option value={15}>15</option>
                     <option value={20}>20</option>
                     <option value={25}>25</option>
@@ -181,9 +192,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     value={settings?.studentLife}
                     onChange={handleChange("studentLife")}
                 >
-                    <option value={0}>
-                        Student Life
-                    </option>
+                    <option value={0}>Student Life</option>
                     <option value={1}>1</option>
                     <option value={2}>2</option>
                     <option value={3}>3</option>
