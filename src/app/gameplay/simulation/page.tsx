@@ -91,6 +91,8 @@ const SimulationGameplay = () => {
         setLives((prevLives) => Math.max(prevLives - amount, 0)) // Ensure lives don't go below 0
     }
 
+    const gameType = simulationDetails.simulationDetails?.simulationType
+
     const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true) // State for showing welcome modal
     const [gameStarted, setGameStarted] = useState<boolean>(false) // State for tracking game start
     const [isPronunciationLocked, setIsPronunciationLocked] = useState(
@@ -279,7 +281,7 @@ const SimulationGameplay = () => {
         currentWordID
     )
 
-    const [isLastEnem, setIsLastEnem] = useState(false)
+    const [isLastEnemy, setIsLastEnemy] = useState(false)
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value)
     }
@@ -407,7 +409,6 @@ const SimulationGameplay = () => {
         subtractScore(score * 0.05)
     }
 
-    const [myScore, setMyScore] = useState(0)
     const [totalItems, setTotalItems] = useState(0)
 
     const incrementTotalItem = () => {
@@ -426,12 +427,12 @@ const SimulationGameplay = () => {
 
         const isLastWord = currentWordIndex === currentEnemy.words.length - 1
         const isLastEnemy = currentEnemyIndex === enemies.length - 1
-        setIsLastEnem(isLastEnemy)
+        setIsLastEnemy(isLastEnemy)
 
         if (
             enemyInterval.time === 0 &&
             lives >= 2 &&
-            !(isLastEnemy && isLastEnemyWord)
+            !(isLastEnemy && isLastWord)
         ) {
             console.log("Enemy Attack!!!")
             handleEnemyAttack()
@@ -450,7 +451,7 @@ const SimulationGameplay = () => {
         if (
             enemyInterval.time === 0 &&
             lives === 1 &&
-            !(isLastEnemy && isLastEnemyWord)
+            !(isLastEnemy && isLastWord)
         ) {
             console.log("Time to switch word")
             handleEnemyAttack()
@@ -470,15 +471,17 @@ const SimulationGameplay = () => {
                 mistake: mistakes + 1,
             }
 
+            console.log(updatedStudentProgress)
+
             updateSimulationProgress(updatedStudentProgress)
             setMistakes(0)
             time.reset()
 
-            setTimeout(() => {
-                const updatedSpelledWords = { ...spelledWords }
-                updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true
-                setSpelledWords(updatedSpelledWords)
-            }, (characterDetails.attackFrame / 12) * 2000)
+            // setTimeout(() => {
+            //   const updatedSpelledWords = { ...spelledWords };
+            //   updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true;
+            //   setSpelledWords(updatedSpelledWords);
+            // }, (characterDetails.attackFrame / 12) * 2000);
 
             setTimeout(() => {
                 console.log("Start nako")
@@ -499,26 +502,38 @@ const SimulationGameplay = () => {
             isLastEnemy
         ) {
             // Last word of the last enemy
-
+            setIsLastEnemyWord(true)
+            setIsLastEnemy(true)
             setLives(0)
-            enemyInterval.reset(0)
 
-            setTimeout(() => {
-                setShowGameOverModal(true)
-            }, (characterDetails.attackFrame / 12) * 3000)
-
-            console.log("Last word of the last enemy.")
-            setDefeatedEnemies((prevDefeatedEnemies) => [
-                ...prevDefeatedEnemies,
-                currentEnemyIndex,
-            ])
-
-            console.log("No more enemies")
+            updateParticipantAssessment(userID, simulationID)
+                .then((score) => {
+                    console.log("Score:", score.data.score)
+                    setTimeout(() => {
+                        if (score.data.score < 60) {
+                            setShowGameOverModal(true)
+                        } else {
+                            setShowConfetti(true)
+                            setShowConquerFloorModal(true)
+                        }
+                    }, (characterDetails.attackFrame / 12) * 5000)
+                })
+                .catch((error) => {
+                    console.error(
+                        "Error updating participant assessment:",
+                        error
+                    )
+                })
+            //enemyInterval.reset(0);
         }
 
         if (isLastWord && enemyInterval.time === 0 && lives === 1) {
             // Last word of current enemy but not the last enemy
-            console.log("Last word for this enemy.")
+
+            console.log(currentEnemyIndex)
+            console.log(currentWordIndex)
+
+            setIsLastEnemyWord(true)
             setDefeatedEnemies((prevDefeatedEnemies) => [
                 ...prevDefeatedEnemies,
                 currentEnemyIndex,
@@ -529,6 +544,7 @@ const SimulationGameplay = () => {
                 setCurrentWordIndex(0) // Reset word index
                 setIsPronunciationLocked(true)
             }, (characterDetails.attackFrame / 12) * 2500)
+            setIsLastEnemyWord(false)
         }
     }
 
@@ -536,13 +552,12 @@ const SimulationGameplay = () => {
         if (lives === 0 && timeLeft !== 0) {
             console.log("hurot")
             setTimeout(() => {
-                console.log("Start nako")
+                console.log("Start nako", currentEnemyIndex)
                 setLives(studentLife)
                 enemyInterval.reset()
                 console.log(
                     `Proceeding to next word: Word ${currentWordIndex + 1}`
                 )
-                setCurrentWordIndex(currentWordIndex + 1) // Move to next word
                 setIsPronunciationLocked(true)
             }, (characterDetails.attackFrame / 12) * 1500)
         }
@@ -571,6 +586,11 @@ const SimulationGameplay = () => {
         const currentEnemy = enemies[currentEnemyIndex]
         enemyInterval.pause()
 
+        // Check if the current word is the last one for this enemy
+        const isLastWord = currentWordIndex === currentEnemy.words.length - 1
+        // Check if the current enemy is the last one
+        const isLastEnemy = currentEnemyIndex === enemies.length - 1
+
         const currentWordID = currentEnemy?.words[currentWordIndex]
         // const simuWord = useFetchSimulationWords(currentWordID);
         const currentWord = simuWord.word?.toLowerCase()
@@ -585,11 +605,15 @@ const SimulationGameplay = () => {
         )
         console.log(`Current word to match: ${currentWord}`)
 
+        const checkGameType =
+            gameType === "Spelling"
+                ? typedWord.toLowerCase() === currentWord
+                : rangeValue === word?.syllable
+
         // Check if the current word matches the expected word or syllable
-        if (
-            typedWord.toLowerCase() === currentWord ||
-            rangeValue === word?.syllable
-        ) {
+        if (checkGameType) {
+            console.log(typedWord)
+            console.log(currentWord)
             // Correct word spelling
             incrementTotalItem()
             console.log("Correct word entered.")
@@ -612,9 +636,9 @@ const SimulationGameplay = () => {
                 mistake: mistakes,
             }
 
+            console.log(updatedStudentProgress)
+
             updateSimulationProgress(updatedStudentProgress)
-            setMistakes(0)
-            time.reset()
 
             setTypedWord("")
             handleCharacterAttack()
@@ -630,28 +654,40 @@ const SimulationGameplay = () => {
                 setLives(lives)
                 enemyInterval.reset()
 
-                // Check if the current word is the last one for this enemy
-                const isLastWord =
-                    currentWordIndex === currentEnemy.words.length - 1
-                // Check if the current enemy is the last one
-                const isLastEnemy = currentEnemyIndex === enemies.length - 1
-
                 if (isLastWord && isLastEnemy) {
                     // Last word of the last enemy
+                    setIsLastEnemy(true)
+                    setIsLastEnemyWord(true)
+                    setLives(0)
+
                     console.log("Last word of the last enemy.")
                     setDefeatedEnemies((prevDefeatedEnemies) => [
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
                     ])
 
-                    setTimeout(() => {
-                        console.log("All enemies defeated.")
-                        setShowConfetti(true)
-                        setShowConquerFloorModal(true) // Show the conquering floor modal
-                        updateParticipantAssessment(studentID, simulationID)
-                    }, 500) // Add delay before showing confetti and modal
+                    updateParticipantAssessment(userID, simulationID)
+                        .then((score) => {
+                            console.log("Score:", score.data.score)
+                            setTimeout(() => {
+                                if (score.data.score < 60) {
+                                    setShowGameOverModal(true)
+                                } else {
+                                    setShowConfetti(true)
+                                    setShowConquerFloorModal(true)
+                                }
+                            }, (characterDetails.attackFrame / 12) * 5000)
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error updating participant assessment:",
+                                error
+                            )
+                        })
+                    enemyInterval.reset(0)
                 } else if (isLastWord) {
                     // Last word of current enemy but not the last enemy
+                    setIsLastEnemyWord(true)
                     console.log("Last word for this enemy.")
                     setDefeatedEnemies((prevDefeatedEnemies) => [
                         ...prevDefeatedEnemies,
@@ -661,6 +697,7 @@ const SimulationGameplay = () => {
                     setCurrentEnemyIndex(currentEnemyIndex + 1)
                     setCurrentWordIndex(0)
                     setIsPronunciationLocked(true)
+                    setIsLastEnemyWord(false)
                 } else {
                     console.log(
                         `Proceeding to next word: Word ${currentWordIndex + 1}`
@@ -670,15 +707,76 @@ const SimulationGameplay = () => {
                     setIsPronunciationLocked(true)
                 }
             }, (characterDetails.attackFrame / 12) * 1000) // Adjust timing as needed
+            setMistakes(0)
+            time.reset()
         } else {
-            // Incorrect input
-            console.log("Incorrect word entered.")
             incrementMistake()
+            console.log("Incorrect word entered.")
+            const updatedStudentProgress = {
+                studentWordProgressID:
+                    studentWordProgress.wordProgress.studentWordProgressID,
+                simulationWordsID: currentWordID,
+                studentID: userID,
+                correct: false,
+                score: 0,
+                duration: time.getFormattedTimeInSeconds(),
+                accuracy: 0,
+                mistake: mistakes + 1,
+            }
+
+            console.log(updatedStudentProgress)
+
+            updateSimulationProgress(updatedStudentProgress)
+
+            setTimeout(() => {
+                console.log("Start nako")
+                setLives(studentLife)
+                enemyInterval.reset()
+                console.log(
+                    `Proceeding to next word: Word ${currentWordIndex + 1}`
+                )
+                setCurrentWordIndex(currentWordIndex + 1) // Move to next word
+                setIsPronunciationLocked(true)
+            }, (characterDetails.attackFrame / 12) * 2500)
+
             handleMissedAttack()
             setTimeLeft(interval)
             setTimeout(() => {
                 handleEnemyAttack()
+
+                if (isLastWord && isLastEnemy) {
+                    setIsLastEnemyWord(true)
+                    setIsLastEnemy(true)
+                    updateParticipantAssessment(userID, simulationID)
+                        .then((score) => {
+                            console.log("Score:", score.data.score)
+                            setTimeout(() => {
+                                if (score.data.score < 60) {
+                                    setShowGameOverModal(true)
+                                } else {
+                                    setShowConfetti(true)
+                                    setShowConquerFloorModal(true)
+                                }
+                            }, (characterDetails.attackFrame / 12) * 5000)
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error updating participant assessment:",
+                                error
+                            )
+                        })
+                } else if (isLastWord) {
+                    setIsLastEnemyWord(true)
+                    setTimeout(() => {
+                        setCurrentEnemyIndex(currentEnemyIndex + 1) // Move to next enemy
+                        setCurrentWordIndex(0) // Reset word index
+                        setIsPronunciationLocked(true)
+                    }, (characterDetails.attackFrame / 12) * 2500)
+                    setIsLastEnemyWord(false)
+                }
             }, (characterDetails.attackFrame / 12) * 2000)
+            setMistakes(0)
+            time.reset()
         }
     }
 
