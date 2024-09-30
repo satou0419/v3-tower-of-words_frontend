@@ -5,13 +5,13 @@ import { InputBox } from "@/app/component/Input/Input"
 import { useEnemyStore } from "@/store/enemyStore"
 import Loading from "@/app/loading"
 import useImageParse from "@/hook/useImageParse"
-import "./adventure.scss" // Make sure your SCSS file is imported correctly
+import "./adventure.scss"
 import "./animation.scss"
 import Modal from "@/app/component/Modal/Modal"
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes"
 import "./modals.scss"
 import useMerriam from "@/hook/useMerriam"
-import useAddWord from "@/hook/useAddWord" // Import the custom hook
+import useAddWord from "@/hook/useAddWord"
 import useProgressEquippedStore from "@/store/progressEquippedStore"
 import getUserDetails from "@/lib/user-endpoint/getUserDetails"
 import useUpdateProgress from "@/hook/useUpdateProgress"
@@ -22,7 +22,7 @@ import useItem from "@/hook/useItem"
 import { useGameplayStore } from "@/store/gameplayStore"
 import ConfettiWrapper from "@/app/component/Confetti/Confetti"
 import useIncrementFloor from "@/hook/useIncrementFloor"
-import { FaVolumeUp } from "react-icons/fa"
+import { FaSignOutAlt, FaVolumeUp } from "react-icons/fa"
 
 interface Item {
     itemID: number
@@ -154,6 +154,10 @@ const AdventureGameplay = () => {
                 setItemToUse(null)
             }
         }
+    }
+
+    const showExitModal = () => {
+        setShowConfirmationModal(true)
     }
 
     const cancelUseItem = () => {
@@ -309,7 +313,7 @@ const AdventureGameplay = () => {
         currentWord = currentEnemy?.words[currentWordIndex] // Assign in the else block
     }
 
-    const word = useMerriam(currentWord) // Now this is accessible here
+    const word = useMerriam(currentWord)
 
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setTypedWord(event.target.value)
@@ -323,7 +327,6 @@ const AdventureGameplay = () => {
 
             setTimeout(() => {
                 setIsEnemyAttacking(true)
-                // playEnemyAttackSound(); // Play the attack sound when the enemy attacks
             }, 800)
 
             setTimeout(() => {
@@ -454,27 +457,32 @@ const AdventureGameplay = () => {
         const data = currentEnemy?.words[currentWordIndex].silentIndex
         setSilentIndex(data)
     })
+
+    //Logic in submitting the answer
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsButtonDisabled(true)
-
         const currentEnemy = enemyData[currentEnemyIndex]
 
+        //#region Assigning the value of currentWord base on gameplay
         if (gameType === "Silent") {
             const currentWord =
                 currentEnemy.words[currentWordIndex].word.toLowerCase()
             setSilentIndex(currentEnemy.words[currentWordIndex].silentIndex)
         }
+
         if (gameType === "Spelling" || gameType === "Syllables") {
             const currentWord = currentEnemy?.words[currentWordIndex].word
         }
-        // Handle the game logic for correct answers
-        console.log("Silent Index", silentIndex)
-        console.log("Selected Index", selectedIndex)
+
+        //#endregion
+
+        //#region Logic for correct answer
         if (
-            typedWord.toLowerCase() === currentWord ||
-            rangeValue === word?.syllable ||
-            silentIndex === selectedIndex
+            (gameType === "Spelling" &&
+                typedWord.toLowerCase() === currentWord) ||
+            (gameType === "Syllables" && rangeValue === word?.syllable) ||
+            (gameType === "Silent" && silentIndex === selectedIndex)
         ) {
             // Correct word spelling
 
@@ -659,6 +667,20 @@ const AdventureGameplay = () => {
 
     return (
         <main className="adventure-wrapper">
+            <div className="game-exit">
+                <FaSignOutAlt onClick={showExitModal} />
+
+                <Modal
+                    className="confirmation-modal"
+                    isOpen={showConfirmationModal}
+                    title="Exit Game"
+                    details={`Are you sure you want to exit?`}
+                    buttons={[
+                        <button key="confirm">Yes, Use Item</button>,
+                        <button key="cancel">Cancel</button>,
+                    ]}
+                />
+            </div>
             {/* Welcome Modal */}
             <Modal
                 className="welcome-modal"

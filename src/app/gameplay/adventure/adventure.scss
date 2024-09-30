@@ -1,3 +1,20 @@
+.game-exit {
+    position: absolute;
+    z-index: 1;
+    right: 10px;
+    top: 2px;
+    :first-child {
+        fill: #333;
+        font-size: 1.8rem;
+        cursor: pointer;
+        transition: fill 0.1s;
+
+        &:hover {
+            fill: #fff;
+        }
+    }
+}
+
 .character-holder {
     height: 100%;
     display: flex;
