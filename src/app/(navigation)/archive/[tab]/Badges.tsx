@@ -16,13 +16,18 @@ interface Achievement {
     imagePath: string;
     totalUnlocked: number;
     criteria: number;
-    achievementType: string; 
+    achievementType: string;
 }
 
 const Badges = () => {
-    const { userAchievements, fetchUserAchievements, fetchAllAchievements } = useAchievementStore();
+    const {
+        achievements,
+        userAchievements,
+        fetchUserAchievements,
+        fetchAllAchievements,
+    } = useAchievementStore();
     const { userID } = useAuthStore.getState();
-  
+
     const [selectedBadge, setSelectedBadge] = useState<Achievement>({
         achievementID: 0,
         name: "",
@@ -30,7 +35,7 @@ const Badges = () => {
         imagePath: "",
         totalUnlocked: 0,
         criteria: 0,
-        achievementType: "", 
+        achievementType: "",
     });
     const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
     const [isEquipped, setIsEquipped] = useState(false); // For equipment confirmation
@@ -47,7 +52,7 @@ const Badges = () => {
         fetchUserAchievements(userID);
     }, [fetchAllAchievements, fetchUserAchievements]);
 
-    console.log(userAchievements)
+    console.log(userAchievements);
 
     const handleBadgeClick = (achievement: Achievement) => {
         if (selectedBadge.achievementID === achievement.achievementID) {
@@ -59,7 +64,7 @@ const Badges = () => {
                 totalUnlocked: 0,
                 criteria: 0,
                 achievementType: "",
-            }); 
+            });
         } else {
             setSelectedBadge(achievement);
         }
@@ -90,55 +95,59 @@ const Badges = () => {
 
     return (
         <section className="badges-container">
-            {userAchievements
-                .filter((userAchievement) => userAchievement.unlocked)
-                .map((userAchievement) => {
-                    const badge = userAchievement.achievementID
+            {achievements.map((achievement) => {
+                // Check if the user owns this achievement
+                const isOwned = userAchievements.some(
+                    (userAchievement) =>
+                        userAchievement.achievementID === achievement &&
+                        userAchievement.unlocked
+                );
 
-                    return (
-                        <CardAchievement
-                            key={userAchievement.archiveAchievementID}
-                            equip={equip == badge.imagePath}
-                            Badge={badge}
-                            onClick={() => handleBadgeClick(badge)}
-                        />
-                    );
-                })}
+                return (
+                    <CardAchievement
+                        key={achievement.achievementID}
+                        equip={equip === achievement.imagePath}
+                        badge={achievement}
+                        owned={isOwned}
+                        onClick={() => handleBadgeClick(achievement)}
+                    />
+                );
+            })}
 
-        {/* Modal for confirming badge equip */}
-        {selectedBadge && (
+            {/* Modal for confirming badge equip */}
+            {selectedBadge && (
+                <Modal
+                    className="confirmation-modal"
+                    title="Confirm Equip"
+                    details={`Do you want to equip ${selectedBadge.name}?`}
+                    isOpen={isModalOpen}
+                    onClose={handleCloseModal}
+                    buttons={[
+                        <button key="cancel" onClick={handleCloseModal}>
+                            Cancel
+                        </button>,
+                        <button key="confirm" onClick={handleConfirmEquip}>
+                            Confirm
+                        </button>,
+                    ]}
+                />
+            )}
+
+            {/* Success modal for badge equipped */}
             <Modal
-            className="confirmation-modal"
-            title="Confirm Equip"
-            details={`Do you want to equip ${selectedBadge.name}?`}
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-            buttons={[
-                <button key="cancel" onClick={handleCloseModal}>
-                Cancel
-                </button>,
-                <button key="confirm" onClick={handleConfirmEquip}>
-                Confirm
-                </button>,
-            ]}
+                className="success-modal"
+                title="Badge Equipped"
+                details={`You have successfully equipped ${selectedBadge?.name}.`}
+                isOpen={isEquipped}
+                onClose={handleCloseEquippedModal}
+                buttons={[
+                    <button key="close" onClick={handleCloseEquippedModal}>
+                        Close
+                    </button>,
+                ]}
             />
-        )}
-
-        {/* Success modal for badge equipped */}
-        <Modal
-            className="success-modal"
-            title="Badge Equipped"
-            details={`You have successfully equipped ${selectedBadge?.name}.`}
-            isOpen={isEquipped}
-            onClose={handleCloseEquippedModal}
-            buttons={[
-            <button key="close" onClick={handleCloseEquippedModal}>
-                Close
-            </button>,
-            ]}
-        />
         </section>
     );
-    };
+};
 
 export default Badges;
