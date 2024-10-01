@@ -15,7 +15,7 @@ const useEquipBadge = () => {
             const response = await fetch(
                 `${BASE_URL}/archive_achievement/equip_badge?userID=${userID}&achievementID=${achievementID}`,
                 {
-                    method: "GET",
+                    method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                     },
@@ -27,7 +27,7 @@ const useEquipBadge = () => {
             }
 
             const result = await response.json();
-            console.log(result)
+            console.log(result);
             return result;
         } catch (error) {
             throw error;

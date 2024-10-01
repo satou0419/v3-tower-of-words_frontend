@@ -24,6 +24,9 @@ const CardAchievement: React.FC<CardAchievementProps> = ({
     owned,
     onClick,
 }) => {
+    if (owned === true) {
+        console.log(badge);
+    }
     return (
         <div
             className={`cardachievement-card ${owned ? "" : "gray-scale"}`}
@@ -33,7 +36,9 @@ const CardAchievement: React.FC<CardAchievementProps> = ({
                 {equip && <div className="equip-banner">Equipped</div>}
                 <div className="banner-container">
                     <img
-                        src={badge.imagePath}
+                        src={`/assets/images/badges/${badge.imagePath}_${
+                            owned ? "unlocked" : "locked"
+                        }.png`}
                         alt={badge.name}
                         className="badge-image"
                     />

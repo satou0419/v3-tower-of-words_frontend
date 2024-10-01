@@ -3,14 +3,15 @@ import "./cardarchive.scss";
 import CardWord from "../CardWord/CardWord";
 import CardInfo from "../CardInfo/CardInfo";
 import CardDetails from "../CardDetails/CardDetails";
-import Link from "next/link";
 
 interface CardArchiveProps {
+    badgeEquipped: string;
     badgesCount: number;
     wordsCount: number;
 }
 
 const CardArchive: React.FC<CardArchiveProps> = ({
+    badgeEquipped,
     badgesCount,
     wordsCount,
 }) => {
@@ -20,7 +21,10 @@ const CardArchive: React.FC<CardArchiveProps> = ({
                 <section className="cardarchive-card">
                     <section className="cardarchive-details_container">
                         <CardWord className="badge-display">
-                            <img></img>
+                            <img
+                                src={`/assets/images/badges/${badgeEquipped}_unlocked.png`}
+                                className="badge"
+                            ></img>
                         </CardWord>
                         <CardDetails
                             className="additional-class"

@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import Loading from "@/app/loading"; // Import the Loading component
 import CardAchievement from "@/app/component/Card/CardAchievement/CardAchievement";
 import useAchievementStore from "@/store/useAchievementStore";
 import Modal from "@/app/component/Modal/Modal";
@@ -37,9 +36,8 @@ const Badges = () => {
         criteria: 0,
         achievementType: "",
     });
-    const [isModalOpen, setIsModalOpen] = useState(false); // Modal state
-    const [isEquipped, setIsEquipped] = useState(false); // For equipment confirmation
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isEquipped, setIsEquipped] = useState(false);
     const { setEquippedBadge } = useProgressEquippedStore();
     const { equipBadge } = useEquipBadge();
 
@@ -68,12 +66,11 @@ const Badges = () => {
         } else {
             setSelectedBadge(achievement);
         }
-        setSelectedBadge(achievement); // Set the selected badge
-        setIsModalOpen(true); // Open the modal for confirmation
+        setSelectedBadge(achievement);
+        setIsModalOpen(true);
     };
 
     const handleConfirmEquip = async () => {
-        // Logic to equip the badge or perform an action
         setIsEquipped(true);
         setIsModalOpen(false);
         try {
@@ -93,15 +90,19 @@ const Badges = () => {
         setIsEquipped(false);
     };
 
+    console.log("Achievements:", achievements);
+    console.log("User Achievements:", userAchievements);
+
     return (
         <section className="badges-container">
             {achievements.map((achievement) => {
-                // Check if the user owns this achievement
                 const isOwned = userAchievements.some(
                     (userAchievement) =>
-                        userAchievement.achievementID === achievement &&
-                        userAchievement.unlocked
+                        userAchievement.achievementID.achievementID ===
+                            achievement.achievementID &&
+                        userAchievement.unlocked === true
                 );
+                console.log(isOwned, achievement);
 
                 return (
                     <CardAchievement
@@ -113,8 +114,6 @@ const Badges = () => {
                     />
                 );
             })}
-
-            {/* Modal for confirming badge equip */}
             {selectedBadge && (
                 <Modal
                     className="confirmation-modal"
@@ -132,8 +131,6 @@ const Badges = () => {
                     ]}
                 />
             )}
-
-            {/* Success modal for badge equipped */}
             <Modal
                 className="success-modal"
                 title="Badge Equipped"
