@@ -45,6 +45,10 @@
         display: flex;
         justify-content: center;
         align-items: center;
+
+        .badge-image {
+            height: 100%;
+        }
     }
 }
 
