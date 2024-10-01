@@ -23,6 +23,7 @@ import { useGameplayStore } from "@/store/gameplayStore"
 import ConfettiWrapper from "@/app/component/Confetti/Confetti"
 import useIncrementFloor from "@/hook/useIncrementFloor"
 import { FaSignOutAlt, FaVolumeUp } from "react-icons/fa"
+import useAchievementChecker from "@/hook/useAchievementChecker"
 
 interface Item {
     itemID: number
@@ -303,6 +304,8 @@ const AdventureGameplay = () => {
         enemyDetails.attackFrame
     )
 
+    const { achievementChecker } = useAchievementChecker()
+
     const currentEnemy = enemyData[currentEnemyIndex]
 
     let currentWord: string | undefined // Declare the variable outside
@@ -442,6 +445,8 @@ const AdventureGameplay = () => {
     const { redeemReward } = useRedeemReward()
     const { incrementFloor } = useFloorIncrement()
     const updateFloor = useIncrementFloor()
+    const [hasStartAchievementCheck, setHasStartAchievementChecker] =
+        useState(false)
 
     const { lives, subtractLives, addLives } = useGameplayStore()
     // Other state and hooks...
@@ -449,10 +454,10 @@ const AdventureGameplay = () => {
     const [silentIndex, setSilentIndex] = useState("")
 
     useEffect(() => {
-        console.log("Current Word", currentWord)
-        console.log("Current WordIndex", currentWordIndex)
-        console.log("Current Enemy", currentEnemy)
-        console.log("Current EnemyIndex", currentEnemyIndex)
+        // console.log("Current Word", currentWord)
+        // console.log("Current WordIndex", currentWordIndex)
+        // console.log("Current Enemy", currentEnemy)
+        // console.log("Current EnemyIndex", currentEnemyIndex)
 
         const data = currentEnemy?.words[currentWordIndex].silentIndex
         setSilentIndex(data)
@@ -496,6 +501,7 @@ const AdventureGameplay = () => {
             if (isClear === "false") {
                 await addWord(currentWord || "")
                 updateFloor
+                setHasStartAchievementChecker(true)
             }
 
             setTimeout(() => {
@@ -571,6 +577,14 @@ const AdventureGameplay = () => {
     }
 
     //Play only the audio in gameType 1
+
+    useEffect(() => {
+        if (hasStartAchievementCheck === true) {
+            console.log("Start Checking")
+            achievementChecker("words")
+            setHasStartAchievementChecker(false)
+        }
+    }, [hasStartAchievementCheck])
 
     useEffect(() => {
         if (gameStarted && word && word.playAudio && gameType === "Spelling") {
