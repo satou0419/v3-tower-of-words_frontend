@@ -19,7 +19,7 @@ const AchievementToast: React.FC<AchievementToastProps> = ({
         const timer = setTimeout(() => {
             setIsVisible(false)
             onClose()
-        }, 1000000)
+        }, 3000)
 
         return () => {
             clearTimeout(timer)

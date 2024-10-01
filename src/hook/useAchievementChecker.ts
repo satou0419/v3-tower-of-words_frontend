@@ -32,7 +32,7 @@ const useAchievementChecker = () => {
                 const achievement = data.data[0] // Get the first achievement
                 setAchievementToast({
                     message: `Achievement Unlocked: ${achievement.name}`,
-                    imageUrl: `assets/images/badges/${achievement.imagePath}_unlocked.png`,
+                    imageUrl: `/assets/images/badges/${achievement.imagePath}_unlocked.png`,
                 })
             } else {
                 setAchievementToast(null) // Clear toast if no achievement
