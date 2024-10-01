@@ -24,6 +24,7 @@ import ConfettiWrapper from "@/app/component/Confetti/Confetti"
 import useIncrementFloor from "@/hook/useIncrementFloor"
 import { FaSignOutAlt, FaVolumeUp } from "react-icons/fa"
 import useAchievementChecker from "@/hook/useAchievementChecker"
+import AchievementToast from "@/app/component/AchievementToast/AchievementToast"
 
 interface Item {
     itemID: number
@@ -304,7 +305,8 @@ const AdventureGameplay = () => {
         enemyDetails.attackFrame
     )
 
-    const { achievementChecker } = useAchievementChecker()
+    const { achievementChecker, achievementToast, closeToast } =
+        useAchievementChecker()
 
     const currentEnemy = enemyData[currentEnemyIndex]
 
@@ -368,6 +370,7 @@ const AdventureGameplay = () => {
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
                     setCharacterHit("")
+                    setIsButtonDisabled(false)
                 }, 500) // 500ms is the duration of the hit
             }, (enemyDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
         }
@@ -903,6 +906,13 @@ const AdventureGameplay = () => {
 
                     <section className="control-input">
                         <form onSubmit={handleSubmit}>
+                            {achievementToast && (
+                                <AchievementToast
+                                    message={achievementToast.message}
+                                    imageUrl={achievementToast.imageUrl}
+                                    onClose={closeToast}
+                                />
+                            )}
                             {gameType === "Syllables" ? (
                                 <>
                                     <p className="syllable-word">

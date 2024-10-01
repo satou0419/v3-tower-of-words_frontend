@@ -1,0 +1,51 @@
+.achievement-toast {
+    position: fixed;
+    top: 5px;
+    right: 20px;
+    background-color: #4caf50; // Change color based on type if needed
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    width: 250px;
+    z-index: 1000;
+    transition: opacity 0.5s ease;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+
+    &.show {
+        opacity: 1;
+        border: 2px solid black;
+    }
+
+    &.hide {
+        opacity: 0;
+    }
+
+    .achievement-image {
+        width: 40px; // Adjust size as necessary
+        height: 40px; // Adjust size as necessary
+        margin-right: 10px; // Add margin to separate image from text
+    }
+}
+
+.image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    height: 100%;
+
+    flex: 1;
+
+    img {
+        width: 50px; // Adjust size as necessary
+        height: 50px; // Adjust size as necessary
+    }
+}
+
+.content {
+    display: flex;
+    flex: 3;
+}
