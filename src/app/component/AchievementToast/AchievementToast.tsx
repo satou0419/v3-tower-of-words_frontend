@@ -39,18 +39,6 @@ const AchievementToast: React.FC<AchievementToastProps> = ({
             <div className="content">
                 <span className="achievement-message">{message}</span>
             </div>
-
-            {/* <img
-                src={imageUrl}
-                alt="Achievement"
-                className="achievement-image"
-            />
-            <div className="achievement-content">
-                <span className="achievement-message">{message}</span>
-                <button className="close-btn" onClick={handleClose}>
-                    &times;
-                </button>
-            </div> */}
         </div>
     )
 }

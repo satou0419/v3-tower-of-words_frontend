@@ -29,6 +29,7 @@ const useRandomWord = () => {
 
             // Fetch all word lists concurrently
             const responses = await Promise.all(wordPromises)
+
             const data = await Promise.all(
                 responses.map((response) => response.json())
             )

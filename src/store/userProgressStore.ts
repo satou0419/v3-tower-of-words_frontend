@@ -8,6 +8,10 @@ interface UserProgress {
     spellingFloorID: number
     syllableFloorID: number
     silentFloorID: number
+
+    silentFloorCount: number
+    spellingFloorCount: number
+    syllableFloorCount: number
 }
 
 interface UserProgressState {
@@ -19,6 +23,10 @@ interface UserProgressState {
     setSpellingFloorID: (spellingFloorID: number) => void
     setSyllableFloorID: (syllableFloorID: number) => void
     setSilentFloorID: (silentFloorID: number) => void
+
+    setSpellingFloorCount: (spellingFloorCount: number) => void
+    setSyllableFloorCount: (syllableFloorCount: number) => void
+    setSilentFloorCount: (silentFloorCount: number) => void
 }
 
 const useUserProgressStore = create<UserProgressState>((set) => ({
@@ -30,6 +38,9 @@ const useUserProgressStore = create<UserProgressState>((set) => ({
         spellingFloorID: 0,
         syllableFloorID: 0,
         silentFloorID: 0,
+        silentFloorCount: 0,
+        syllableFloorCount: 0,
+        spellingFloorCount: 0,
     },
     setUserProgressID: (userProgressID) =>
         set((state) => ({
@@ -58,6 +69,21 @@ const useUserProgressStore = create<UserProgressState>((set) => ({
     setSilentFloorID: (silentFloorID) =>
         set((state) => ({
             userProgress: { ...state.userProgress, silentFloorID },
+        })),
+
+    setSilentFloorCount: (silentFloorCount) =>
+        set((state) => ({
+            userProgress: { ...state.userProgress, silentFloorCount },
+        })),
+
+    setSpellingFloorCount: (spellingFloorCount) =>
+        set((state) => ({
+            userProgress: { ...state.userProgress, spellingFloorCount },
+        })),
+
+    setSyllableFloorCount: (syllableFloorCount) =>
+        set((state) => ({
+            userProgress: { ...state.userProgress, syllableFloorCount },
         })),
 }))
 
