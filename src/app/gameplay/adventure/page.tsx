@@ -514,14 +514,7 @@ const AdventureGameplay = () => {
                 await addWord(currentWord || "")
                 updateFloor
                 achievementChecker("floors")
-                if (gameType === "Syllables")
-                    // achievementChecker("syllablefloors")
-
-                    // achievementChecker("spellingfloors")
-
-                    // achievementChecker("silentfloors")
-
-                    setHasStartAchievementChecker(true)
+                setHasStartAchievementChecker(true)
             }
 
             setTimeout(() => {
