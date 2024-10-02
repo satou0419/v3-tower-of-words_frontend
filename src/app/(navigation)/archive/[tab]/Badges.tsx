@@ -102,6 +102,12 @@ const Badges = () => {
                             achievement.achievementID &&
                         userAchievement.unlocked === true
                 );
+
+                const unlockedDate = userAchievements.find(
+                    (userAchievement) =>
+                        userAchievement.achievementID.achievementID ===
+                        achievement.achievementID
+                )?.unlockedDate;
                 console.log(isOwned, achievement);
 
                 return (
@@ -110,6 +116,7 @@ const Badges = () => {
                         equip={equip === achievement.imagePath}
                         badge={achievement}
                         owned={isOwned}
+                        date={unlockedDate}
                         onClick={() => handleBadgeClick(achievement)}
                     />
                 );

@@ -18,7 +18,7 @@ export default function RoomInformation() {
     const [newRoomName, setNewRoomName] = useState<string>("");
     const { usernameToID } = useUsernameToID();
     const searchParams = useSearchParams();
-    const { currentRoom, setCurrentRoom} = useRoomStore();
+    const { currentRoom, setCurrentRoom } = useRoomStore();
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [toastType, setToastType] = useState<"success" | "error" | "warning">(
         "success"
@@ -27,16 +27,18 @@ export default function RoomInformation() {
     const roomIDParam = searchParams.get("roomID");
     const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
 
-
     useEffect(() => {
         const fetchSimulations = async () => {
-        try {
-            const room = await viewRoom(roomID);
-            setCurrentRoom(room);
-        } catch (error) {
-            console.error("Failed to fetch simulations for the room:", error);
-        }
-    };
+            try {
+                const room = await viewRoom(roomID);
+                setCurrentRoom(room);
+            } catch (error) {
+                console.error(
+                    "Failed to fetch simulations for the room:",
+                    error
+                );
+            }
+        };
         fetchSimulations();
     }, [setCurrentRoom]);
 
@@ -77,17 +79,19 @@ export default function RoomInformation() {
             try {
                 const userID = await usernameToID(username);
 
-                const userExistsInRoom = currentRoom.members.some(member => member === userID);
+                const userExistsInRoom = currentRoom.members.some(
+                    (member) => member === userID
+                );
 
-            if (userExistsInRoom) {
-                console.log("User already exists in the room");
-                setToastMessage("User already exists in the room.");
-                setToastType("error");
-            } else {
-                await insertStudent(userID, currentRoom);
-                setToastMessage("User added successfully.");
-                setToastType("success");
-            }
+                if (userExistsInRoom) {
+                    console.log("User already exists in the room");
+                    setToastMessage("User already exists in the room.");
+                    setToastType("error");
+                } else {
+                    await insertStudent(userID, currentRoom);
+                    setToastMessage("User added successfully.");
+                    setToastType("success");
+                }
             } catch (error) {
                 console.error("Error fetching user ID:", error);
             }

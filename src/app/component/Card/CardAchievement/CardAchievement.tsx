@@ -15,6 +15,7 @@ interface CardAchievementProps {
     badge: Badges;
     equip: boolean;
     owned: boolean;
+    date: string | null | undefined;
     onClick: () => void;
 }
 
@@ -22,6 +23,7 @@ const CardAchievement: React.FC<CardAchievementProps> = ({
     badge,
     equip,
     owned,
+    date,
     onClick,
 }) => {
     if (owned === true) {
@@ -50,6 +52,7 @@ const CardAchievement: React.FC<CardAchievementProps> = ({
                     <div className="badge-description">
                         {badge?.description}
                     </div>
+                    <div className="badge-date">{date}</div>
                 </section>
             </section>
         </div>

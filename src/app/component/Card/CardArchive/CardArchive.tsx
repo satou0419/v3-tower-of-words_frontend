@@ -5,7 +5,7 @@ import CardInfo from "../CardInfo/CardInfo";
 import CardDetails from "../CardDetails/CardDetails";
 
 interface CardArchiveProps {
-    badgeEquipped: string;
+    badgeEquipped: string | null;
     badgesCount: number;
     wordsCount: number;
 }
@@ -21,10 +21,12 @@ const CardArchive: React.FC<CardArchiveProps> = ({
                 <section className="cardarchive-card">
                     <section className="cardarchive-details_container">
                         <CardWord className="badge-display">
-                            <img
-                                src={`/assets/images/badges/${badgeEquipped}_unlocked.png`}
-                                className="badge"
-                            ></img>
+                            {badgeEquipped && (
+                                <img
+                                    src={`/assets/images/badges/${badgeEquipped}_unlocked.png`}
+                                    className="badge"
+                                ></img>
+                            )}
                         </CardWord>
                         <CardDetails
                             className="additional-class"

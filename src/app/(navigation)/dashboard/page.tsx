@@ -75,11 +75,11 @@ export default function Dashboard() {
                 />
 
                 <CardMode
-                    bannerSrc="/assets/images/banner/banner-adventure_large.webp"
-                    progressHeader="Words Available"
-                    progressValue={userDashboard.floorCount}
+                    bannerSrc="/assets/images/banner/banner-playground_large.png"
+                    progressHeader="Words Collected"
+                    progressValue={userDashboard.wordsCollected}
                     modeTitle="Playground"
-                    modeDescription="This is a custom description for the adventure."
+                    modeDescription="This is a custom description for the playground."
                     link="/gameplay/playground"
                     className="dashboard-card"
                 />

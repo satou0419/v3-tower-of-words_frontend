@@ -162,8 +162,12 @@ const AdventureGameplay = () => {
         }
     }
 
-    const showExitModal = () => {
-        setShowConfirmationModal(true)
+    const handleExitModal = () => {
+        setShowExitModal(true)
+    }
+
+    const handleCancelExitModal = () => {
+        setShowExitModal(false)
     }
 
     const cancelUseItem = () => {
@@ -192,6 +196,7 @@ const AdventureGameplay = () => {
     //#endRegion
 
     const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false)
+    const [showExitModal, setShowExitModal] = useState<boolean>(false)
 
     // Handler for restarting the game
     const handleGameOverRestart = () => {
@@ -280,8 +285,8 @@ const AdventureGameplay = () => {
     useEffect(() => {
         getUserDetails()
     }, [])
-    // const characterDetails = useImageParse(userEquipped.equippedCharacter)
-    const characterDetails = useImageParse("&melee_gloves-a24-i24")
+    const characterDetails = useImageParse(userEquipped.equippedCharacter)
+    //const characterDetails = useImageParse("&melee_gloves-a24-i24")
 
     const enemyDetails = useImageParse(
         enemies[currentEnemyIndex]?.imagePath || ""
@@ -700,7 +705,7 @@ const AdventureGameplay = () => {
     return (
         <main className="adventure-wrapper">
             <div className="game-exit">
-                <FaSignOutAlt onClick={showExitModal} />
+                <FaSignOutAlt onClick={handleExitModal} />
 
                 <Modal
                     className="confirmation-modal"
@@ -1060,6 +1065,25 @@ const AdventureGameplay = () => {
                         }
                     >
                         Exit to Main Menu
+                    </button>,
+                ]}
+            />
+
+            <Modal
+                className="logout-modal"
+                isOpen={showExitModal}
+                title="Confirm Exit"
+                onClose={handleGameOverRestart}
+                details="Are you sure you want to leave?"
+                buttons={[
+                    <button
+                        key="exit"
+                        onClick={() => (window.location.href = "/select-tower")}
+                    >
+                        Exit
+                    </button>,
+                    <button key="cancel" onClick={handleCancelExitModal}>
+                        Cancel
                     </button>,
                 ]}
             />
