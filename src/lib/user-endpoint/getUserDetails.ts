@@ -14,6 +14,9 @@ const getUserDetails = async () => {
         setSyllableSectionProgress,
         setSilentSectionProgress,
         setSpellingSectionProgress,
+        setSilentFloorCount,
+        setSpellingFloorCount,
+        setSyllableFloorCount,
     } = useUserProgressStore.getState()
     const {
         setCreditAmount,
@@ -46,6 +49,11 @@ const getUserDetails = async () => {
         setSpellingFloorID(userProgress.spellingFloorID)
         setSyllableFloorID(userProgress.syllableFloorID)
         setSilentFloorID(userProgress.silentFloorID)
+
+        //Update Floor Count
+        setSilentFloorCount(data.data.silentFloorCount)
+        setSyllableFloorCount(data.data.syllableFloorCount)
+        setSpellingFloorCount(data.data.spellingFloorCount)
 
         // Update and log Progress Dashboard
         setCreditAmount(data.data.creditAmount)

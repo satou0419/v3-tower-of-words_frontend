@@ -25,6 +25,10 @@ import useIncrementFloor from "@/hook/useIncrementFloor"
 import { FaSignOutAlt, FaVolumeUp } from "react-icons/fa"
 import useAchievementChecker from "@/hook/useAchievementChecker"
 import AchievementToast from "@/app/component/AchievementToast/AchievementToast"
+import useIncrementSyllableFloor from "@/hook/useIncrementSyllableFloor"
+import useFloorSyllableIncrement from "@/hook/useIncrementSyllableFloor"
+import useFloorSpellingIncrement from "@/hook/useFloorSpellingIncrement"
+import useFloorSilentIncrement from "@/hook/useFloorSilentIncrement"
 
 interface Item {
     itemID: number
@@ -447,7 +451,12 @@ const AdventureGameplay = () => {
     } = useUpdateProgress()
     const { redeemReward } = useRedeemReward()
     const { incrementFloor } = useFloorIncrement()
+    const { incrementSyllableFloor } = useFloorSyllableIncrement()
+    const { incrementSpellingFloor } = useFloorSpellingIncrement()
+    const { incrementSilentFloor } = useFloorSilentIncrement()
+
     const updateFloor = useIncrementFloor()
+
     const [hasStartAchievementCheck, setHasStartAchievementChecker] =
         useState(false)
 
@@ -504,7 +513,15 @@ const AdventureGameplay = () => {
             if (isClear === "false") {
                 await addWord(currentWord || "")
                 updateFloor
-                setHasStartAchievementChecker(true)
+                achievementChecker("floors")
+                if (gameType === "Syllables")
+                    // achievementChecker("syllablefloors")
+
+                    // achievementChecker("spellingfloors")
+
+                    // achievementChecker("silentfloors")
+
+                    setHasStartAchievementChecker(true)
             }
 
             setTimeout(() => {
@@ -531,7 +548,9 @@ const AdventureGameplay = () => {
                                         nextSection
                                     )
                                     redeemReward(floorId)
-                                    incrementFloor()
+
+                                    incrementSyllableFloor()
+                                    achievementChecker("syllablefloors")
                                 }
 
                                 if (gameType === "Silent") {
@@ -541,6 +560,7 @@ const AdventureGameplay = () => {
                                     )
                                     redeemReward(floorId)
                                     incrementFloor()
+                                    incrementSilentFloor()
                                 }
 
                                 if (gameType === "Spelling") {
@@ -550,6 +570,8 @@ const AdventureGameplay = () => {
                                     )
                                     redeemReward(floorId)
                                     incrementFloor()
+                                    incrementSpellingFloor()
+                                    achievementChecker("spellingfloors")
                                 }
                             } else {
                                 console.log("It is cleared previously")
