@@ -713,17 +713,6 @@ const AdventureGameplay = () => {
         <main className="adventure-wrapper">
             <div className="game-exit">
                 <FaSignOutAlt onClick={handleExitModal} />
-
-                <Modal
-                    className="confirmation-modal"
-                    isOpen={showConfirmationModal}
-                    title="Exit Game"
-                    details={`Are you sure you want to exit?`}
-                    buttons={[
-                        <button key="confirm">Yes, Use Item</button>,
-                        <button key="cancel">Cancel</button>,
-                    ]}
-                />
             </div>
             {/* Welcome Modal */}
             <Modal

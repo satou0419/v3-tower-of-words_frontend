@@ -26,7 +26,9 @@ export default function Leaderboard() {
     );
     const [showPopup, setShowPopup] = useState(false);
     const [newName, setNewName] = useState<string>(currentSimulation.name);
-    const [newDeadline, setNewDeadline] = useState<string>(currentSimulation.deadline);
+    const [newDeadline, setNewDeadline] = useState<string>(
+        currentSimulation.deadline
+    );
     const simulationIDParam = searchParams.get("simulationID");
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
@@ -179,7 +181,10 @@ export default function Leaderboard() {
                 />
             )}
             <section className="leaderboard-container">
-                <h1>Simulation ID: {simulationID} | Simulation Name: {currentSimulation.name}</h1>
+                <h1>
+                    Simulation ID: {simulationID} | Simulation Name:{" "}
+                    {currentSimulation.name}
+                </h1>
 
                 <section className="leaderboard-content">
                     <CardTab
@@ -188,8 +193,14 @@ export default function Leaderboard() {
                         subtitle="Student Total: "
                         counter={currentSimulation.participants.length.toString()}
                     >
-                        {currentSimulation.participants.map(
-                            (participant, index) => (
+                        {currentSimulation.participants
+                            .sort((a, b) => {
+                                if (b.score === a.score) {
+                                    return b.accuracy - a.accuracy; // Sort by accuracy if scores are tied
+                                }
+                                return b.score - a.score; // Sort by score
+                            })
+                            .map((participant, index) => (
                                 <CardUser
                                     key={index}
                                     username={participant.userID}
@@ -204,8 +215,7 @@ export default function Leaderboard() {
                                         handleStudentClick(participant.userID)
                                     }
                                 />
-                            )
-                        )}
+                            ))}
                     </CardTab>
 
                     <section className="leaderboard-setting">
@@ -238,26 +248,26 @@ export default function Leaderboard() {
                             </div>
                             <div className="setting-item">
                                 <span>Items: </span>
-                                <input 
-                                    type="checkbox" 
-                                    checked={currentSimulation.items} 
-                                    readOnly 
+                                <input
+                                    type="checkbox"
+                                    checked={currentSimulation.items}
+                                    readOnly
                                 />
                             </div>
                             <div className="setting-item">
                                 <span>Description: </span>
-                                <input 
-                                    type="checkbox" 
-                                    checked={currentSimulation.description} 
-                                    readOnly 
+                                <input
+                                    type="checkbox"
+                                    checked={currentSimulation.description}
+                                    readOnly
                                 />
                             </div>
                             <div className="setting-item">
                                 <span>Pronunciation: </span>
-                                <input 
-                                    type="checkbox" 
-                                    checked={currentSimulation.pronunciation} 
-                                    readOnly 
+                                <input
+                                    type="checkbox"
+                                    checked={currentSimulation.pronunciation}
+                                    readOnly
                                 />
                             </div>
                         </div>

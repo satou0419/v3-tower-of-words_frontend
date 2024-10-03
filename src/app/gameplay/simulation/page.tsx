@@ -1,450 +1,465 @@
-"use client"
-import React, { useEffect, useState } from "react"
-import { useSearchParams } from "next/navigation"
-import { InputBox } from "@/app/component/Input/Input"
-import useImageParse from "@/hook/useImageParse"
-import "./adventure.scss" // Make sure your SCSS file is imported correctly
-import "./animation.scss"
-import Modal from "@/app/component/Modal/Modal"
-import useAnimationKeyframes from "@/hook/useAnimationKeyframes"
-import "./modals.scss"
-import useMerriam from "@/hook/useMerriam"
-import useProgressEquippedStore from "@/store/progressEquippedStore"
-import getUserDetails from "@/lib/user-endpoint/getUserDetails"
-import getUserItems from "@/lib/item-endpoint/getUserItem"
-import useItem from "@/hook/useItem"
-import ConfettiWrapper from "@/app/component/Confetti/Confetti"
-import useSimulationDetails from "@/hook/useSimulationDetails"
-import useTimer from "@/util/timer"
-import { useAuthStore } from "@/store/authStore"
-import useFetchSimulationWords from "@/hook/useSimulationWord"
-import useCountdown from "@/hook/useCountDown"
-import StudentWordProgress from "@/app/(navigation)/student-word-progress/page"
-import useUpdateSimulationProgress from "@/hook/useUpdateSimulationProgress"
-import updateSimulationProgress from "@/lib/assessment-endpoint/updateSimulationProgress"
-import useStudentWordProgress from "@/hook/useStudentWordProgress"
-import viewSimulationParticipants from "@/lib/simulation-endpoint/viewSimulationParticipants"
-import updateParticipantAssessment from "@/lib/assessment-endpoint/updateParticipantAssessment"
+"use client";
+import React, { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { InputBox } from "@/app/component/Input/Input";
+import useImageParse from "@/hook/useImageParse";
+import "./adventure.scss"; // Make sure your SCSS file is imported correctly
+import "./animation.scss";
+import Modal from "@/app/component/Modal/Modal";
+import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
+import "./modals.scss";
+import useMerriam from "@/hook/useMerriam";
+import useProgressEquippedStore from "@/store/progressEquippedStore";
+import getUserDetails from "@/lib/user-endpoint/getUserDetails";
+import getUserItems from "@/lib/item-endpoint/getUserItem";
+import useItem from "@/hook/useItem";
+import ConfettiWrapper from "@/app/component/Confetti/Confetti";
+import useSimulationDetails from "@/hook/useSimulationDetails";
+import useTimer from "@/util/timer";
+import { useAuthStore } from "@/store/authStore";
+import useFetchSimulationWords from "@/hook/useSimulationWord";
+import useCountdown from "@/hook/useCountDown";
+import StudentWordProgress from "@/app/(navigation)/student-word-progress/page";
+import useUpdateSimulationProgress from "@/hook/useUpdateSimulationProgress";
+import updateSimulationProgress from "@/lib/assessment-endpoint/updateSimulationProgress";
+import useStudentWordProgress from "@/hook/useStudentWordProgress";
+import viewSimulationParticipants from "@/lib/simulation-endpoint/viewSimulationParticipants";
+import updateParticipantAssessment from "@/lib/assessment-endpoint/updateParticipantAssessment";
+import { FaSignOutAlt } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+
 interface Item {
-    itemID: number
-    name: string
-    imagePath: string
-    description: string
-    price: number
+    itemID: number;
+    name: string;
+    imagePath: string;
+    description: string;
+    price: number;
 }
 interface UserItem {
-    userItemID: number
-    quantity: number
-    userID: number
-    itemID: Item
+    userItemID: number;
+    quantity: number;
+    userID: number;
+    itemID: Item;
 }
 
 interface SimulationWordsArray {
-    simulationWordsID: number
-    creatorID: number
-    word: string
-    silentIndex: string // Keeping silentIndex as string
+    simulationWordsID: number;
+    creatorID: number;
+    word: string;
+    silentIndex: string; // Keeping silentIndex as string
 }
 
 export interface SimulationEnemy {
-    simulationEnemyID: number
-    imagePath: string
-    words: number[] // Array of numbers
+    simulationEnemyID: number;
+    imagePath: string;
+    words: number[]; // Array of numbers
 }
 
 const SimulationGameplay = () => {
-    const { userID } = useAuthStore.getState()
-    const searchParams = useSearchParams()
+    const { userID } = useAuthStore.getState();
+    const searchParams = useSearchParams();
 
-    const simulationIDParam = searchParams.get("simulationID")
+    const simulationIDParam = searchParams.get("simulationID");
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
-        : NaN
+        : NaN;
     // const [loading, setLoading] = useState<boolean>(true);
-    const attackIntervalParam = searchParams.get("attackInterval")
+    const attackIntervalParam = searchParams.get("attackInterval");
     const attackInterval = attackIntervalParam
         ? parseInt(attackIntervalParam, 10)
-        : NaN
+        : NaN;
 
-    const enemyInterval = useCountdown(attackInterval)
-    const simulationDetails = useSimulationDetails(simulationID)
-    const studentLife = simulationDetails?.simulationDetails?.studentLife ?? 0
-    const [lives, setLives] = useState<number>(studentLife)
+    const enemyInterval = useCountdown(attackInterval);
+    const simulationDetails = useSimulationDetails(simulationID);
+    const studentLife = simulationDetails?.simulationDetails?.studentLife ?? 0;
+    const [lives, setLives] = useState<number>(studentLife);
 
-    const interval = simulationDetails?.simulationDetails?.attackInterval ?? 0
-    const [timeLeft, setTimeLeft] = useState<number>(interval)
-    const [score, setScore] = useState(100)
+    const interval = simulationDetails?.simulationDetails?.attackInterval ?? 0;
+    const [timeLeft, setTimeLeft] = useState<number>(interval);
+    const [score, setScore] = useState(100);
+
+    const router = useRouter();
 
     const subtractScore = (amount: number) => {
-        setScore((prevScore) => Math.max(prevScore - amount, 0)) // Ensure lives don't go below 0
-    }
+        setScore((prevScore) => Math.max(prevScore - amount, 0)); // Ensure lives don't go below 0
+    };
     // Set the initial state and update it if studentLife changes
     useEffect(() => {
-        setLives(studentLife)
-    }, [studentLife])
+        setLives(studentLife);
+    }, [studentLife]);
 
     const addLives = (amount: number) => {
-        setLives((prevLives) => prevLives + amount)
-    }
+        setLives((prevLives) => prevLives + amount);
+    };
 
     const subtractLives = (amount: number) => {
-        setLives((prevLives) => Math.max(prevLives - amount, 0)) // Ensure lives don't go below 0
-    }
+        setLives((prevLives) => Math.max(prevLives - amount, 0)); // Ensure lives don't go below 0
+    };
 
-    const gameType = simulationDetails.simulationDetails?.simulationType
+    const gameType = simulationDetails.simulationDetails?.simulationType;
 
-    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true) // State for showing welcome modal
-    const [gameStarted, setGameStarted] = useState<boolean>(false) // State for tracking game start
+    const [showWelcomeModal, setShowWelcomeModal] = useState<boolean>(true); // State for showing welcome modal
+    const [gameStarted, setGameStarted] = useState<boolean>(false); // State for tracking game start
     const [isPronunciationLocked, setIsPronunciationLocked] = useState(
         simulationDetails.simulationDetails?.pronunciation
-    )
+    );
     const [isDefinitionLocked, setIsDefinitionLocked] = useState(
         simulationDetails.simulationDetails?.description
-    )
-    const [isItemLocked] = useState(simulationDetails.simulationDetails?.items)
+    );
+    const [isItemLocked] = useState(simulationDetails.simulationDetails?.items);
 
-    const lockedPronunciation = isPronunciationLocked ? "locked" : ""
-    const lockedDefinition = isDefinitionLocked ? "locked" : ""
-    const [showConquerFloorModal, setShowConquerFloorModal] = useState(false)
+    const lockedPronunciation = isPronunciationLocked ? "locked" : "";
+    const lockedDefinition = isDefinitionLocked ? "locked" : "";
+    const [showConquerFloorModal, setShowConquerFloorModal] = useState(false);
 
     //#region  Item Logic
-    const [userItems, setUserItems] = useState<UserItem[]>([])
+    const [userItems, setUserItems] = useState<UserItem[]>([]);
     const [showConfirmationModal, setShowConfirmationModal] =
-        useState<boolean>(false)
+        useState<boolean>(false);
     const [itemToUse, setItemToUse] = useState<{
-        id: number
-        name: string
-    } | null>(null)
+        id: number;
+        name: string;
+    } | null>(null);
 
     useEffect(() => {
         const fetchUserItems = async () => {
-            const items = await getUserItems()
-            setUserItems(items)
-        }
+            const items = await getUserItems();
+            setUserItems(items);
+        };
 
-        fetchUserItems()
-    }, [])
+        fetchUserItems();
+    }, []);
 
-    const { useItemFunction } = useItem()
+    const { useItemFunction } = useItem();
 
     const handleUseItem = (itemID: number, itemName: string) => {
         // Set the item to use and show the confirmation modal
-        setItemToUse({ id: itemID, name: itemName })
-        setShowConfirmationModal(true)
-    }
+        setItemToUse({ id: itemID, name: itemName });
+        setShowConfirmationModal(true);
+    };
 
     const confirmUseItem = async () => {
         if (itemToUse) {
-            const { id, name } = itemToUse
+            const { id, name } = itemToUse;
             try {
-                await useItemFunction(id)
-                console.log(name)
+                await useItemFunction(id);
+                console.log(name);
                 switch (name) {
                     case "Bandage":
-                        addLives(1)
-                        subtractScore(score * 0.02)
-                        break
+                        addLives(1);
+                        subtractScore(score * 0.02);
+                        break;
                     case "Medical Kit":
-                        addLives(3)
-                        subtractScore(score * 0.02)
+                        addLives(3);
+                        subtractScore(score * 0.02);
 
-                        break
+                        break;
                     case "Unusual Battery":
-                        setIsPronunciationLocked(false)
-                        subtractScore(score * 0.02)
+                        setIsPronunciationLocked(false);
+                        subtractScore(score * 0.02);
 
-                        break
+                        break;
                 }
                 // Fetch updated user items after successful use
-                const updatedItems = await getUserItems()
-                setUserItems(updatedItems)
+                const updatedItems = await getUserItems();
+                setUserItems(updatedItems);
             } catch (error) {
-                console.error("Failed to use item:", error)
+                console.error("Failed to use item:", error);
             } finally {
                 // Close the confirmation modal after processing
-                setShowConfirmationModal(false)
-                setItemToUse(null)
+                setShowConfirmationModal(false);
+                setItemToUse(null);
             }
         }
-    }
+    };
 
     const cancelUseItem = () => {
         // Close the confirmation modal without using the item
-        setShowConfirmationModal(false)
-        setItemToUse(null)
-    }
+        setShowConfirmationModal(false);
+        setItemToUse(null);
+    };
 
-    const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false)
+    const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false);
+    const [showExitModal, setShowExitModal] = useState<boolean>(false);
+
+    const handleExitModal = () => {
+        setShowExitModal(true);
+    };
+
+    const handleCancelExitModal = () => {
+        setShowExitModal(false);
+    };
+
     const handleGameOverRestart = () => {
         // Logic to restart the game
-        console.log("Restarting game...")
-        setShowGameOverModal(false)
-        window.location.reload()
+        console.log("Restarting game...");
+        setShowGameOverModal(false);
+        window.location.reload();
 
         // Add additional logic here to reset the game state
-    }
+    };
 
-    const [enemies, setEnemies] = useState<SimulationEnemy[]>([])
+    const [enemies, setEnemies] = useState<SimulationEnemy[]>([]);
 
     useEffect(() => {
         if (simulationDetails) {
-            setEnemies(simulationDetails.simulationDetails?.enemy || [])
+            setEnemies(simulationDetails.simulationDetails?.enemy || []);
         }
-    }, [gameStarted, enemies])
+    }, [gameStarted, enemies]);
 
-    const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0)
-    const [currentWordIndex, setCurrentWordIndex] = useState<number>(0)
-    const [typedWord, setTypedWord] = useState<string>("")
+    const [currentEnemyIndex, setCurrentEnemyIndex] = useState<number>(0);
+    const [currentWordIndex, setCurrentWordIndex] = useState<number>(0);
+    const [typedWord, setTypedWord] = useState<string>("");
 
-    const [imagesLoaded, setImagesLoaded] = useState<boolean>(false)
+    const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
     const [spelledWords, setSpelledWords] = useState<Record<number, boolean[]>>(
         {}
-    )
-    const [showConfetti, setShowConfetti] = useState<boolean>(false) // State for showing confetti
-    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([])
+    );
+    const [showConfetti, setShowConfetti] = useState<boolean>(false); // State for showing confetti
+    const [defeatedEnemies, setDefeatedEnemies] = useState<number[]>([]);
 
-    const [total, setTotal] = useState(0)
+    const [total, setTotal] = useState(0);
     useEffect(() => {
         if (enemies.length > 0) {
-            const initialSpelledWords: Record<number, boolean[]> = {}
-            let totalWords = 0 // Variable to store the total count of words
+            const initialSpelledWords: Record<number, boolean[]> = {};
+            let totalWords = 0; // Variable to store the total count of words
 
             enemies.forEach((enemy, index) => {
                 initialSpelledWords[index] = new Array(enemy.words.length).fill(
                     false
-                )
-                totalWords += enemy.words.length // Add the number of words for each enemy to the total count
-                setTotal(total)
-            })
+                );
+                totalWords += enemy.words.length; // Add the number of words for each enemy to the total count
+                setTotal(total);
+            });
 
-            setSpelledWords(initialSpelledWords)
-            console.log("Enemies", enemies)
-            console.log("Initial", initialSpelledWords)
-            console.log("Total words", totalWords) // Log the total count of words
+            setSpelledWords(initialSpelledWords);
+            console.log("Enemies", enemies);
+            console.log("Initial", initialSpelledWords);
+            console.log("Total words", totalWords); // Log the total count of words
         }
-    }, [enemies])
+    }, [enemies]);
 
     const [isCharacterAttacking, setIsCharacterAttacking] =
-        useState<boolean>(false)
-    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false)
-    const [characterAttackType, setCharacterAttackType] = useState("")
-    const [enemyAttackType, setEnemyAttackType] = useState("")
-    const [enemyHit, setEnemyHit] = useState("")
-    const [characterHit, setCharacterHit] = useState("")
+        useState<boolean>(false);
+    const [isEnemyAttacking, setIsEnemyAttacking] = useState<boolean>(false);
+    const [characterAttackType, setCharacterAttackType] = useState("");
+    const [enemyAttackType, setEnemyAttackType] = useState("");
+    const [enemyHit, setEnemyHit] = useState("");
+    const [characterHit, setCharacterHit] = useState("");
 
     const userEquipped = useProgressEquippedStore(
         (state) => state.progressEquipped
-    )
+    );
 
     useEffect(() => {
-        console.log(simulationDetails.simulationDetails)
-    }, [])
+        console.log(simulationDetails.simulationDetails);
+    }, []);
 
     useEffect(() => {
-        getUserDetails()
-    }, [])
-    const characterDetails = useImageParse("&range_cannon-a22-i17")
+        getUserDetails();
+    }, []);
+    const characterDetails = useImageParse("&range_cannon-a22-i17");
     const enemyDetails = useImageParse(
         enemies[currentEnemyIndex]?.imagePath || ""
-    )
+    );
 
     useEffect(() => {
         if (characterDetails.name) {
-            const characterImage = new Image()
-            characterImage.src = `/assets/images/sprite/${characterDetails.name}.png`
-            characterImage.onload = () => setImagesLoaded(true)
+            const characterImage = new Image();
+            characterImage.src = `/assets/images/sprite/${characterDetails.name}.png`;
+            characterImage.onload = () => setImagesLoaded(true);
         }
-    }, [characterDetails.name])
+    }, [characterDetails.name]);
 
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
         characterDetails.name,
         characterDetails.idleFrame,
         characterDetails.attackFrame
-    )
+    );
 
     const enemyAnimation = useAnimationKeyframes(
         isEnemyAttacking ? "attack" : "idle",
         enemyDetails.name,
         enemyDetails.idleFrame,
         enemyDetails.attackFrame
-    )
+    );
 
-    const currentEnemy = enemies[currentEnemyIndex]
-    const currentWordID = currentEnemy?.words[currentWordIndex]
-    const simuWord = useFetchSimulationWords(currentWordID)
-    const currentWord = simuWord.word
-    const word = useMerriam(currentWord || "") // Pass the currentWord to the custom hook
+    const currentEnemy = enemies[currentEnemyIndex];
+    const currentWordID = currentEnemy?.words[currentWordIndex];
+    const simuWord = useFetchSimulationWords(currentWordID);
+    const currentWord = simuWord.word;
+    const word = useMerriam(currentWord || ""); // Pass the currentWord to the custom hook
     const studentWordProgress = useStudentWordProgress(
         simulationID,
         userID,
         currentWordID
-    )
+    );
 
-    const [isLastEnemy, setIsLastEnemy] = useState(false)
+    const [isLastEnemy, setIsLastEnemy] = useState(false);
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setTypedWord(event.target.value)
-    }
+        setTypedWord(event.target.value);
+    };
 
-    const [isLastEnemyWord, setIsLastEnemyWord] = useState(false)
+    const [isLastEnemyWord, setIsLastEnemyWord] = useState(false);
 
     const handleEnemyAttack = () => {
         if (enemyDetails.attackType == "melee") {
-            setEnemyAttackType("expand-width")
-            console.log("Enemy is Melee")
+            setEnemyAttackType("expand-width");
+            console.log("Enemy is Melee");
 
             setTimeout(() => {
-                setIsEnemyAttacking(true)
+                setIsEnemyAttacking(true);
                 // playEnemyAttackSound(); // Play the attack sound when the enemy attacks
-            }, 800)
+            }, 800);
 
             setTimeout(() => {
-                setIsEnemyAttacking(false)
-                setCharacterHit("hit")
-                subtractLives(1) // Subtract 1 from lives on incorrect input
+                setIsEnemyAttacking(false);
+                setCharacterHit("hit");
+                subtractLives(1); // Subtract 1 from lives on incorrect input
 
-                setCharacterAttackType("")
+                setCharacterAttackType("");
 
                 setTimeout(() => {
                     if (lives === 1 && isEndLive === true) {
                         // setShowGameOverModal(true);
                     }
-                }, 500)
+                }, 500);
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setEnemyAttackType("shrink-width")
+                    setEnemyAttackType("shrink-width");
 
-                    setCharacterHit("")
-                    enemyInterval.start()
-                }, 500) // 500ms is the duration of the hit
-            }, (enemyDetails.attackFrame / 12) * 1000 + 800) // Main enemy attack duration
+                    setCharacterHit("");
+                    enemyInterval.start();
+                }, 500); // 500ms is the duration of the hit
+            }, (enemyDetails.attackFrame / 12) * 1000 + 800); // Main enemy attack duration
         } else {
-            setIsEnemyAttacking(true)
-            console.log("Enemy is Range")
+            setIsEnemyAttacking(true);
+            console.log("Enemy is Range");
 
             setTimeout(() => {
-                setIsEnemyAttacking(false)
-                setCharacterHit("hit")
-                subtractLives(1)
-                setCharacterAttackType("")
+                setIsEnemyAttacking(false);
+                setCharacterHit("hit");
+                subtractLives(1);
+                setCharacterAttackType("");
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setCharacterHit("")
-                    enemyInterval.start()
-                }, 500) // 500ms is the duration of the hit
-            }, (enemyDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
+                    setCharacterHit("");
+                    enemyInterval.start();
+                }, 500); // 500ms is the duration of the hit
+            }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
         }
-    }
+    };
 
     const handleCharacterAttack = () => {
         if (characterDetails.attackType == "melee") {
-            setCharacterAttackType("expand-width")
-            console.log("Attack is Melee")
+            setCharacterAttackType("expand-width");
+            console.log("Attack is Melee");
 
             setTimeout(() => {
-                setIsCharacterAttacking(true)
-            }, 500)
+                setIsCharacterAttacking(true);
+            }, 500);
 
             setTimeout(() => {
-                setIsCharacterAttacking(false)
-                setCharacterAttackType("shrink-width")
-                setEnemyAttackType("")
-                setEnemyHit("hit")
+                setIsCharacterAttacking(false);
+                setCharacterAttackType("shrink-width");
+                setEnemyAttackType("");
+                setEnemyHit("hit");
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setEnemyHit("")
-                }, 500) // 500ms is the duration of the hit
-            }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration
+                    setEnemyHit("");
+                }, 500); // 500ms is the duration of the hit
+            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration
         } else {
-            console.log("Attack is Range")
+            console.log("Attack is Range");
 
-            setIsCharacterAttacking(true)
+            setIsCharacterAttacking(true);
 
             setTimeout(() => {
-                setIsCharacterAttacking(false)
-                setEnemyAttackType("")
+                setIsCharacterAttacking(false);
+                setEnemyAttackType("");
 
-                setEnemyHit("hit")
+                setEnemyHit("hit");
 
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
-                    setEnemyHit("")
-                }, 500) // 500ms is the duration of the hit
-            }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
+                    setEnemyHit("");
+                }, 500); // 500ms is the duration of the hit
+            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
         }
-    }
+    };
 
     const handleMissedAttack = () => {
         if (characterDetails.attackType == "melee") {
-            console.log("Missed Melee Attack")
-            setCharacterAttackType("expand-width")
+            console.log("Missed Melee Attack");
+            setCharacterAttackType("expand-width");
             setTimeout(() => {
-                setIsCharacterAttacking(true)
-            }, 500)
+                setIsCharacterAttacking(true);
+            }, 500);
 
             setTimeout(() => {
-                setIsCharacterAttacking(false)
-                setCharacterAttackType("shrink-width")
-                setEnemyAttackType("")
-            }, (characterDetails.attackFrame / 12) * 1000)
+                setIsCharacterAttacking(false);
+                setCharacterAttackType("shrink-width");
+                setEnemyAttackType("");
+            }, (characterDetails.attackFrame / 12) * 1000);
         } else {
-            console.log("Missed Range Attack")
-            setIsCharacterAttacking(true)
+            console.log("Missed Range Attack");
+            setIsCharacterAttacking(true);
 
             setTimeout(() => {
-                setIsCharacterAttacking(false)
-            }, (characterDetails.attackFrame / 12) * 1000) // Main enemy attack duration for non-melee
+                setIsCharacterAttacking(false);
+            }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
         }
-    }
-    const time = useTimer()
+    };
+    const time = useTimer();
 
-    const [isEndLive, setIsEndLive] = useState(false)
+    const [isEndLive, setIsEndLive] = useState(false);
 
-    const [mistakes, setMistakes] = useState(0)
+    const [mistakes, setMistakes] = useState(0);
     const incrementMistake = () => {
-        setMistakes((prevMistakes) => prevMistakes + 1)
-        subtractScore(score * 0.05)
-    }
+        setMistakes((prevMistakes) => prevMistakes + 1);
+        subtractScore(score * 0.05);
+    };
 
-    const [totalItems, setTotalItems] = useState(0)
+    const [totalItems, setTotalItems] = useState(0);
 
     const incrementTotalItem = () => {
-        setTotalItems((prevTotalItems) => prevTotalItems + 1)
-    }
+        setTotalItems((prevTotalItems) => prevTotalItems + 1);
+    };
 
     const handleTimesUp = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const currentEnemy = enemies[currentEnemyIndex]
-        incrementMistake()
+        event.preventDefault();
+        const currentEnemy = enemies[currentEnemyIndex];
+        incrementMistake();
 
         if (!currentEnemy) {
-            console.error("Current enemy is undefined")
-            return
+            console.error("Current enemy is undefined");
+            return;
         }
 
-        const isLastWord = currentWordIndex === currentEnemy.words.length - 1
-        const isLastEnemy = currentEnemyIndex === enemies.length - 1
-        setIsLastEnemy(isLastEnemy)
+        const isLastWord = currentWordIndex === currentEnemy.words.length - 1;
+        const isLastEnemy = currentEnemyIndex === enemies.length - 1;
+        setIsLastEnemy(isLastEnemy);
 
         if (
             enemyInterval.time === 0 &&
             lives >= 2 &&
             !(isLastEnemy && isLastWord)
         ) {
-            console.log("Enemy Attack!!!")
-            handleEnemyAttack()
+            console.log("Enemy Attack!!!");
+            handleEnemyAttack();
             setTimeout(() => {
-                console.log("Reset Time")
-                enemyInterval.reset()
-            }, (characterDetails.attackFrame / 12) * 2000)
+                console.log("Reset Time");
+                enemyInterval.reset();
+            }, (characterDetails.attackFrame / 12) * 2000);
 
             setTimeout(() => {
-                console.log("Starts the countdown")
-                enemyInterval.start()
-            }, (characterDetails.attackFrame / 12) * 2500)
+                console.log("Starts the countdown");
+                enemyInterval.start();
+            }, (characterDetails.attackFrame / 12) * 2500);
         }
 
         // Check if the time is up and lives are 1
@@ -453,11 +468,11 @@ const SimulationGameplay = () => {
             lives === 1 &&
             !(isLastEnemy && isLastWord)
         ) {
-            console.log("Time to switch word")
-            handleEnemyAttack()
+            console.log("Time to switch word");
+            handleEnemyAttack();
 
             // Prepare to move to the next enemy or word
-            setTypedWord("")
+            setTypedWord("");
 
             const updatedStudentProgress = {
                 studentWordProgressID:
@@ -469,13 +484,13 @@ const SimulationGameplay = () => {
                 duration: time.getFormattedTimeInSeconds(),
                 accuracy: 0,
                 mistake: mistakes + 1,
-            }
+            };
 
-            console.log(updatedStudentProgress)
+            console.log(updatedStudentProgress);
 
-            updateSimulationProgress(updatedStudentProgress)
-            setMistakes(0)
-            time.reset()
+            updateSimulationProgress(updatedStudentProgress);
+            setMistakes(0);
+            time.reset();
 
             // setTimeout(() => {
             //   const updatedSpelledWords = { ...spelledWords };
@@ -484,15 +499,15 @@ const SimulationGameplay = () => {
             // }, (characterDetails.attackFrame / 12) * 2000);
 
             setTimeout(() => {
-                console.log("Start nako")
-                setLives(studentLife)
-                enemyInterval.reset()
+                console.log("Start nako");
+                setLives(studentLife);
+                enemyInterval.reset();
                 console.log(
                     `Proceeding to next word: Word ${currentWordIndex + 1}`
-                )
-                setCurrentWordIndex(currentWordIndex + 1) // Move to next word
-                setIsPronunciationLocked(true)
-            }, (characterDetails.attackFrame / 12) * 2500)
+                );
+                setCurrentWordIndex(currentWordIndex + 1); // Move to next word
+                setIsPronunciationLocked(true);
+            }, (characterDetails.attackFrame / 12) * 2500);
         }
 
         if (
@@ -502,127 +517,127 @@ const SimulationGameplay = () => {
             isLastEnemy
         ) {
             // Last word of the last enemy
-            setIsLastEnemyWord(true)
-            setIsLastEnemy(true)
-            setLives(0)
+            setIsLastEnemyWord(true);
+            setIsLastEnemy(true);
+            setLives(0);
 
             updateParticipantAssessment(userID, simulationID)
                 .then((score) => {
-                    console.log("Score:", score.data.score)
+                    console.log("Score:", score.data.score);
                     setTimeout(() => {
                         if (score.data.score < 60) {
-                            setShowGameOverModal(true)
+                            setShowGameOverModal(true);
                         } else {
-                            setShowConfetti(true)
-                            setShowConquerFloorModal(true)
+                            setShowConfetti(true);
+                            setShowConquerFloorModal(true);
                         }
-                    }, (characterDetails.attackFrame / 12) * 5000)
+                    }, (characterDetails.attackFrame / 12) * 5000);
                 })
                 .catch((error) => {
                     console.error(
                         "Error updating participant assessment:",
                         error
-                    )
-                })
+                    );
+                });
             //enemyInterval.reset(0);
         }
 
         if (isLastWord && enemyInterval.time === 0 && lives === 1) {
             // Last word of current enemy but not the last enemy
 
-            console.log(currentEnemyIndex)
-            console.log(currentWordIndex)
+            console.log(currentEnemyIndex);
+            console.log(currentWordIndex);
 
-            setIsLastEnemyWord(true)
+            setIsLastEnemyWord(true);
             setDefeatedEnemies((prevDefeatedEnemies) => [
                 ...prevDefeatedEnemies,
                 currentEnemyIndex,
-            ])
+            ]);
 
             setTimeout(() => {
-                setCurrentEnemyIndex(currentEnemyIndex + 1) // Move to next enemy
-                setCurrentWordIndex(0) // Reset word index
-                setIsPronunciationLocked(true)
-            }, (characterDetails.attackFrame / 12) * 2500)
-            setIsLastEnemyWord(false)
+                setCurrentEnemyIndex(currentEnemyIndex + 1); // Move to next enemy
+                setCurrentWordIndex(0); // Reset word index
+                setIsPronunciationLocked(true);
+            }, (characterDetails.attackFrame / 12) * 2500);
+            setIsLastEnemyWord(false);
         }
-    }
+    };
 
     useEffect(() => {
         if (lives === 0 && timeLeft !== 0) {
-            console.log("hurot")
+            console.log("hurot");
             setTimeout(() => {
-                console.log("Start nako", currentEnemyIndex)
-                setLives(studentLife)
-                enemyInterval.reset()
+                console.log("Start nako", currentEnemyIndex);
+                setLives(studentLife);
+                enemyInterval.reset();
                 console.log(
                     `Proceeding to next word: Word ${currentWordIndex + 1}`
-                )
-                setIsPronunciationLocked(true)
-            }, (characterDetails.attackFrame / 12) * 1500)
+                );
+                setIsPronunciationLocked(true);
+            }, (characterDetails.attackFrame / 12) * 1500);
         }
-    })
+    });
 
     const handleDummySubmit = async () => {
         const dummyEvent = {
             preventDefault: () => {},
-        } as React.FormEvent<HTMLFormElement>
+        } as React.FormEvent<HTMLFormElement>;
 
-        await handleTimesUp(dummyEvent)
-    }
+        await handleTimesUp(dummyEvent);
+    };
 
     useEffect(() => {
         const submitAndResetInterval = async () => {
-            await handleDummySubmit()
-        }
+            await handleDummySubmit();
+        };
 
         if (enemyInterval.time === 0) {
-            submitAndResetInterval()
+            submitAndResetInterval();
         }
-    }, [enemyInterval.time, enemyDetails.attackFrame])
+    }, [enemyInterval.time, enemyDetails.attackFrame]);
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault()
-        const currentEnemy = enemies[currentEnemyIndex]
-        enemyInterval.pause()
+        event.preventDefault();
+        const currentEnemy = enemies[currentEnemyIndex];
+        enemyInterval.pause();
 
         // Check if the current word is the last one for this enemy
-        const isLastWord = currentWordIndex === currentEnemy.words.length - 1
+        const isLastWord = currentWordIndex === currentEnemy.words.length - 1;
         // Check if the current enemy is the last one
-        const isLastEnemy = currentEnemyIndex === enemies.length - 1
+        const isLastEnemy = currentEnemyIndex === enemies.length - 1;
 
-        const currentWordID = currentEnemy?.words[currentWordIndex]
+        const currentWordID = currentEnemy?.words[currentWordIndex];
         // const simuWord = useFetchSimulationWords(currentWordID);
-        const currentWord = simuWord.word?.toLowerCase()
+        const currentWord = simuWord.word?.toLowerCase();
 
         console.log(
             `Submitting: Enemy ${currentEnemyIndex + 1}/${enemies.length}`
-        )
+        );
         console.log(
             `Word ${currentWordIndex + 1}/${
                 currentEnemy.words.length
             }: ${typedWord.toLowerCase()}`
-        )
-        console.log(`Current word to match: ${currentWord}`)
+        );
+        console.log(`Current word to match: ${currentWord}`);
 
         const checkGameType =
             gameType === "Spelling"
                 ? typedWord.toLowerCase() === currentWord
-                : rangeValue === word?.syllable
+                : rangeValue === word?.syllable;
 
         // Check if the current word matches the expected word or syllable
         if (checkGameType) {
-            console.log(typedWord)
-            console.log(currentWord)
+            console.log(typedWord);
+            console.log(currentWord);
             // Correct word spelling
-            incrementTotalItem()
-            console.log("Correct word entered.")
-            enemyInterval.pause()
+            incrementTotalItem();
+            console.log("Correct word entered.");
+            enemyInterval.pause();
 
-            const studentID = userID
-            const numberOfAttempts = mistakes
+            const studentID = userID;
+            const numberOfAttempts = mistakes;
 
-            const accuracy = ((studentLife - mistakes) / studentLife) * 100
+            const accuracy = ((studentLife - mistakes) / studentLife) * 100;
 
             const updatedStudentProgress = {
                 studentWordProgressID:
@@ -634,84 +649,84 @@ const SimulationGameplay = () => {
                 duration: time.getFormattedTimeInSeconds(),
                 accuracy: accuracy,
                 mistake: mistakes,
-            }
+            };
 
-            console.log(updatedStudentProgress)
+            console.log(updatedStudentProgress);
 
-            updateSimulationProgress(updatedStudentProgress)
+            updateSimulationProgress(updatedStudentProgress);
 
-            setTypedWord("")
-            handleCharacterAttack()
+            setTypedWord("");
+            handleCharacterAttack();
 
-            const updatedSpelledWords = { ...spelledWords }
-            updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true
-            setSpelledWords(updatedSpelledWords)
+            const updatedSpelledWords = { ...spelledWords };
+            updatedSpelledWords[currentEnemyIndex][currentWordIndex] = true;
+            setSpelledWords(updatedSpelledWords);
 
             // Prepare progress data
 
             setTimeout(() => {
-                setIsCharacterAttacking(false)
-                setLives(lives)
-                enemyInterval.reset()
+                setIsCharacterAttacking(false);
+                setLives(lives);
+                enemyInterval.reset();
 
                 if (isLastWord && isLastEnemy) {
                     // Last word of the last enemy
-                    setIsLastEnemy(true)
-                    setIsLastEnemyWord(true)
-                    setLives(0)
+                    setIsLastEnemy(true);
+                    setIsLastEnemyWord(true);
+                    setLives(0);
 
-                    console.log("Last word of the last enemy.")
+                    console.log("Last word of the last enemy.");
                     setDefeatedEnemies((prevDefeatedEnemies) => [
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
-                    ])
+                    ]);
 
                     updateParticipantAssessment(userID, simulationID)
                         .then((score) => {
-                            console.log("Score:", score.data.score)
+                            console.log("Score:", score.data.score);
                             setTimeout(() => {
                                 if (score.data.score < 60) {
-                                    setShowGameOverModal(true)
+                                    setShowGameOverModal(true);
                                 } else {
-                                    setShowConfetti(true)
-                                    setShowConquerFloorModal(true)
+                                    setShowConfetti(true);
+                                    setShowConquerFloorModal(true);
                                 }
-                            }, (characterDetails.attackFrame / 12) * 5000)
+                            }, (characterDetails.attackFrame / 12) * 5000);
                         })
                         .catch((error) => {
                             console.error(
                                 "Error updating participant assessment:",
                                 error
-                            )
-                        })
-                    enemyInterval.reset(0)
+                            );
+                        });
+                    enemyInterval.reset(0);
                 } else if (isLastWord) {
                     // Last word of current enemy but not the last enemy
-                    setIsLastEnemyWord(true)
-                    console.log("Last word for this enemy.")
+                    setIsLastEnemyWord(true);
+                    console.log("Last word for this enemy.");
                     setDefeatedEnemies((prevDefeatedEnemies) => [
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
-                    ])
-                    setTimeLeft(interval)
-                    setCurrentEnemyIndex(currentEnemyIndex + 1)
-                    setCurrentWordIndex(0)
-                    setIsPronunciationLocked(true)
-                    setIsLastEnemyWord(false)
+                    ]);
+                    setTimeLeft(interval);
+                    setCurrentEnemyIndex(currentEnemyIndex + 1);
+                    setCurrentWordIndex(0);
+                    setIsPronunciationLocked(true);
+                    setIsLastEnemyWord(false);
                 } else {
                     console.log(
                         `Proceeding to next word: Word ${currentWordIndex + 1}`
-                    )
-                    setTimeLeft(interval)
-                    setCurrentWordIndex(currentWordIndex + 1)
-                    setIsPronunciationLocked(true)
+                    );
+                    setTimeLeft(interval);
+                    setCurrentWordIndex(currentWordIndex + 1);
+                    setIsPronunciationLocked(true);
                 }
-            }, (characterDetails.attackFrame / 12) * 1000) // Adjust timing as needed
-            setMistakes(0)
-            time.reset()
+            }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
+            setMistakes(0);
+            time.reset();
         } else {
-            incrementMistake()
-            console.log("Incorrect word entered.")
+            incrementMistake();
+            console.log("Incorrect word entered.");
             const updatedStudentProgress = {
                 studentWordProgressID:
                     studentWordProgress.wordProgress.studentWordProgressID,
@@ -722,63 +737,63 @@ const SimulationGameplay = () => {
                 duration: time.getFormattedTimeInSeconds(),
                 accuracy: 0,
                 mistake: mistakes + 1,
-            }
+            };
 
-            console.log(updatedStudentProgress)
+            console.log(updatedStudentProgress);
 
-            updateSimulationProgress(updatedStudentProgress)
+            updateSimulationProgress(updatedStudentProgress);
 
             setTimeout(() => {
-                console.log("Start nako")
-                setLives(studentLife)
-                enemyInterval.reset()
+                console.log("Start nako");
+                setLives(studentLife);
+                enemyInterval.reset();
                 console.log(
                     `Proceeding to next word: Word ${currentWordIndex + 1}`
-                )
-                setCurrentWordIndex(currentWordIndex + 1) // Move to next word
-                setIsPronunciationLocked(true)
-            }, (characterDetails.attackFrame / 12) * 2500)
+                );
+                setCurrentWordIndex(currentWordIndex + 1); // Move to next word
+                setIsPronunciationLocked(true);
+            }, (characterDetails.attackFrame / 12) * 2500);
 
-            handleMissedAttack()
-            setTimeLeft(interval)
+            handleMissedAttack();
+            setTimeLeft(interval);
             setTimeout(() => {
-                handleEnemyAttack()
+                handleEnemyAttack();
 
                 if (isLastWord && isLastEnemy) {
-                    setIsLastEnemyWord(true)
-                    setIsLastEnemy(true)
+                    setIsLastEnemyWord(true);
+                    setIsLastEnemy(true);
                     updateParticipantAssessment(userID, simulationID)
                         .then((score) => {
-                            console.log("Score:", score.data.score)
+                            console.log("Score:", score.data.score);
                             setTimeout(() => {
                                 if (score.data.score < 60) {
-                                    setShowGameOverModal(true)
+                                    setShowGameOverModal(true);
                                 } else {
-                                    setShowConfetti(true)
-                                    setShowConquerFloorModal(true)
+                                    setShowConfetti(true);
+                                    setShowConquerFloorModal(true);
                                 }
-                            }, (characterDetails.attackFrame / 12) * 5000)
+                            }, (characterDetails.attackFrame / 12) * 5000);
                         })
                         .catch((error) => {
                             console.error(
                                 "Error updating participant assessment:",
                                 error
-                            )
-                        })
+                            );
+                        });
                 } else if (isLastWord) {
-                    setIsLastEnemyWord(true)
+                    setIsLastEnemyWord(true);
                     setTimeout(() => {
-                        setCurrentEnemyIndex(currentEnemyIndex + 1) // Move to next enemy
-                        setCurrentWordIndex(0) // Reset word index
-                        setIsPronunciationLocked(true)
-                    }, (characterDetails.attackFrame / 12) * 2500)
-                    setIsLastEnemyWord(false)
+                        setCurrentEnemyIndex(currentEnemyIndex + 1); // Move to next enemy
+                        setCurrentWordIndex(0); // Reset word index
+                        setIsPronunciationLocked(true);
+                    }, (characterDetails.attackFrame / 12) * 2500);
+                    setIsLastEnemyWord(false);
                 }
-            }, (characterDetails.attackFrame / 12) * 2000)
-            setMistakes(0)
-            time.reset()
+            }, (characterDetails.attackFrame / 12) * 2000);
+            setMistakes(0);
+            time.reset();
         }
-    }
+    };
 
     //Play only the audio in gameType 1
 
@@ -786,64 +801,68 @@ const SimulationGameplay = () => {
         if (gameStarted && word && word.playAudio) {
             // Play audio on word change
             const timer = setTimeout(() => {
-                word.playAudio()
-            }, 1000)
+                word.playAudio();
+            }, 1000);
 
             setTimeout(() => {
-                console.log("audio ends")
-                enemyInterval.start()
-                time.start()
-            }, 2000)
+                console.log("audio ends");
+                enemyInterval.start();
+                time.start();
+            }, 2000);
 
-            return () => clearTimeout(timer) // Clear the timeout if the component unmounts or word changes
+            return () => clearTimeout(timer); // Clear the timeout if the component unmounts or word changes
         }
-    }, [gameStarted, word]) // Trigger on gameStarted or word change
+    }, [gameStarted, word]); // Trigger on gameStarted or word change
 
     useEffect(() => {
-        if (!gameStarted) return // Do nothing if the game hasn't started
+        if (!gameStarted) return; // Do nothing if the game hasn't started
 
         // Handle key down event for shift key to play audio
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Shift") {
                 if (word && word.playAudio) {
-                    word.playAudio()
+                    word.playAudio();
                 }
             }
-        }
+        };
 
-        window.addEventListener("keydown", handleKeyDown)
+        window.addEventListener("keydown", handleKeyDown);
 
         return () => {
-            window.removeEventListener("keydown", handleKeyDown)
-        }
-    }, [gameStarted, word]) // Trigger on gameStarted or word change
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [gameStarted, word]); // Trigger on gameStarted or word change
 
-    const [rangeValue, setRangeValue] = useState(1)
+    const [rangeValue, setRangeValue] = useState(1);
 
     const handleRangeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setRangeValue(Number(event.target.value))
-    }
+        setRangeValue(Number(event.target.value));
+    };
 
     const extractEnemyName = (imagePath: string) => {
         // Match the pattern of &attackType_name-a11-i12
-        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/)
-        return match ? match[1] : "unknown" // Return the name or 'unknown' if not found
-    }
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
+        return match ? match[1] : "unknown"; // Return the name or 'unknown' if not found
+    };
 
     const welcomeModalButtons = [
         <button
             key="start-game"
             onClick={() => {
-                setShowWelcomeModal(false)
-                setGameStarted(true) // Start the game when the modal is closed
+                setShowWelcomeModal(false);
+                setGameStarted(true); // Start the game when the modal is closed
             }}
         >
             Start Game
         </button>,
-    ]
+    ];
 
     return (
         <main className="adventure-wrapper">
+            <div className="game-exit">
+                <FaSignOutAlt onClick={handleExitModal} />
+            </div>
+
             {/* Welcome Modal */}
             <Modal
                 className="welcome-modal"
@@ -863,7 +882,7 @@ const SimulationGameplay = () => {
                     <p>Time: {enemyInterval.time}</p>
                     <section className="enemy-track">
                         {enemies.map((enemy, enemyIndex) => {
-                            const enemyName = extractEnemyName(enemy.imagePath)
+                            const enemyName = extractEnemyName(enemy.imagePath);
 
                             return (
                                 <div
@@ -903,7 +922,7 @@ const SimulationGameplay = () => {
                                         )
                                     )}
                                 </div>
-                            )
+                            );
                         })}
                     </section>
 
@@ -1137,6 +1156,22 @@ const SimulationGameplay = () => {
                 ]}
             />
 
+            <Modal
+                className="logout-modal"
+                isOpen={showExitModal}
+                title="Confirm Exit"
+                onClose={handleGameOverRestart}
+                details="Are you sure you want to leave?"
+                buttons={[
+                    <button key="exit" onClick={() => router.back()}>
+                        Exit
+                    </button>,
+                    <button key="cancel" onClick={handleCancelExitModal}>
+                        Cancel
+                    </button>,
+                ]}
+            />
+
             <ConfettiWrapper showConfetti={showConfetti} />
 
             <Modal
@@ -1154,7 +1189,7 @@ const SimulationGameplay = () => {
                 ]}
             />
         </main>
-    )
-}
+    );
+};
 
-export default SimulationGameplay
+export default SimulationGameplay;

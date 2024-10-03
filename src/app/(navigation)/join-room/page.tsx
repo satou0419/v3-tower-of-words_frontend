@@ -11,10 +11,15 @@ export default function JoinRoom() {
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
     const [redirectAfterClose, setRedirectAfterClose] = useState(false);
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const handleJoinRoom = async (e: React.FormEvent) => {
         e.preventDefault();
+
+        if (loading) return;
+
+        setLoading(true);
 
         try {
             await joinRoom(code);
@@ -22,6 +27,8 @@ export default function JoinRoom() {
             setRedirectAfterClose(true); // Set redirect flag
         } catch (err) {
             setIsErrorModalOpen(true); // Open error modal
+        } finally {
+            setLoading(false); // Set loading back to false after request completes
         }
     };
 
