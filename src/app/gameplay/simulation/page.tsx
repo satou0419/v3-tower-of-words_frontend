@@ -744,14 +744,16 @@ const SimulationGameplay = () => {
             updateSimulationProgress(updatedStudentProgress);
 
             setTimeout(() => {
-                console.log("Start nako");
-                setLives(studentLife);
-                enemyInterval.reset();
-                console.log(
-                    `Proceeding to next word: Word ${currentWordIndex + 1}`
-                );
-                setCurrentWordIndex(currentWordIndex + 1); // Move to next word
-                setIsPronunciationLocked(true);
+                if (lives === 0) {
+                    console.log("Start nako");
+                    setLives(studentLife);
+                    enemyInterval.reset();
+                    console.log(
+                        `Proceeding to next word: Word ${currentWordIndex + 1}`
+                    );
+                    setCurrentWordIndex(currentWordIndex + 1);
+                    setIsPronunciationLocked(true);
+                }
             }, (characterDetails.attackFrame / 12) * 2500);
 
             handleMissedAttack();
