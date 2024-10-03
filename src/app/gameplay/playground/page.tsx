@@ -405,17 +405,39 @@ const PlaygroundGameplay = () => {
         return match ? match[1] : "unknown"; // Return the name or 'unknown' if not found
     };
 
+    const [showTutorial, setShowTutorial] = useState(false);
+    const [currentStep, setCurrentStep] = useState(0);
+
     const welcomeModalButtons = [
         <button
             key="start-game"
             onClick={() => {
                 setShowWelcomeModal(false);
-                setGameStarted(true); // Start the game when the modal is closed
+                setShowTutorial(true);
             }}
         >
-            Start Game
+            Continue
         </button>,
     ];
+
+    const steps = [
+        "Welcome to the Playground! Let's walk through the basics.",
+        "Step 1: An audio will prompt the of word to spell. You can repeat the audio by clicking the audio button.",
+        "Step 2: Fill out your answer at the input box.",
+        "Step 3: Check pronunciation and description guide for any additional hints.",
+        "Step 4: Press 'Go' to attack the enemy.",
+        "Be careful! If your spelling is incorrect, the enemy will attack you!",
+        "Now you're ready! Press 'Start' to begin the game.",
+    ];
+
+    const handleNextStep = () => {
+        if (currentStep < steps.length - 1) {
+            setCurrentStep(currentStep + 1);
+        } else {
+            setShowTutorial(false);
+            setGameStarted(true);
+        }
+    };
 
     return (
         <main className="adventure-wrapper">
@@ -429,6 +451,23 @@ const PlaygroundGameplay = () => {
                 title="Welcome to Playground"
                 details="Survive!"
                 buttons={welcomeModalButtons}
+            />
+
+            <Modal
+                className="welcome-modal"
+                isOpen={showTutorial}
+                title="Tutorial"
+                details={steps[currentStep]}
+                buttons={[
+                    <button
+                        key="start-game"
+                        onClick={() => {
+                            handleNextStep();
+                        }}
+                    >
+                        {currentStep === steps.length - 1 ? "Start" : "Next"}
+                    </button>,
+                ]}
             />
 
             {/* Game Content */}
