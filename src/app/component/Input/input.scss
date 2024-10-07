@@ -1,22 +1,46 @@
-input {
-    outline: none;
-    font-size: 0.8em;
+.input-wrapper {
+    position: relative;
+    width: 100%;
 }
 
-.input-box {
-    border: 1px solid var(--clr-gray);
-    border-radius: 5px;
-    color: var(--clr-gray_dark);
-
-    &::placeholder {
-        color: var(--clr-gray);
-    }
+.input-bo {
+    width: 100%;
+    font-size: 1rem;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
 }
-
 .input-line {
+    width: 100%;
+    font-size: 1rem;
     border: none;
     border-bottom: 2px solid var(--clr-gray_dark);
-    background-color: transparent;
+    border-radius: 4px;
     outline: none;
-    color: var(--clr-gray_dark);
+    transition: border-color 0.3s ease;
+    box-sizing: border-box;
+}
+.input-label {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    background-color: white;
+    color: #999;
+    transition: 0.3s ease;
+}
+
+.input-box:focus + .input-label,
+.input-box:not(:placeholder-shown) + .input-label,
+.input-line:focus + .input-label,
+.input-line:not(:placeholder-shown) + .input-label {
+    top: 0px;
+    font-size: 0.8rem;
+    color: var(--clr-violet);
+}
+
+.input-box:focus,
+.input-line:focus {
+    border-color: 2px solid var(--clr-gray_dark);
 }
