@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { InputBox } from "@/app/component/Input/Input";
 import { useEnemyStore } from "@/store/enemyStore";
 import Loading from "@/app/loading";
@@ -408,7 +408,7 @@ const AdventureGameplay = () => {
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
                     setEnemyHit("");
-                    setIsButtonDisabled(false);
+                    // setIsButtonDisabled(false)
                 }, 500); // 500ms is the duration of the hit
             }, (characterDetails.attackFrame / 12) * 1000); // Main enemy attack duration
         } else {
@@ -603,6 +603,22 @@ const AdventureGameplay = () => {
             setTimeout(() => {
                 handleEnemyAttack();
             }, (characterDetails.attackFrame / 12) * 2000);
+        }
+    };
+
+    const router = useRouter();
+    const returnMenu = () => {
+        console.log("Click menu");
+        if (gameType === "Spelling") {
+            router.push("/tower/spelling/?gameType=Spelling");
+        }
+
+        if (gameType === "Silent") {
+            router.push("/tower/spelling/?gameType=Silent");
+        }
+
+        if (gameType === "Silent") {
+            router.push("/tower/spelling/?gameType=Syllables");
         }
     };
 
@@ -1092,10 +1108,7 @@ const AdventureGameplay = () => {
                 title="Floor Conquered!"
                 details="Congratulations! You've conquered this floor.?"
                 buttons={[
-                    <button
-                        key="menu"
-                        onClick={() => (window.location.href = "/select-tower")}
-                    >
+                    <button key="menu" onClick={returnMenu}>
                         Return to Main Menu
                     </button>,
                 ]}
