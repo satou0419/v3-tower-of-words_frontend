@@ -364,6 +364,7 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            z-index: 1000;
         }
         .clue-pronunciation {
             background-color: white;

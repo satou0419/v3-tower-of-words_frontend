@@ -413,6 +413,7 @@ const PlaygroundGameplay = () => {
             key="start-game"
             onClick={() => {
                 setShowWelcomeModal(false);
+                setGameStarted(true);
                 setShowTutorial(true);
             }}
         >
@@ -435,7 +436,6 @@ const PlaygroundGameplay = () => {
             setCurrentStep(currentStep + 1);
         } else {
             setShowTutorial(false);
-            setGameStarted(true);
         }
     };
 
