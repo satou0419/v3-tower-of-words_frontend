@@ -1,38 +1,38 @@
-"use client";
-import "./login.scss";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import loginUser from "@/lib/auth-endpoint/loginUser";
-import getAllItems from "@/lib/item-endpoint/getAllItem";
-import { InputBox } from "@/app/component/Input/Input";
-import Link from "next/link";
-import Loading from "@/app/loading";
+"use client"
+import "./login.scss"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
+import loginUser from "@/lib/auth-endpoint/loginUser"
+import getAllItems from "@/lib/item-endpoint/getAllItem"
+import { InputBox } from "@/app/component/Input/Input"
+import Link from "next/link"
+import Loading from "@/app/loading"
 
 export default function Login() {
-    const route = useRouter();
-    const [password, setPassword] = useState("");
-    const [username, setUsername] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
+    const route = useRouter()
+    const [password, setPassword] = useState("")
+    const [username, setUsername] = useState("")
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-        setLoading(true);
-        setError("");
+        event.preventDefault()
+        setLoading(true)
+        setError("")
 
         try {
-            const loginData = await loginUser(username, password);
-            console.log(loginData);
-            const data = await getAllItems();
-            console.log(data);
-            route.push("/dashboard");
+            const loginData = await loginUser(username, password)
+            console.log(loginData)
+            const data = await getAllItems()
+            console.log(data)
+            route.push("/dashboard")
         } catch (err) {
-            console.error("Login failed: ", err);
-            setError("Login failed. Please try again.");
+            console.error("Login failed: ", err)
+            setError("Login failed. Please try again.")
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     return (
         <main className="login-wrapper">
@@ -50,7 +50,7 @@ export default function Login() {
                     <div className="login-input_group">
                         <InputBox
                             type="text"
-                            placeholder="Username"
+                            label="Username"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
                             required
@@ -58,7 +58,7 @@ export default function Login() {
                         />
                         <InputBox
                             type="password"
-                            placeholder="Password"
+                            label="Password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
@@ -81,5 +81,5 @@ export default function Login() {
                 </form>
             </section>
         </main>
-    );
+    )
 }

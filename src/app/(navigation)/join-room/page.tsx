@@ -79,7 +79,7 @@ export default function JoinRoom() {
                         <div className="joinroom-inputgroup">
                             <InputLine
                                 type="text"
-                                placeholder="Enter Tower Code"
+                                label="Enter Tower Code"
                                 value={code}
                                 onChange={(e) => setCode(e.target.value)}
                                 required

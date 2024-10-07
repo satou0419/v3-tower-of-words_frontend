@@ -233,6 +233,7 @@ const Register: React.FC = () => {
                                 type="text"
                                 name="firstname"
                                 placeholder="Firstname"
+                                label="Firstname"
                                 value={formData.firstname}
                                 onChange={handleChange}
                                 required
@@ -243,6 +244,7 @@ const Register: React.FC = () => {
                                 type="text"
                                 name="lastname"
                                 placeholder="Lastname"
+                                label="Lastname"
                                 value={formData.lastname}
                                 onChange={handleChange}
                                 required
@@ -259,6 +261,7 @@ const Register: React.FC = () => {
                                 type="text"
                                 name="username"
                                 placeholder="Username"
+                                label="Username"
                                 value={formData.username}
                                 onChange={handleChange}
                                 required
@@ -277,6 +280,7 @@ const Register: React.FC = () => {
                             type="text"
                             name="email"
                             placeholder="Email"
+                            label="Email"
                             value={formData.email}
                             onChange={handleChange}
                             required
@@ -292,6 +296,7 @@ const Register: React.FC = () => {
                                 type="password"
                                 name="password"
                                 placeholder="Password"
+                                label="Password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
@@ -309,7 +314,7 @@ const Register: React.FC = () => {
                         <InputBox
                             type="password"
                             name="confirmPassword"
-                            placeholder="Confirm Password"
+                            label="Confirm Password"
                             value={formData.confirmPassword}
                             onChange={handleChange}
                             required
