@@ -5,37 +5,35 @@ import { InputLine } from "@/app/component/Input/Input";
 import Modal from "@/app/component/Modal/Modal";
 import joinRoom from "@/lib/room-endpoint/joinRoom";
 import "./joinroom.scss";
+import Loading from "@/app/loading";
 
 export default function JoinRoom() {
     const [code, setCode] = useState("");
+    const [isLoading, setIsLoading] = useState(false); // Loading state
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
     const [isErrorModalOpen, setIsErrorModalOpen] = useState(false);
     const [redirectAfterClose, setRedirectAfterClose] = useState(false);
-    const [loading, setLoading] = useState(false);
     const router = useRouter();
 
     const handleJoinRoom = async (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (loading) return;
-
-        setLoading(true);
+        setIsLoading(true); // Set loading state to true
 
         try {
             await joinRoom(code);
-            setIsSuccessModalOpen(true); // Open success modal
-            setRedirectAfterClose(true); // Set redirect flag
+            setIsSuccessModalOpen(true);
+            setRedirectAfterClose(true);
         } catch (err) {
-            setIsErrorModalOpen(true); // Open error modal
+            setIsErrorModalOpen(true);
         } finally {
-            setLoading(false); // Set loading back to false after request completes
+            setIsLoading(false); // Reset loading state to false
         }
     };
 
     const handleCloseSuccessModal = () => {
         setIsSuccessModalOpen(false);
         if (redirectAfterClose) {
-            router.push("/student-room"); // Redirect to the room page or any desired page
+            router.push("/student-room");
         }
     };
 
@@ -45,7 +43,6 @@ export default function JoinRoom() {
 
     return (
         <main className="joinroom-wrapper">
-            {/* Success Modal */}
             <Modal
                 className="success-modal"
                 isOpen={isSuccessModalOpen}
@@ -59,7 +56,6 @@ export default function JoinRoom() {
                 ]}
             />
 
-            {/* Error Modal */}
             <Modal
                 className="error-modal"
                 isOpen={isErrorModalOpen}
@@ -88,8 +84,14 @@ export default function JoinRoom() {
                                 onChange={(e) => setCode(e.target.value)}
                                 required
                             />
-                            <button type="submit">Join now</button>
-                            <button type="button" onClick={() => router.back()}>
+                            <button type="submit" disabled={isLoading}>
+                                {isLoading ? <Loading /> : "Join now"}{" "}
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => router.back()}
+                                disabled={isLoading}
+                            >
                                 Cancel
                             </button>
                         </div>
