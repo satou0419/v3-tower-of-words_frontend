@@ -3,13 +3,14 @@
     width: 100%;
 }
 
-.input-bo {
+.input-box {
     width: 100%;
     font-size: 1rem;
     border: 2px solid #ccc;
     border-radius: 4px;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
+    background-color: transparent;
 }
 .input-line {
     width: 100%;
@@ -20,6 +21,7 @@
     outline: none;
     transition: border-color 0.3s ease;
     box-sizing: border-box;
+    background-color: transparent;
 }
 .input-label {
     position: absolute;

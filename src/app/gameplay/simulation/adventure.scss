@@ -428,3 +428,24 @@
         }
     }
 }
+
+.silent-container {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5em;
+
+    .silent-index {
+        border: 1px solid black;
+        padding: 0.5em;
+        border-radius: 0.2em;
+        cursor: pointer;
+
+        &.unselected {
+            background-color: #9a6dea;
+        }
+
+        &.selected {
+            background-color: #ffc658;
+        }
+    }
+}
