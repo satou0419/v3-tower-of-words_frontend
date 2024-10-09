@@ -284,10 +284,29 @@
             width: 90%;
             padding: 1em;
         }
+        .landing__intro .landing__description{
+            h1{
+                font-size: 1.3em;
+            }
+
+            span{
+                font-size: 1em;
+            }
+        }
         .landing__adventure .landing__details,
+        .landing__items .landing__description,
         .landing__simulation .landing__details {
             flex-direction: column;
             align-items: center;
+            h1{
+                font-size: 2em;
+            }
+
+            span{
+                font-size: 1em;
+                padding-left: 0px;
+                padding-right: 10px;
+            }
         }
         .landing__adventure .landing__details .landing__description,
         .landing__simulation .landing__details .landing__description {
@@ -295,6 +314,24 @@
         }
         .landing__about h1 {
             font-size: 2em;
+        }
+        .landing__nav .links{
+            a{
+                font-size: 0.75em;
+            }
+        }
+        .landing__nav{
+            img{
+                width: 30%;
+                height: 40%;
+            }
+        }
+        .landing__items{
+            img{
+                width: 40%;
+                height: 40%;
+                margin-top: 40%;
+            }
         }
     }
 }
