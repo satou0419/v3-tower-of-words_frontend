@@ -30,3 +30,20 @@
     gap: 2em;
     padding-bottom: 2em;
 }
+
+@media (max-width: 430px) {
+    .game-room {
+        padding-top: 2em;
+        display: flex;
+        height: 100%;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        gap: 3em;
+    }
+
+    .game-container {
+        gap: 2em;
+    }
+}

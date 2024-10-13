@@ -2,8 +2,8 @@
     &.alternate {
         background-color: #662b9a;
         height: 100%;
-        width: 10em;
-        padding-top: 1em;
+        width: 100%;
+        padding: 0.5em;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
@@ -47,6 +47,31 @@
             color: #ffcd6c;
             text-shadow: var(--glow-yellow);
             font-size: 2em;
+        }
+    }
+
+    @media (max-width: 430px) {
+        &.default {
+            height: 4em;
+            width: 100%;
+            left: 0;
+            bottom: 1em;
+            position: absolute;
+            display: flex;
+            flex-direction: row;
+        }
+    }
+
+    @media (max-width: 705px) {
+        &.alternate {
+            h1 {
+                color: #fff;
+                font-size: 1em;
+            }
+
+            span {
+                font-size: 1.5em;
+            }
         }
     }
 }

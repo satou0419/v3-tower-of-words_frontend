@@ -6,19 +6,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-evenly;
+    gap: 5em;
 }
 
 .dashboard-cardmode {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 10em;
+    justify-content: space-evenly;
     width: 100%;
 }
 
-@media (max-width: 430px) {
+@media (max-width: 740px) {
     .dashboard-cardmode {
         flex-direction: column;
+        gap: 3em;
     }
 }
 

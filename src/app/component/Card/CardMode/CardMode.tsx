@@ -1,17 +1,17 @@
-import React from "react"
-import "./cardmode.scss"
-import CardInfo from "../CardInfo/CardInfo"
-import CardDetails from "../CardDetails/CardDetails"
-import Link from "next/link"
+import React from "react";
+import "./cardmode.scss";
+import CardInfo from "../CardInfo/CardInfo";
+import CardDetails from "../CardDetails/CardDetails";
+import Link from "next/link";
 
 interface CardModeProps {
-    className?: string
-    bannerSrc?: string
-    progressHeader?: string
-    progressValue?: number
-    modeTitle?: string
-    modeDescription?: string
-    link: string
+    className?: string;
+    bannerSrc?: string;
+    progressHeader?: string;
+    progressValue?: number;
+    modeTitle?: string;
+    modeDescription?: string;
+    link: string;
 }
 
 const CardMode: React.FC<CardModeProps> = ({
@@ -40,7 +40,7 @@ const CardMode: React.FC<CardModeProps> = ({
                 </Link>
             </section>
         </main>
-    )
-}
+    );
+};
 
-export default CardMode
+export default CardMode;
