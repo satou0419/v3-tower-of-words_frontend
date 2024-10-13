@@ -1,20 +1,45 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from "react"
 
 const useAnimationKeyframes = (
     animationName: string,
     name: string,
     idleFrames: number,
     attackFrames: number,
-    attackType?: string // Added attackType parameter
+    attackType?: string
 ) => {
-    const [keyframesCSS, setKeyframesCSS] = useState("");
+    const [keyframesCSS, setKeyframesCSS] = useState("")
+    const [frameWidth, setFrameWidth] = useState(360)
+    const [frameHeight, setFrameHeight] = useState(360)
+
+    useEffect(() => {
+        // Function to update frame size based on screen width
+        const updateFrameSize = () => {
+            if (window.innerWidth > 768) {
+                setFrameWidth(360)
+                setFrameHeight(360)
+            } else if (window.innerWidth > 600) {
+                setFrameWidth(260)
+                setFrameHeight(260)
+            } else if (window.innerWidth > 425) {
+                setFrameWidth(180)
+                setFrameHeight(180)
+            } else {
+                setFrameWidth(120)
+                setFrameHeight(120)
+            }
+        }
+
+        // Call updateFrameSize on mount and whenever the screen resizes
+        updateFrameSize()
+        window.addEventListener("resize", updateFrameSize)
+
+        // Cleanup the event listener on component unmount
+        return () => window.removeEventListener("resize", updateFrameSize)
+    }, [])
 
     useEffect(() => {
         const generateKeyframes = () => {
-            const frameWidth = 360; // Width of each frame in the sprite sheet
-            const frameHeight = 360; // Height of each frame in the sprite sheet
-
-            let keyframes = `@keyframes ${animationName}-${name} {`;
+            let keyframes = `@keyframes ${animationName}-${name} {`
 
             if (animationName === "idle") {
                 keyframes += `
@@ -26,7 +51,7 @@ const useAnimationKeyframes = (
                             idleFrames * frameWidth
                         }px -${frameHeight}px;
                     }
-                `;
+                `
             } else if (animationName === "attack") {
                 keyframes += `
                     0% {
@@ -35,16 +60,16 @@ const useAnimationKeyframes = (
                     100% {
                         background-position: -${attackFrames * frameWidth}px 0;
                     }
-                `;
+                `
             }
 
-            keyframes += `}`;
+            keyframes += `}`
 
             if (attackType === "melee") {
                 keyframes += `
                     @keyframes expand-width-${name} {
                         0% {
-                            width: 360px;
+                            width: ${frameWidth}px;
                         }
                         100% {
                             width: 90%;
@@ -56,19 +81,27 @@ const useAnimationKeyframes = (
                             width: 90%;
                         }
                         100% {
-                            width: 360px;
+                            width: ${frameWidth}px;
                         }
                     }
-                `;
+                `
             }
 
-            setKeyframesCSS(keyframes);
-        };
+            setKeyframesCSS(keyframes)
+        }
 
-        generateKeyframes();
-    }, [animationName, idleFrames, attackFrames, name, attackType]);
+        generateKeyframes()
+    }, [
+        animationName,
+        idleFrames,
+        attackFrames,
+        name,
+        attackType,
+        frameWidth,
+        frameHeight,
+    ])
 
-    return keyframesCSS;
-};
+    return keyframesCSS
+}
 
-export default useAnimationKeyframes;
+export default useAnimationKeyframes

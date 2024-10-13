@@ -6,10 +6,11 @@ import { useEnemyStore } from "@/store/enemyStore"
 import Loading from "@/app/loading"
 import useImageParse from "@/hook/useImageParse"
 import "./adventure.scss"
+import "./adventure_mobile.scss"
+
 import "./animation.scss"
 import Modal from "@/app/component/Modal/Modal"
 import useAnimationKeyframes from "@/hook/useAnimationKeyframes"
-import "./modals.scss"
 import useMerriam from "@/hook/useMerriam"
 import useAddWord from "@/hook/useAddWord"
 import useProgressEquippedStore from "@/store/progressEquippedStore"
@@ -22,7 +23,15 @@ import useItem from "@/hook/useItem"
 import { useGameplayStore } from "@/store/gameplayStore"
 import ConfettiWrapper from "@/app/component/Confetti/Confetti"
 import useIncrementFloor from "@/hook/useIncrementFloor"
-import { FaSignOutAlt, FaVolumeUp } from "react-icons/fa"
+import {
+    FaEye,
+    FaHospitalSymbol,
+    FaPencilAlt,
+    FaSignOutAlt,
+    FaTumblr,
+    FaVolumeUp,
+    FaWater,
+} from "react-icons/fa"
 import useAchievementChecker from "@/hook/useAchievementChecker"
 import AchievementToast from "@/app/component/AchievementToast/AchievementToast"
 import useIncrementSyllableFloor from "@/hook/useIncrementSyllableFloor"
@@ -730,6 +739,89 @@ const AdventureGameplay = () => {
         </button>,
     ]
 
+    // State to track visibility of each section
+    const [isItemVisible, setIsItemVisible] = useState(false)
+    const [isInputVisible, setIsInputVisible] = useState(false)
+    const [isClueVisible, setIsClueVisible] = useState(false)
+
+    const [spriteWidth, setSpriteWidth] = useState("360")
+    const [spriteHeight, setSpriteHeight] = useState("360")
+    const [spriteSize, setSpriteSize] = useState("")
+
+    // Detect screen size and update visibility when screen width is greater than 440px
+    useEffect(() => {
+        const updateVisibilityBasedOnScreenSize = () => {
+            if (window.innerWidth > 768) {
+                setIsItemVisible(true)
+                setIsInputVisible(true)
+                setIsClueVisible(true)
+
+                setSpriteHeight("360")
+                setSpriteWidth("360")
+                setSpriteSize("")
+            } else if (window.innerWidth > 600) {
+                // Optionally reset or leave the values unchanged when below 440px
+                setIsItemVisible(false)
+                setIsInputVisible(true)
+                setIsClueVisible(false)
+
+                setSpriteHeight("260")
+                setSpriteWidth("260")
+                setSpriteSize("-260")
+            } else if (window.innerWidth > 425) {
+                // Optionally reset or leave the values unchanged when below 440px
+                setIsItemVisible(false)
+                setIsInputVisible(true)
+                setIsClueVisible(false)
+
+                setSpriteHeight("180")
+                setSpriteWidth("180")
+                setSpriteSize("-180")
+            } else {
+                setIsItemVisible(false)
+                setIsInputVisible(true)
+                setIsClueVisible(false)
+
+                setSpriteHeight("120")
+                setSpriteWidth("120")
+                setSpriteSize("-120")
+            }
+        }
+
+        // Run the function initially and on window resize
+        updateVisibilityBasedOnScreenSize()
+        window.addEventListener("resize", updateVisibilityBasedOnScreenSize)
+
+        // Cleanup the event listener on unmount
+        return () =>
+            window.removeEventListener(
+                "resize",
+                updateVisibilityBasedOnScreenSize
+            )
+    }, [])
+
+    // Function to toggle visibility of sections
+    const handleButtonItem = () => {
+        setIsItemVisible(true)
+        setIsInputVisible(false)
+        setIsClueVisible(false)
+        console.log("Item CLick")
+    }
+
+    const handleButtonInput = () => {
+        setIsItemVisible(false)
+        setIsInputVisible(true)
+        setIsClueVisible(false)
+        console.log("Item CLick")
+    }
+
+    const handleButtonClue = () => {
+        setIsItemVisible(false)
+        setIsInputVisible(false)
+        setIsClueVisible(true)
+        console.log("Item CLick")
+    }
+
     if (!floorId || loading || !imagesLoaded) {
         return <Loading />
     }
@@ -751,6 +843,27 @@ const AdventureGameplay = () => {
             {/* Game Content */}
             {gameStarted && (
                 <section className="adventure-platform">
+                    <section className="control-buttons">
+                        <button
+                            className="button-item"
+                            onClick={handleButtonItem}
+                        >
+                            <FaWater />
+                        </button>
+                        <button
+                            className="button-input"
+                            onClick={handleButtonInput}
+                        >
+                            <FaPencilAlt />
+                        </button>
+                        <button
+                            className="button-clue"
+                            onClick={handleButtonClue}
+                        >
+                            <FaEye />
+                        </button>
+                    </section>
+
                     <div className="platform-indicator">Floor {floorId}</div>
                     <div className="lives-container">{renderHearts()}</div>
 
@@ -803,6 +916,10 @@ const AdventureGameplay = () => {
                         {/* Character Sprite */}
                         <section
                             className={`character-container ${characterAttackType} ${characterHit}`}
+                            style={{
+                                width: `${spriteWidth}px`,
+                                height: `${spriteHeight}px`,
+                            }}
                         >
                             <div
                                 className={`character-sprite ${
@@ -812,11 +929,12 @@ const AdventureGameplay = () => {
                                 }`}
                                 style={{
                                     position: "absolute",
+                                    // backgroundColor: "red",
                                     bottom: 0,
                                     right: 0,
-                                    backgroundImage: `url("/assets/images/sprite/${characterDetails.name}.png")`,
-                                    width: `360px`,
-                                    height: `360px`,
+                                    backgroundImage: `url("/assets/images/sprite/${characterDetails.name}${spriteSize}.png")`,
+                                    width: `${spriteWidth}px`,
+                                    height: `${spriteHeight}px`,
                                     animation: `${
                                         isCharacterAttacking
                                             ? `attack-${characterDetails.name}`
@@ -843,6 +961,10 @@ const AdventureGameplay = () => {
                         {/* Enemy Sprite */}
                         <section
                             className={`enemy-container ${enemyAttackType} ${enemyHit}`}
+                            style={{
+                                width: `${spriteWidth}px`,
+                                height: `${spriteHeight}px`,
+                            }}
                         >
                             <div
                                 className={`enemy-sprite ${
@@ -854,9 +976,10 @@ const AdventureGameplay = () => {
                                     position: "absolute",
                                     bottom: 0,
                                     left: 0,
-                                    backgroundImage: `url("/assets/images/sprite/${enemyDetails.name}.png")`,
-                                    width: `360px`,
-                                    height: `360px`,
+                                    // backgroundColor: "blue",
+                                    backgroundImage: `url("/assets/images/sprite/${enemyDetails.name}${spriteSize}.png")`,
+                                    width: `${spriteWidth}px`,
+                                    height: `${spriteHeight}px`,
                                     animation: `${
                                         isEnemyAttacking
                                             ? `attack-${enemyDetails.name}`
@@ -884,9 +1007,11 @@ const AdventureGameplay = () => {
             )}
 
             {/* Confirmation Modal */}
+
             {gameStarted && (
                 <section className="adventure-control">
                     <img src="/assets/images/background/bg-border_large.webp" />
+
                     <Modal
                         className="confirmation-modal"
                         isOpen={showConfirmationModal}
@@ -908,6 +1033,7 @@ const AdventureGameplay = () => {
                         className={`control-item ${
                             isItemLocked ? "item-locked" : "item-unlocked"
                         }`}
+                        style={{ display: isItemVisible ? "" : "none" }}
                     >
                         <img
                             className={
@@ -945,7 +1071,10 @@ const AdventureGameplay = () => {
                         )}
                     </section>
 
-                    <section className="control-input">
+                    <section
+                        className="control-input"
+                        style={{ display: isInputVisible ? "" : "none" }}
+                    >
                         <form onSubmit={handleSubmit}>
                             {achievementToast && (
                                 <AchievementToast
@@ -1046,7 +1175,10 @@ const AdventureGameplay = () => {
                         </form>
                     </section>
 
-                    <section className="control-clue">
+                    <section
+                        className="control-clue"
+                        style={{ display: isClueVisible ? "" : "none" }}
+                    >
                         <h1>Word's Info</h1>
 
                         <section className="clue-container">

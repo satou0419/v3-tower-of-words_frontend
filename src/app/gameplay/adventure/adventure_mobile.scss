@@ -1,0 +1,59 @@
+@media (max-width: 768px) {
+    .adventure-platform {
+        .control-buttons {
+            display: inherit;
+            button {
+                visibility: visible;
+            }
+        }
+    }
+
+    .sprite-holder {
+        // width: 80%;
+        // display: flex;
+        // align-items: center;
+        // justify-content: flex-end;
+        // position: absolute;
+        bottom: 50px;
+    }
+
+    .adventure-control {
+        .control-item {
+            border-color: transparent;
+        }
+        .control-input {
+            .input-wrapper {
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        .control-clue {
+            border-color: transparent;
+            h1 {
+                margin-top: 10px;
+            }
+        }
+    }
+    .control-buttons {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        z-index: 999;
+
+        .button-item,
+        .button-input,
+        .button-clue {
+            background-color: #ffcd6c;
+            border: 2px solid #b6661b;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+            flex: 1;
+            height: 3em;
+            margin: 0 0.2em;
+        }
+    }
+}

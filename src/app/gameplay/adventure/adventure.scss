@@ -34,6 +34,9 @@
 }
 
 .adventure-platform {
+    .control-buttons {
+        display: none;
+    }
     height: 60%;
     width: 100%;
     background-color: bisque;
