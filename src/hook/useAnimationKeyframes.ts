@@ -20,12 +20,9 @@ const useAnimationKeyframes = (
             } else if (window.innerWidth > 600) {
                 setFrameWidth(260)
                 setFrameHeight(260)
-            } else if (window.innerWidth > 425) {
+            } else {
                 setFrameWidth(180)
                 setFrameHeight(180)
-            } else {
-                setFrameWidth(120)
-                setFrameHeight(120)
             }
         }
 

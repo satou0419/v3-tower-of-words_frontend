@@ -25,10 +25,8 @@ import ConfettiWrapper from "@/app/component/Confetti/Confetti"
 import useIncrementFloor from "@/hook/useIncrementFloor"
 import {
     FaEye,
-    FaHospitalSymbol,
     FaPencilAlt,
     FaSignOutAlt,
-    FaTumblr,
     FaVolumeUp,
     FaWater,
 } from "react-icons/fa"
@@ -768,7 +766,7 @@ const AdventureGameplay = () => {
                 setSpriteHeight("260")
                 setSpriteWidth("260")
                 setSpriteSize("-260")
-            } else if (window.innerWidth > 425) {
+            } else {
                 // Optionally reset or leave the values unchanged when below 440px
                 setIsItemVisible(false)
                 setIsInputVisible(true)
@@ -777,14 +775,6 @@ const AdventureGameplay = () => {
                 setSpriteHeight("180")
                 setSpriteWidth("180")
                 setSpriteSize("-180")
-            } else {
-                setIsItemVisible(false)
-                setIsInputVisible(true)
-                setIsClueVisible(false)
-
-                setSpriteHeight("120")
-                setSpriteWidth("120")
-                setSpriteSize("-120")
             }
         }
 
@@ -912,7 +902,14 @@ const AdventureGameplay = () => {
                             )
                         })}
                     </section>
-                    <section className="sprite-holder">
+                    <section
+                        className="sprite-holder"
+                        style={
+                            {
+                                // width: `100%`,
+                            }
+                        }
+                    >
                         {/* Character Sprite */}
                         <section
                             className={`character-container ${characterAttackType} ${characterHit}`}
