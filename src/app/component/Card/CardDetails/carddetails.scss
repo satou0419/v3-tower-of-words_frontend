@@ -7,7 +7,7 @@
         align-items: center;
         text-align: center;
         flex-grow: 1.5;
-        gap: 1em;
+        gap: 0.5em;
 
         h1 {
             font-size: 1.5em;
@@ -20,14 +20,33 @@
 
     &.alternate {
         align-self: flex-start;
-        margin-top: 0.5em;
-        margin-left: 0.5em;
         h1 {
             font-size: 2em;
         }
 
         span {
             font-size: 1em;
+        }
+    }
+
+    @media (max-width: 430px) {
+        &.default {
+            padding: 0;
+            gap: 0;
+            align-items: start;
+            text-align: start;
+        }
+    }
+
+    @media (max-width: 750px) {
+        &.alternate {
+            align-self: flex-start;
+            h1 {
+                font-size: 1em;
+            }
+            span {
+                font-size: 0.7em;
+            }
         }
     }
 }

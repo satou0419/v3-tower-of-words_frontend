@@ -21,15 +21,23 @@
 
 @media (max-width: 430px) {
     .cardmode-card {
-        width: 100%;
-        height: 75%;
+        width: 20em;
+        height: 10em;
+        display: flex;
+        flex-direction: row;
+        position: relative;
+    }
+
+    .cardmode-banner {
+        width: 50%;
+        position: relative;
     }
 }
 
 .cardmode-banner {
     display: flex;
-    min-height: 40%;
-    max-height: 40%;
+    min-height: 50%;
+    max-height: 50%;
 
     align-items: center;
     position: relative;

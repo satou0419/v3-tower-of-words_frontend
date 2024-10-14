@@ -11,7 +11,7 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    button{
+    button {
         background-color: #ffaf40;
         height: 3em;
         width: 10em;
@@ -40,4 +40,21 @@
     overflow-x: auto;
     gap: 2em;
     padding-bottom: 2em;
+}
+
+@media (max-width: 430px) {
+    .teacherroom-room {
+        padding-top: 2em;
+        display: flex;
+        height: 100%;
+        width: 100%;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        gap: 3em;
+    }
+
+    .teacherroom-container {
+        gap: 2em;
+    }
 }
