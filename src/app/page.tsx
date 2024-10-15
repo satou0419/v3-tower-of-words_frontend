@@ -1,5 +1,5 @@
-import Link from "next/link"
-import "./landing.scss"
+import Link from "next/link";
+import "./landing.scss";
 
 export default function Landing() {
     return (
@@ -9,9 +9,15 @@ export default function Landing() {
                     <nav className="landing__nav">
                         <img src="/assets/images/logo/logo_simple.webp" />
                         <div className="links">
-                            <Link href="#about_us">ABOUT US</Link>
-                            <Link href="/register">SIGN UP</Link>
-                            <Link href="/login">SIGN IN</Link>
+                            <Link href="#about_us" className="landing-aboutus">
+                                ABOUT US
+                            </Link>
+                            <Link href="/register" className="landing-register">
+                                SIGN UP
+                            </Link>
+                            <Link href="/login" className="landing-login">
+                                SIGN IN
+                            </Link>
                         </div>
                     </nav>
 
@@ -209,5 +215,5 @@ export default function Landing() {
                 </footer>
             </section>
         </main>
-    )
+    );
 }

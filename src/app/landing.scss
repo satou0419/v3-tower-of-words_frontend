@@ -35,6 +35,23 @@
                 justify-content: center;
                 align-items: center;
                 gap: 2em;
+
+                .landing-aboutus,
+                .landing-register,
+                .landing-login {
+                    background-color: transparent;
+                    transition: background-color 0.3s ease, transform 0.3s ease;
+                    padding: 10px 20px;
+                    border-radius: 5px;
+                }
+
+                .landing-aboutus:hover,
+                .landing-register:hover,
+                .landing-login:hover {
+                    background-color: #ffaf40;
+                    transform: scale(1.05);
+                    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+                }
             }
         }
     }
@@ -86,7 +103,7 @@
 
         & .landing__details {
             display: flex;
-            justify-content: flex-end;
+            justify-content: flex-start;
             gap: 2em;
             width: 100%;
 
