@@ -371,6 +371,7 @@ const SimulationGameplay = () => {
                     setEnemyAttackType("shrink-width");
 
                     setCharacterHit("");
+                    setIsButtonDisabled(false);
                     enemyInterval.start();
                 }, 500); // 500ms is the duration of the hit
             }, (enemyDetails.attackFrame / 12) * 1000 + 800); // Main enemy attack duration
@@ -387,6 +388,7 @@ const SimulationGameplay = () => {
                 // Set character hit to "" after the hit duration
                 setTimeout(() => {
                     setCharacterHit("");
+                    setIsButtonDisabled(false);
                     enemyInterval.start();
                 }, 500); // 500ms is the duration of the hit
             }, (enemyDetails.attackFrame / 12) * 1000); // Main enemy attack duration for non-melee
@@ -406,6 +408,7 @@ const SimulationGameplay = () => {
                 setIsCharacterAttacking(false);
                 setCharacterAttackType("shrink-width");
                 setEnemyAttackType("");
+                setIsButtonDisabled(false);
                 setEnemyHit("hit");
 
                 // Set character hit to "" after the hit duration
@@ -652,6 +655,7 @@ const SimulationGameplay = () => {
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
+        setIsButtonDisabled(true);
         const currentEnemy = enemies[currentEnemyIndex];
         enemyInterval.pause();
 
@@ -870,6 +874,7 @@ const SimulationGameplay = () => {
             // Play audio on word change
             const timer = setTimeout(() => {
                 word.playAudio();
+                setIsButtonDisabled(false);
             }, 1000);
 
             setTimeout(() => {
@@ -1159,7 +1164,12 @@ const SimulationGameplay = () => {
                                     <span className="range-value">
                                         {rangeValue}
                                     </span>
-                                    <button type="submit">Go!</button>
+                                    <button
+                                        type="submit"
+                                        disabled={isButtonDisabled}
+                                    >
+                                        Go!
+                                    </button>
                                 </>
                             ) : simulationDetails.simulationDetails
                                   ?.simulationType === "Spelling" ? (
@@ -1178,7 +1188,12 @@ const SimulationGameplay = () => {
                                         required
                                     />
 
-                                    <button type="submit">Go!</button>
+                                    <button
+                                        type="submit"
+                                        disabled={isButtonDisabled}
+                                    >
+                                        Go!
+                                    </button>
                                 </>
                             ) : gameType === "Silent" ? (
                                 <>
