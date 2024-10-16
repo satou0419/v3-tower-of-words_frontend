@@ -786,6 +786,7 @@ const SimulationGameplay = () => {
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
                     ]);
+                    enemyInterval.reset();
                     setTimeLeft(interval);
                     setCurrentEnemyIndex(currentEnemyIndex + 1);
                     setCurrentWordIndex(0);
