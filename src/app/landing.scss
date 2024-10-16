@@ -269,6 +269,10 @@
         .landing__adventure img,
         .landing__simulation img {
             width: 100%;
+            
+        }
+        .landing__simulation .landing__details .landing__description{
+            margin-left: 0em;
         }
         .landing__about .landing__developers {
             flex-direction: column;
@@ -276,6 +280,17 @@
         }
         .landing__profile {
             width: 80%;
+        }
+
+        .landing__items{
+            flex-direction: column-reverse;
+            align-items: center;
+
+            img {
+                margin-top: 0%;
+                width: 40%;
+                height: 40%;
+            }
         }
     }
 
@@ -326,12 +341,12 @@
                 height: 40%;
             }
         }
-        .landing__items{
-            img{
-                width: 40%;
-                height: 40%;
-                margin-top: 40%;
-            }
-        }
+        // .landing__items{
+        //     img{
+        //         width: 40%;
+        //         height: 40%;
+        //         // margin-top: 40%;
+        //     }
+        // }
     }
 }
