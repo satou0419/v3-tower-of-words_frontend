@@ -619,6 +619,17 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 2500);
             setIsLastEnemyWord(false);
         }
+
+        if (lives === 1) {
+            console.log("HERE!!!");
+            setTimeout(() => {
+                enemyInterval.reset();
+                setLives(studentLife);
+                setTimeLeft(interval);
+                setCurrentWordIndex(currentWordIndex + 1);
+                setIsPronunciationLocked(true);
+            }, (characterDetails.attackFrame / 12) * 2500);
+        }
         time.reset();
     };
 
@@ -851,6 +862,7 @@ const SimulationGameplay = () => {
                     setIsLastEnemyWord(false);
                 } else if (lives === 1) {
                     setTimeout(() => {
+                        enemyInterval.reset();
                         setLives(studentLife);
                         setTimeLeft(interval);
                         setCurrentWordIndex(currentWordIndex + 1);
