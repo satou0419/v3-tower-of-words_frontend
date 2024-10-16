@@ -8,6 +8,7 @@ import Toast from "@/app/component/Toast/Toast";
 import { useRouter } from "next/navigation";
 import Modal from "@/app/component/Modal/Modal";
 import Loading from "@/app/loading";
+import useCheckUsername from "@/hook/useCheckUsername";
 
 interface FormData {
     username: string;
@@ -40,7 +41,6 @@ const Register: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
-    // Styles for input fields
     const [inputStyles, setInputStyles] = useState<Record<string, string>>({
         username: "",
         email: "",
@@ -50,8 +50,15 @@ const Register: React.FC = () => {
         confirmPassword: "",
         userType: "",
     });
+
+    const validateName = (name: string) => {
+        const nameRegex = /^[A-Za-z]+$/;
+        return nameRegex.test(name) && name.length >= 2;
+    };
+
     const validateUsername = (username: string) => {
         const usernameRegex = /^[a-z][a-z._]*[a-z._]?$/;
+
         return usernameRegex.test(username) && username.length >= 3;
     };
 
@@ -67,6 +74,8 @@ const Register: React.FC = () => {
     };
 
     const validateForm = () => {
+        const isFirstnameValid = validateName(formData.firstname);
+        const isLastnameValid = validateName(formData.lastname);
         const isUsernameValid = validateUsername(formData.username);
         const isPasswordValid = validatePassword(formData.password);
         const isEmailValid = validateEmail(formData.email);
@@ -75,6 +84,8 @@ const Register: React.FC = () => {
         const isUserTypeValid = formData.userType !== "";
 
         return (
+            isFirstnameValid &&
+            isLastnameValid &&
             isUsernameValid &&
             isPasswordValid &&
             isEmailValid &&
@@ -92,7 +103,6 @@ const Register: React.FC = () => {
             [name]: value,
         }));
 
-        // Update input styles based on value and field name
         switch (name) {
             case "username":
                 setInputStyles((prevStyles) => ({
