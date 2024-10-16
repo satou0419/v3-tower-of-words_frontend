@@ -556,6 +556,8 @@ const SimulationGameplay = () => {
             // }, (characterDetails.attackFrame / 12) * 2000);
 
             setTimeout(() => {
+                setLives(studentLife);
+                setTimeLeft(interval);
                 setCurrentWordIndex(currentWordIndex + 1); // Move to next word
                 setIsPronunciationLocked(true);
             }, (characterDetails.attackFrame / 12) * 2500);
@@ -808,19 +810,6 @@ const SimulationGameplay = () => {
 
             updateSimulationProgress(updatedStudentProgress);
 
-            // setTimeout(() => {
-            //     if (lives === 0) {
-            //         console.log("Start nako");
-            //         setLives(studentLife);
-            //         enemyInterval.reset();
-            //         console.log(
-            //             `Proceeding to next word: Word ${currentWordIndex + 1}`
-            //         );
-            //         setCurrentWordIndex(currentWordIndex + 1);
-            //         setIsPronunciationLocked(true);
-            //     }
-            // }, (characterDetails.attackFrame / 12) * 2500);
-
             handleMissedAttack();
 
             setTimeout(() => {
@@ -858,8 +847,15 @@ const SimulationGameplay = () => {
                         setTimeLeft(interval);
                         setCurrentEnemyIndex(currentEnemyIndex + 1);
                         setCurrentWordIndex(0);
-                    }, (characterDetails.attackFrame / 12) * 2500);
+                    }, (characterDetails.attackFrame / 12) * 3000);
                     setIsLastEnemyWord(false);
+                } else if (lives === 1) {
+                    setTimeout(() => {
+                        setLives(studentLife);
+                        setTimeLeft(interval);
+                        setCurrentWordIndex(currentWordIndex + 1);
+                        setIsPronunciationLocked(true);
+                    }, (characterDetails.attackFrame / 12) * 2500);
                 }
             }, (characterDetails.attackFrame / 12) * 2000);
             setMistakes(0);
