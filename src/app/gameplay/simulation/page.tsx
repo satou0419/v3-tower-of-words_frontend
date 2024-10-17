@@ -556,6 +556,7 @@ const SimulationGameplay = () => {
             // }, (characterDetails.attackFrame / 12) * 2000);
 
             setTimeout(() => {
+                enemyInterval.reset();
                 setLives(studentLife);
                 setTimeLeft(interval);
                 setCurrentWordIndex(currentWordIndex + 1); // Move to next word
@@ -618,17 +619,6 @@ const SimulationGameplay = () => {
                 setIsPronunciationLocked(true);
             }, (characterDetails.attackFrame / 12) * 2500);
             setIsLastEnemyWord(false);
-        }
-
-        if (lives === 1) {
-            console.log("HERE!!!");
-            setTimeout(() => {
-                enemyInterval.reset();
-                setLives(studentLife);
-                setTimeLeft(interval);
-                setCurrentWordIndex(currentWordIndex + 1);
-                setIsPronunciationLocked(true);
-            }, (characterDetails.attackFrame / 12) * 2500);
         }
         time.reset();
     };
@@ -786,6 +776,7 @@ const SimulationGameplay = () => {
                         ...prevDefeatedEnemies,
                         currentEnemyIndex,
                     ]);
+                    enemyInterval.reset();
                     setTimeLeft(interval);
                     setCurrentEnemyIndex(currentEnemyIndex + 1);
                     setCurrentWordIndex(0);
