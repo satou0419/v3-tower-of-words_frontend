@@ -4,6 +4,7 @@ import useStudentInfo from "@/hook/useStudentInfo";
 import fetchUserDetails from "@/hook/useGetUserDetails";
 
 interface CardUserProps {
+    index: number;
     username: number;
     time?: string | null;
     score?: number;
@@ -12,6 +13,7 @@ interface CardUserProps {
 }
 
 const CardUser: React.FC<CardUserProps> = ({
+    index,
     username,
     time,
     score,
@@ -46,6 +48,7 @@ const CardUser: React.FC<CardUserProps> = ({
             className={`carduser-card ${className || ""}`}
             onClick={onClick}
         >
+            <span>{index + 1}</span>
             <section className="carduser-container">
                 <section className="banner-container">
                     <div className="banner">
