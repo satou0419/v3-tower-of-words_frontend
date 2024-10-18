@@ -142,5 +142,31 @@
 @media (max-width: 480px) {
     .login-form {
         padding: 0.5em; /* Further adjust padding */
+        margin-top: 4em;
+    }
+
+    .login-container{
+        width: 90%;
+        height: 90%;
+
+        display: flex;
+        flex-direction: column;
+        
+    }
+
+    .login-wrapper{
+        height: 150vh;
+        
+    }
+
+    .login-form{
+        margin-right: 0%;
+        height: 50%;
+        gap: 3.5em;
+        margin-top: 0;
+    }
+
+    .login-link_group{
+        margin-top: 0;
     }
 }

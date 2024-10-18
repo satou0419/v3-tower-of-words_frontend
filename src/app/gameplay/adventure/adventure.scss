@@ -121,8 +121,6 @@
     justify-content: flex-end;
     justify-content: center;
     align-items: center;
-    width: 360px;
-    height: 360px;
     left: 0;
     // animation: expand-width 0.5s forwards, shrink-width 2s 4s forwards; /* Apply expand and shrink animations */
 }
@@ -130,8 +128,6 @@
 .enemy-container {
     position: relative;
     align-items: center;
-    height: 360px;
-    width: 360px;
 
     // animation: expand-width 0.8s forwards, shrink-width 2s 4s forwards; /* Apply expand and shrink animations */
 }
@@ -217,6 +213,10 @@
 
     //GameType 2 - Syllable
     .control-input {
+        .input-wrapper {
+            display: flex;
+            justify-content: center;
+        }
         .syllable-word {
             width: 60%;
             height: 1.8em;
