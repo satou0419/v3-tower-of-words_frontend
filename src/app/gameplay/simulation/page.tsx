@@ -487,44 +487,7 @@ const SimulationGameplay = () => {
         const isLastEnemy = currentEnemyIndex === enemies.length - 1;
         setIsLastEnemy(isLastEnemy);
 
-        if (enemyInterval.time === 0 && lives >= 2 && isLastEnemy) {
-            console.log("Enemy Attack!!!");
-            handleEnemyAttack();
-            setTimeout(() => {
-                console.log("Reset Time");
-                enemyInterval.reset();
-            }, (characterDetails.attackFrame / 12) * 2000);
-
-            setTimeout(() => {
-                console.log("Starts the countdown");
-                enemyInterval.start();
-            }, (characterDetails.attackFrame / 12) * 2500);
-        }
-
-        if (
-            enemyInterval.time === 0 &&
-            lives >= 2 &&
-            !(isLastEnemy && isLastWord)
-        ) {
-            console.log("Enemy Attack!!!");
-            handleEnemyAttack();
-            setTimeout(() => {
-                console.log("Reset Time");
-                enemyInterval.reset();
-            }, (characterDetails.attackFrame / 12) * 2000);
-
-            setTimeout(() => {
-                console.log("Starts the countdown");
-                enemyInterval.start();
-            }, (characterDetails.attackFrame / 12) * 2500);
-        }
-
-        // Check if the time is up and lives are 1
-        if (
-            enemyInterval.time === 0 &&
-            lives === 1 &&
-            !(isLastEnemy && isLastWord)
-        ) {
+        if (enemyInterval.time === 0 && !(isLastEnemy && isLastWord)) {
             console.log("Time to switch word");
             handleEnemyAttack();
 
@@ -546,6 +509,7 @@ const SimulationGameplay = () => {
             console.log(updatedStudentProgress);
 
             updateSimulationProgress(updatedStudentProgress);
+            setLives(0);
             setMistakes(0);
             time.reset();
 
@@ -564,33 +528,28 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 2500);
         }
 
-        if (
-            enemyInterval.time === 0 &&
-            lives === 1 &&
-            isLastWord &&
-            isLastEnemy
-        ) {
+        if (enemyInterval.time === 0 && isLastWord && isLastEnemy) {
             // Last word of the last enemy
+            handleEnemyAttack();
             setIsLastEnemyWord(true);
             setIsLastEnemy(true);
             setLives(0);
 
-            updateParticipantAssessment(userID, simulationID)
-                .then((score) => {
-                    console.log("Score:", score.data.score);
-                    setFinalScore(score.data.score);
-                    setTimeout(() => {
+            setTimeout(() => {
+                updateParticipantAssessment(userID, simulationID)
+                    .then((score) => {
+                        console.log("Score:", score.data.score);
+                        setFinalScore(score.data.score);
                         setShowConfetti(true);
                         setShowConquerFloorModal(true);
-                    }, (characterDetails.attackFrame / 12) * 1000);
-                })
-                .catch((error) => {
-                    console.error(
-                        "Error updating participant assessment:",
-                        error
-                    );
-                });
-            //enemyInterval.reset(0);
+                    })
+                    .catch((error) => {
+                        console.error(
+                            "Error updating participant assessment:",
+                            error
+                        );
+                    });
+            }, (characterDetails.attackFrame / 12) * 2500);
         }
 
         console.log(isLastWord);
@@ -598,9 +557,9 @@ const SimulationGameplay = () => {
         console.log(lives);
         console.log(currentWordIndex);
 
-        if (isLastWord && enemyInterval.time === 0 && lives === 1) {
+        if (isLastWord && enemyInterval.time === 0) {
             // Last word of current enemy but not the last enemy
-
+            setLives(0);
             console.log(currentEnemyIndex);
             console.log(currentWordIndex);
 
@@ -670,6 +629,10 @@ const SimulationGameplay = () => {
         const currentWordID = currentEnemy?.words[currentWordIndex];
         // const simuWord = useFetchSimulationWords(currentWordID);
         const currentWord = simuWord.word?.toLowerCase();
+
+        if (currentWord === undefined || currentWordID === undefined) {
+            return;
+        }
 
         console.log(
             `Submitting: Enemy ${currentEnemyIndex + 1}/${enemies.length}`
@@ -756,10 +719,8 @@ const SimulationGameplay = () => {
                         .then((score) => {
                             console.log("Score:", score.data.score);
                             setFinalScore(score.data.score);
-                            setTimeout(() => {
-                                setShowConfetti(true);
-                                setShowConquerFloorModal(true);
-                            }, (characterDetails.attackFrame / 12) * 1000);
+                            setShowConfetti(true);
+                            setShowConquerFloorModal(true);
                         })
                         .catch((error) => {
                             console.error(
@@ -790,7 +751,7 @@ const SimulationGameplay = () => {
                     setCurrentWordIndex(currentWordIndex + 1);
                     setIsPronunciationLocked(true);
                 }
-            }, (characterDetails.attackFrame / 12) * 1000); // Adjust timing as needed
+            }, (characterDetails.attackFrame / 12) * 2000); // Adjust timing as needed
             setMistakes(0);
             time.reset();
         } else {
@@ -815,7 +776,6 @@ const SimulationGameplay = () => {
             handleMissedAttack();
 
             setTimeout(() => {
-                enemyInterval.reset();
                 handleEnemyAttack();
 
                 if (isLastWord && isLastEnemy && lives === 1) {
@@ -825,10 +785,8 @@ const SimulationGameplay = () => {
                         .then((score) => {
                             console.log("Score:", score.data.score);
                             setFinalScore(score.data.score);
-                            setTimeout(() => {
-                                setShowConfetti(true);
-                                setShowConquerFloorModal(true);
-                            }, (characterDetails.attackFrame / 12) * 1000);
+                            setShowConfetti(true);
+                            setShowConquerFloorModal(true);
                         })
                         .catch((error) => {
                             console.error(
@@ -846,7 +804,6 @@ const SimulationGameplay = () => {
                     setTimeout(() => {
                         enemyInterval.reset();
                         setLives(studentLife);
-                        setTimeLeft(interval);
                         setCurrentEnemyIndex(currentEnemyIndex + 1);
                         setCurrentWordIndex(0);
                     }, (characterDetails.attackFrame / 12) * 3000);
@@ -855,7 +812,6 @@ const SimulationGameplay = () => {
                     setTimeout(() => {
                         enemyInterval.reset();
                         setLives(studentLife);
-                        setTimeLeft(interval);
                         setCurrentWordIndex(currentWordIndex + 1);
                         setIsPronunciationLocked(true);
                     }, (characterDetails.attackFrame / 12) * 2500);
@@ -873,11 +829,11 @@ const SimulationGameplay = () => {
             // Play audio on word change
             const timer = setTimeout(() => {
                 word.playAudio();
-                setIsButtonDisabled(false);
             }, 1000);
 
             setTimeout(() => {
                 console.log("audio ends");
+                setIsButtonDisabled(false);
                 enemyInterval.start();
                 time.start();
             }, 2000);
@@ -922,6 +878,7 @@ const SimulationGameplay = () => {
             key="start-game"
             onClick={() => {
                 setShowWelcomeModal(false);
+                setIsButtonDisabled(true);
                 setGameStarted(true); // Start the game when the modal is closed
             }}
         >
@@ -1303,6 +1260,14 @@ const SimulationGameplay = () => {
                 title="Simulation Done!"
                 details={`Congratulations! You've completed this Simulation with the score of ${finalScore} `}
                 buttons={[
+                    <button
+                        key="menu"
+                        onClick={() =>
+                            (window.location.href = `/student-leaderboard?simulationID=${simulationID}`)
+                        }
+                    >
+                        View Leaderboard
+                    </button>,
                     <button
                         key="menu"
                         onClick={() => (window.location.href = "/student-room")}
