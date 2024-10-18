@@ -487,6 +487,24 @@ const SimulationGameplay = () => {
         const isLastEnemy = currentEnemyIndex === enemies.length - 1;
         setIsLastEnemy(isLastEnemy);
 
+        const updatedStudentProgress = {
+            studentWordProgressID:
+                studentWordProgress.wordProgress.studentWordProgressID,
+            simulationWordsID: currentWordID,
+            studentID: userID,
+            correct: false,
+            score: 0,
+            duration: time.getFormattedTimeInSeconds(),
+            accuracy: 0,
+            mistake: mistakes + 1,
+        };
+
+        console.log(updatedStudentProgress);
+
+        updateSimulationProgress(updatedStudentProgress);
+        setLives(0);
+        setMistakes(0);
+
         if (enemyInterval.time === 0 && !(isLastEnemy && isLastWord)) {
             console.log("Time to switch word");
             handleEnemyAttack();
@@ -494,23 +512,6 @@ const SimulationGameplay = () => {
             // Prepare to move to the next enemy or word
             setTypedWord("");
 
-            const updatedStudentProgress = {
-                studentWordProgressID:
-                    studentWordProgress.wordProgress.studentWordProgressID,
-                simulationWordsID: currentWordID,
-                studentID: userID,
-                correct: false,
-                score: 0,
-                duration: time.getFormattedTimeInSeconds(),
-                accuracy: 0,
-                mistake: mistakes + 1,
-            };
-
-            console.log(updatedStudentProgress);
-
-            updateSimulationProgress(updatedStudentProgress);
-            setLives(0);
-            setMistakes(0);
             time.reset();
 
             // setTimeout(() => {
@@ -533,7 +534,6 @@ const SimulationGameplay = () => {
             handleEnemyAttack();
             setIsLastEnemyWord(true);
             setIsLastEnemy(true);
-            setLives(0);
 
             setTimeout(() => {
                 updateParticipantAssessment(userID, simulationID)
@@ -549,7 +549,7 @@ const SimulationGameplay = () => {
                             error
                         );
                     });
-            }, (characterDetails.attackFrame / 12) * 2500);
+            }, (characterDetails.attackFrame / 12) * 1000);
         }
 
         console.log(isLastWord);
@@ -559,7 +559,6 @@ const SimulationGameplay = () => {
 
         if (isLastWord && enemyInterval.time === 0) {
             // Last word of current enemy but not the last enemy
-            setLives(0);
             console.log(currentEnemyIndex);
             console.log(currentWordIndex);
 
@@ -579,7 +578,6 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 2500);
             setIsLastEnemyWord(false);
         }
-        time.reset();
     };
 
     useEffect(() => {
@@ -588,7 +586,6 @@ const SimulationGameplay = () => {
             setTimeout(() => {
                 console.log("Start nako", currentEnemyIndex);
                 setLives(studentLife);
-                enemyInterval.reset();
                 console.log(
                     `Proceeding to next word: Word ${currentWordIndex + 1}`
                 );
@@ -728,7 +725,6 @@ const SimulationGameplay = () => {
                                 error
                             );
                         });
-                    enemyInterval.reset(0);
                 } else if (isLastWord) {
                     // Last word of current enemy but not the last enemy
                     setIsLastEnemyWord(true);
