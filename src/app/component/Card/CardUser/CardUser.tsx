@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import "./carduser.scss";
 import useStudentInfo from "@/hook/useStudentInfo";
 import fetchUserDetails from "@/hook/useGetUserDetails";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faMedal, faTrophy } from "@fortawesome/free-solid-svg-icons";
 
 interface CardUserProps {
     index: number;
@@ -39,17 +41,42 @@ const CardUser: React.FC<CardUserProps> = ({
 
     const formattedTime = !isNaN(totalSeconds) ? `${minutes}:${seconds}` : time;
 
-    console.log(profile);
-    console.log(user.studentInfo?.data?.username);
-    console.log(time);
+    const renderRankIcon = () => {
+        if (index === 0 && score !== 0) {
+            return (
+                <FontAwesomeIcon
+                    icon={faTrophy}
+                    style={{ color: "gold", fontSize: "24px" }}
+                />
+            );
+        } else if (index === 1 && score !== 0) {
+            return (
+                <FontAwesomeIcon
+                    icon={faTrophy}
+                    style={{ color: "#C0C0C0", fontSize: "24px" }}
+                />
+            );
+        } else if (index === 2 && score !== 0) {
+            return (
+                <FontAwesomeIcon
+                    icon={faTrophy}
+                    style={{ color: "#CE8946", fontSize: "24px" }}
+                />
+            );
+        }
+        return null; // No icon for ranks beyond 3
+    };
 
     return (
         <section
             className={`carduser-card ${className || ""}`}
             onClick={onClick}
         >
-            <span>{index + 1}</span>
             <section className="carduser-container">
+                <span className="carduser-ranking">
+                    {index + 1}
+                    {renderRankIcon()}
+                </span>
                 <section className="banner-container">
                     <div className="banner">
                         <img
