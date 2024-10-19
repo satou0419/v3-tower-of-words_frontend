@@ -813,7 +813,7 @@ const SimulationGameplay = () => {
                         setIsPronunciationLocked(true);
                     }, (characterDetails.attackFrame / 12) * 2500);
                 }
-            }, (characterDetails.attackFrame / 12) * 1000);
+            }, (characterDetails.attackFrame / 12) * 1500);
             setMistakes(0);
             time.reset();
 
