@@ -501,7 +501,6 @@ const SimulationGameplay = () => {
 
         console.log(updatedStudentProgress);
 
-        updateSimulationProgress(updatedStudentProgress);
         setLives(0);
         setMistakes(0);
 
@@ -535,8 +534,8 @@ const SimulationGameplay = () => {
             setIsLastEnemyWord(true);
             setIsLastEnemy(true);
 
-            setTimeout(() => {
-                updateParticipantAssessment(userID, simulationID)
+            setTimeout(async () => {
+                await updateParticipantAssessment(userID, simulationID)
                     .then((score) => {
                         console.log("Score:", score.data.score);
                         setFinalScore(score.data.score);
@@ -578,6 +577,8 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 2500);
             setIsLastEnemyWord(false);
         }
+
+        await updateSimulationProgress(updatedStudentProgress);
     };
 
     useEffect(() => {
@@ -683,8 +684,6 @@ const SimulationGameplay = () => {
 
             console.log(updatedStudentProgress);
 
-            updateSimulationProgress(updatedStudentProgress);
-
             setTypedWord("");
             handleCharacterAttack();
 
@@ -694,7 +693,7 @@ const SimulationGameplay = () => {
 
             // Prepare progress data
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 clearSelections;
                 setIsCharacterAttacking(false);
                 setLives(studentLife);
@@ -712,7 +711,7 @@ const SimulationGameplay = () => {
                         currentEnemyIndex,
                     ]);
 
-                    updateParticipantAssessment(userID, simulationID)
+                    await updateParticipantAssessment(userID, simulationID)
                         .then((score) => {
                             console.log("Score:", score.data.score);
                             setFinalScore(score.data.score);
@@ -750,6 +749,8 @@ const SimulationGameplay = () => {
             }, (characterDetails.attackFrame / 12) * 2000); // Adjust timing as needed
             setMistakes(0);
             time.reset();
+
+            await updateSimulationProgress(updatedStudentProgress);
         } else {
             incrementMistake();
             console.log("Incorrect word entered.");
@@ -767,17 +768,17 @@ const SimulationGameplay = () => {
 
             console.log(updatedStudentProgress);
 
-            updateSimulationProgress(updatedStudentProgress);
-
             handleMissedAttack();
 
-            setTimeout(() => {
+            setTimeout(async () => {
                 handleEnemyAttack();
 
                 if (isLastWord && isLastEnemy && lives === 1) {
                     setIsLastEnemyWord(true);
                     setIsLastEnemy(true);
-                    updateParticipantAssessment(userID, simulationID)
+                    setLives(0);
+
+                    await updateParticipantAssessment(userID, simulationID)
                         .then((score) => {
                             console.log("Score:", score.data.score);
                             setFinalScore(score.data.score);
@@ -790,7 +791,7 @@ const SimulationGameplay = () => {
                                 error
                             );
                         });
-                    enemyInterval.reset(0);
+                    //nemyInterval.reset(0);
                 } else if (isLastWord && lives === 1) {
                     setIsLastEnemyWord(true);
                     setDefeatedEnemies((prevDefeatedEnemies) => [
@@ -812,9 +813,11 @@ const SimulationGameplay = () => {
                         setIsPronunciationLocked(true);
                     }, (characterDetails.attackFrame / 12) * 2500);
                 }
-            }, (characterDetails.attackFrame / 12) * 2000);
+            }, (characterDetails.attackFrame / 12) * 1500);
             setMistakes(0);
             time.reset();
+
+            await updateSimulationProgress(updatedStudentProgress);
         }
     };
 
@@ -832,6 +835,7 @@ const SimulationGameplay = () => {
                 setIsButtonDisabled(false);
                 enemyInterval.start();
                 time.start();
+                setIsButtonDisabled(false);
             }, 2000);
 
             return () => clearTimeout(timer); // Clear the timeout if the component unmounts or word changes

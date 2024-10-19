@@ -42,7 +42,16 @@ export default function StudentLeaderboard() {
     return (
         <main className="leaderboard-wrapper">
             <section className="leaderboard-container">
-                <h1>Simulation Name: {currentSimulation.name}</h1>
+                <section className="leaderboard-header">
+                    <h1>Simulation Name: {currentSimulation.name}</h1>
+                    <button
+                        onClick={() => router.push("/dashboard")}
+                        type="button"
+                        className="wordassessment-button"
+                    >
+                        Back
+                    </button>
+                </section>
 
                 <section className="leaderboard-content">
                     <CardTab

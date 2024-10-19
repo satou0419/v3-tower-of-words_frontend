@@ -12,6 +12,26 @@
     display: flex;
     gap: 2em;
     flex-direction: column;
+
+    .leaderboard-header {
+        display: flex;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+
+    .wordassessment-button {
+        cursor: pointer;
+        color: #fff;
+        height: 3em;
+        width: 10em;
+        background-color: #fc5776;
+        border-radius: 8px;
+        padding: 0.5em 1em;
+        border: none;
+        border-top: 4px solid #fff;
+        box-shadow: 0 6px 12px rgba(252, 87, 118, 0.4),
+            0 3px 6px rgba(0, 0, 0, 0.1);
+    }
 }
 
 .leaderboard-content {
