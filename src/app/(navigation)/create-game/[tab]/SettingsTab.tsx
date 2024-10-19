@@ -44,6 +44,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         "success"
     );
     const [showPopup, setShowPopup] = useState(false);
+    let isCreatingGame = false;
 
     const handleToggle =
         (field: keyof SimulationDetails) => (state: boolean) => {
@@ -135,18 +136,30 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         setShowPopup(true);
     };
 
-    const handleConfirmCreateGame = () => {
+    const handleConfirmCreateGame = async () => {
         if (!settings) {
             setToastMessage("Settings are not set.");
             setToastType("error");
             return;
         }
 
-        createGame(settings);
-        router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
-        localStorage.removeItem("enemies");
-        localStorage.removeItem("settings");
-        setShowPopup(false);
+        if (isCreatingGame) return;
+
+        isCreatingGame = true;
+
+        try {
+            await createGame(settings);
+            router.push(`/teacher-room/game?roomID=${settings.roomID.roomID}`);
+            localStorage.removeItem("enemies");
+            localStorage.removeItem("settings");
+            setShowPopup(false);
+        } catch (error) {
+            setToastMessage("Error creating game.");
+            setToastType("error");
+            console.error(error);
+        } finally {
+            isCreatingGame = false;
+        }
     };
 
     console.log(settings);

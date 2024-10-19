@@ -65,6 +65,9 @@ const CardUser: React.FC<CardUserProps> = ({
                             </h1>
                         )}
                         {time && <h4>Time: {formattedTime}</h4>}
+                        {username && (
+                            <h4>{user.studentInfo?.data?.username}</h4>
+                        )}
                     </div>
                 </section>
 
