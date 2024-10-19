@@ -9,9 +9,22 @@ import insertStudent from "@/lib/room-endpoint/insertStudent";
 import { useState, useEffect } from "react";
 import { useRoomStore } from "@/store/roomStore";
 import { viewRoom } from "@/lib/room-endpoint/viewRoom";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import renameRoom from "@/lib/room-endpoint/renameRoom";
 import Toast from "@/app/component/Toast/Toast";
+import deleteRoom from "@/lib/room-endpoint/deleteRoom";
+import removeStudent from "@/lib/room-endpoint/removeStudent";
+import useUserInfoStore from "@/store/userInfoStore";
+import Modal from "@/app/component/Modal/Modal";
+
+interface Room {
+    name: string;
+    creatorID: number;
+    roomID: number;
+    code: string;
+    members: number[];
+    simulations: any[];
+}
 
 export default function RoomInformation() {
     const [username, setUsername] = useState<string>("");
@@ -23,9 +36,16 @@ export default function RoomInformation() {
     const [toastType, setToastType] = useState<"success" | "error" | "warning">(
         "success"
     );
+    const router = useRouter();
+    const { userType } = useUserInfoStore.getState();
 
     const roomIDParam = searchParams.get("roomID");
     const roomID = roomIDParam ? parseInt(roomIDParam, 10) : NaN;
+
+    const [showDeleteRoomPopup, setShowDeleteRoomPopup] = useState(false);
+    const [showRenamePopup, setShowRenamePopup] = useState(false);
+    const [showDeleteUserPopup, setShowDeleteUserPopup] = useState(false);
+    const [showAddUserPopup, setShowAddUserPopup] = useState(false);
 
     useEffect(() => {
         const fetchSimulations = async () => {
@@ -42,14 +62,52 @@ export default function RoomInformation() {
         fetchSimulations();
     }, [setCurrentRoom]);
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         console.log("Delete button clicked");
-        // Handle delete action
+
+        try {
+            const response = await deleteRoom(roomID);
+            router.push(`/${userType.toLowerCase()}-room`);
+            console.log("Room deleted successfully:", response);
+        } catch (error) {
+            console.error("Failed to delete room:", error);
+        }
     };
 
-    const handleReset = () => {
+    const handleReset = async () => {
         console.log("Delete button clicked");
-        setUsername("");
+        if (username.trim()) {
+            try {
+                const userID = await usernameToID(username);
+
+                const userExistsInRoom = currentRoom.members.some(
+                    (member) => member === userID
+                );
+
+                if (!userExistsInRoom) {
+                    console.log("User is not in the room.");
+                    setToastMessage("User is not in the room.");
+                    setToastType("error");
+                } else {
+                    await removeStudent(userID, roomID);
+
+                    setCurrentRoom({
+                        ...currentRoom, // Keep existing properties
+                        members: currentRoom.members.filter(
+                            (member) => member !== userID
+                        ), // Remove the userID
+                    });
+
+                    setToastMessage("User deleted successfully.");
+                    setToastType("success");
+                }
+            } catch (error) {
+                console.error("Error fetching user ID:", error);
+            }
+        } else {
+            setToastMessage("No username provided");
+            setToastType("warning");
+        }
     };
 
     const handleRename = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -85,10 +143,17 @@ export default function RoomInformation() {
 
                 if (userExistsInRoom) {
                     console.log("User already exists in the room");
+
                     setToastMessage("User already exists in the room.");
                     setToastType("error");
                 } else {
                     await insertStudent(userID, currentRoom);
+
+                    setCurrentRoom({
+                        ...currentRoom, // Keep existing properties
+                        members: [...currentRoom.members, userID], // Add the new userID
+                    });
+
                     setToastMessage("User added successfully.");
                     setToastType("success");
                 }
@@ -127,6 +192,11 @@ export default function RoomInformation() {
         },
     ];
 
+    const handleOpenDeleteRoomPopup = () => setShowDeleteRoomPopup(true);
+    const handleOpenDeleteUserPopup = () => setShowDeleteUserPopup(true);
+    const handleOpenRenamePopup = () => setShowRenamePopup(true);
+    const handleOpenAddUserPopup = () => setShowAddUserPopup(true);
+
     return (
         <main className="roominformation-wrapper">
             {toastMessage && (
@@ -160,9 +230,9 @@ export default function RoomInformation() {
                         <CardSetting
                             title="Settings"
                             inputs={inputSetting}
-                            deleteButtonLabel="Delete"
-                            saveButtonLabel="Save"
-                            onDelete={handleDelete}
+                            deleteButtonLabel="Delete Room"
+                            saveButtonLabel="Rename"
+                            onDelete={() => setShowDeleteRoomPopup(true)}
                             onSave={handleRename}
                             className="custom-cardsetting"
                         />
@@ -170,15 +240,55 @@ export default function RoomInformation() {
                         <CardSetting
                             title="Add Student"
                             inputs={inputAddStudent}
-                            deleteButtonLabel="Reset"
-                            saveButtonLabel="Save"
-                            onDelete={handleReset}
+                            deleteButtonLabel="Remove Student"
+                            saveButtonLabel="Add"
+                            onDelete={() => setShowDeleteUserPopup(true)}
                             onSave={handleSaveAddStudent}
                             className="custom-cardsetting"
                         />
                     </section>
                 </section>
             </section>
+            {showDeleteRoomPopup && (
+                <Modal
+                    className="confirmation-modal"
+                    title="Confirm Delete Room?"
+                    isOpen={showDeleteRoomPopup}
+                    onClose={() => setShowDeleteRoomPopup(false)}
+                    buttons={[
+                        <button key="confirm" onClick={handleDelete}>
+                            Yes
+                        </button>,
+                        <button
+                            key="cancel"
+                            onClick={() => setShowDeleteRoomPopup(false)}
+                        >
+                            Cancel
+                        </button>,
+                    ]}
+                />
+            )}
+
+            {/* Confirmation Modal for Remove Student */}
+            {showDeleteUserPopup && (
+                <Modal
+                    className="confirmation-modal"
+                    title="Confirm Remove Student?"
+                    isOpen={showDeleteUserPopup}
+                    onClose={() => setShowDeleteUserPopup(false)}
+                    buttons={[
+                        <button key="confirm" onClick={handleReset}>
+                            Yes
+                        </button>,
+                        <button
+                            key="cancel"
+                            onClick={() => setShowDeleteUserPopup(false)}
+                        >
+                            Cancel
+                        </button>,
+                    ]}
+                />
+            )}
         </main>
     );
 }

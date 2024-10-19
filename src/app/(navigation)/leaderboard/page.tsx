@@ -13,6 +13,7 @@ import { useRoomStore } from "@/store/roomStore";
 import useUserInfoStore from "@/store/userInfoStore";
 import editSimulation from "@/lib/simulation-endpoint/editSimulation";
 import Modal from "@/app/component/Modal/Modal";
+import deleteSimulation from "@/lib/simulation-endpoint/deleteSimulation";
 
 export default function Leaderboard() {
     const { currentRoom } = useRoomStore();
@@ -29,6 +30,7 @@ export default function Leaderboard() {
     const [newDeadline, setNewDeadline] = useState<string>(
         currentSimulation.deadline
     );
+    const [showDeletePopup, setShowDeletePopup] = useState(false);
     const simulationIDParam = searchParams.get("simulationID");
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
@@ -50,8 +52,18 @@ export default function Leaderboard() {
         fetchSimulations();
     }, [setCurrentSimulation]);
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         console.log("Delete button clicked");
+
+        try {
+            const response = await deleteSimulation(simulationID);
+            console.log("Simulation deleted successfully:", response);
+            router.push(`/${userType.toLowerCase()}-room`);
+        } catch (error) {
+            console.error("Failed to delete simulation:", error);
+        } finally {
+            setShowDeletePopup(false); // Close the delete confirmation modal
+        }
     };
 
     const handleClone = async (simulation: any) => {
@@ -154,6 +166,10 @@ export default function Leaderboard() {
 
     const handleCloseModal = () => {
         setShowPopup(false);
+    };
+
+    const handleCloseDeleteModal = () => {
+        setShowDeletePopup(false);
     };
 
     const inputSetting = [
@@ -275,9 +291,9 @@ export default function Leaderboard() {
                         <CardSetting
                             title="Settings"
                             inputs={inputSetting}
-                            deleteButtonLabel="Delete"
+                            deleteButtonLabel="Delete Simulation"
                             saveButtonLabel="Save"
-                            onDelete={handleDelete}
+                            onDelete={() => setShowDeletePopup(true)}
                             onSave={handleSave}
                             className="custom-cardsetting"
                         />
@@ -295,6 +311,22 @@ export default function Leaderboard() {
                             Yes
                         </button>,
                         <button key="No" onClick={handleCloseModal}>
+                            Cancel
+                        </button>,
+                    ]}
+                />
+            )}
+            {showDeletePopup && (
+                <Modal
+                    className="confirmation-modal"
+                    title="Confirm Delete Simulation?"
+                    isOpen={showDeletePopup}
+                    onClose={handleCloseDeleteModal}
+                    buttons={[
+                        <button key="confirm" onClick={handleDelete}>
+                            Yes
+                        </button>,
+                        <button key="No" onClick={handleCloseDeleteModal}>
                             Cancel
                         </button>,
                     ]}
