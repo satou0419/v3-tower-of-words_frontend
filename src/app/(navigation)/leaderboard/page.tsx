@@ -203,6 +203,7 @@ export default function Leaderboard() {
                             .map((participant, index) => (
                                 <CardUser
                                     key={index}
+                                    index={index}
                                     username={participant.userID}
                                     time={
                                         participant.done

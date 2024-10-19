@@ -149,6 +149,7 @@ export default function RoomInformation() {
                         {currentRoom.members.map((user, index) => (
                             <CardUser
                                 key={index}
+                                index={index}
                                 username={user}
                                 className="custom-carduser"
                             />
