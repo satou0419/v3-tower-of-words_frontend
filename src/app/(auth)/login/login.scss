@@ -122,8 +122,8 @@
 @media (max-width: 1024px) {
     .login-banner{
         img{
-            height: 68%;
-            margin-left: -20%;
+            height: 80%;
+            margin-left: -15%;
         }
     }
 
@@ -158,6 +158,12 @@
     .login-form {
         padding: 1em; /* Further adjust padding */
     }
+    .login-banner{
+        img{
+            height: 65%;
+            margin-left: -20%;
+        }
+    }
 }
 
 @media (max-width: 440px) {
@@ -173,6 +179,7 @@
         height: 55%; /* Adjust banner height */
         margin-top: -25%;
         margin-bottom: -19%;
+        justify-content: center;
         img {
             border-radius: 20px 20px 0 0; /* Adjust border radius */
             margin-left: 0%;
