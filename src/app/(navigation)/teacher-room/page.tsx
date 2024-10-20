@@ -9,20 +9,25 @@ import { useSimulationStore } from "@/store/simulationStore";
 import { useRouter } from "next/navigation";
 import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";
 import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
+import Loading from "@/app/loading";
 
 export default function TeacherRoom() {
     const { rooms, setRoom, setCurrentRoom } = useRoomStore();
     const { setSimulation } = useSimulationStore();
     const [isClicked, setIsClicked] = useState(false);
     const router = useRouter();
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchRooms = async () => {
+            setLoading(true);
             try {
                 const roomData = await viewCreatedRoom();
                 setRoom(roomData);
             } catch (error) {
                 console.error("Failed to fetch rooms:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -51,6 +56,10 @@ export default function TeacherRoom() {
         router.push("/teacher-word");
     };
 
+    if (loading) {
+        return <Loading />;
+    }
+
     return (
         <main className="teacherroom-wrapper">
             <section className="teacherroom-container">
@@ -63,7 +72,7 @@ export default function TeacherRoom() {
                     {rooms.map((room) => (
                         <CardRoomGame
                             key={room.roomID}
-                            bannerClass="room-banner"
+                            bannerClass="/assets/images/banner/banner-tower.png"
                             title={room.name}
                             description={`Teacher ID: ${room.creatorID}`}
                             infoTitle="Game"

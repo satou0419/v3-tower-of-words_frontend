@@ -13,25 +13,45 @@ import { faVolumeUp } from "@fortawesome/free-solid-svg-icons";
 import CardTab from "@/app/component/Card/CardTab/CardTab";
 import viewStudentWordProgress from "@/lib/assessment-endpoint/viewStudentWordProgress";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from "chart.js";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 export default function StudentWordProgress() {
     const [assessmentData, setAssessmentData] = useState<any>(null);
-    const [ simulationWordsID, setSimulationWordsID ] = useState<number[]>([]);
+    const [simulationWordsID, setSimulationWordsID] = useState<number[]>([]);
     const router = useRouter();
-    const [showGraph, setShowGraph] = useState(false); 
+    const [showGraph, setShowGraph] = useState(false);
     const searchParams = useSearchParams();
     const simulationIDParam = searchParams.get("simulationID");
-    const simulationID = simulationIDParam ? parseInt(simulationIDParam, 10) : NaN;
+    const simulationID = simulationIDParam
+        ? parseInt(simulationIDParam, 10)
+        : NaN;
 
     const studentIDParam = searchParams.get("studentID");
     const studentID = studentIDParam ? parseInt(studentIDParam, 10) : NaN;
 
     const [selectedWord, setSelectedWord] = useState<null | string>(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const simulationWords = useFetchAllSimulationWords(simulationWordsID).simulationWords;
+    const simulationWords =
+        useFetchAllSimulationWords(simulationWordsID).simulationWords;
     const [filteredWords, setFilteredWords] = useState(simulationWords);
 
     const wordData = useMerriam(selectedWord || "");
@@ -41,14 +61,20 @@ export default function StudentWordProgress() {
     useEffect(() => {
         const fetchSimulations = async () => {
             try {
-                const simulation = await viewStudentWordProgress(simulationID, studentID);
+                const simulation = await viewStudentWordProgress(
+                    simulationID,
+                    studentID
+                );
                 if (Array.isArray(simulation)) {
                     setAssessmentData(simulation);
                 } else {
                     console.error("Unexpected response format:", simulation);
                 }
             } catch (error) {
-                console.error("Failed to fetch simulations for the room:", error);
+                console.error(
+                    "Failed to fetch simulations for the room:",
+                    error
+                );
             }
         };
         fetchSimulations();
@@ -56,7 +82,9 @@ export default function StudentWordProgress() {
 
     useEffect(() => {
         if (assessmentData) {
-            const wordsID = assessmentData.map((item: any) => item.simulationWordsID);
+            const wordsID = assessmentData.map(
+                (item: any) => item.simulationWordsID
+            );
             setSimulationWordsID(wordsID);
         }
     }, [assessmentData]);
@@ -86,39 +114,59 @@ export default function StudentWordProgress() {
         setSearchTerm(event.target.value);
     };
 
-    const selectedWordID = simulationWords.find(word => word.word === selectedWord)?.simulationWordsID;
+    const selectedWordID = simulationWords.find(
+        (word) => word.word === selectedWord
+    )?.simulationWordsID;
 
     const selectedAssessment = assessmentData?.find(
         (assessment: any) => assessment.simulationWordsID === selectedWordID
     );
 
-    console.log(selectedAssessment)
+    console.log(selectedAssessment);
 
     const chartData = {
-        labels: selectedAssessment
-        ? [
-            `Accuracy: ${selectedAssessment.accuracy.toFixed(2)}`,
-            `Mistake: ${selectedAssessment.mistake}`,
-            `Duration: ${selectedAssessment.duration}`,
-            `Score: ${selectedAssessment.score}`,
-        ]
-        : ['Accuracy', 'Mistake', 'Duration', 'Score'],
+        labels: ["Accuracy", "Mistake", "Duration", "Score"],
         datasets: [
             {
-                label: 'Assessment Data',
-                data: selectedAssessment
-                    ? [selectedAssessment.accuracy, selectedAssessment.mistake, selectedAssessment.duration, selectedAssessment.score]
-                    : [],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: "Assessment Data",
+                data: [
+                    selectedAssessment?.accuracy,
+                    selectedAssessment?.mistake,
+                    selectedAssessment?.duration,
+                    selectedAssessment?.score,
+                ],
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
                 borderWidth: 1,
             },
         ],
     };
 
+    const chartOptions = {
+        indexAxis: "y" as const, // Make sure to use 'y' or 'x'
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+            },
+            y: {
+                grid: {
+                    display: false, // Hides the y-axis grid lines
+                },
+            },
+        },
+    };
+
     return (
         <main className="main-wrapper">
-            <button onClick={() => router.back()} type="button" className="studentwordprogress-button">Back</button>
+            <button
+                onClick={() => router.back()}
+                type="button"
+                className="studentwordprogress-button"
+            >
+                Back
+            </button>
             <section className="studentwordprogress-container">
                 <CardWord className="studentwordprogress-left">
                     <div className="left-container">
@@ -147,58 +195,66 @@ export default function StudentWordProgress() {
                 </CardWord>
                 <CardWord className="studentwordprogress-right">
                     <section className="right-container">
-                    {selectedWord && wordData ? (
-                        <>
-                            <div className="word-control">
-                                <h1>{wordData.word}</h1>
-                                {wordData.pronunciation && (
-                                    <span className="pronunciation">
-                                        {wordData.pronunciation}
-                                    </span>
-                                )}
-                                {wordData.audio && (
-                                    <FontAwesomeIcon
-                                        className="play-audio-icon"
-                                        icon={faVolumeUp}
-                                        onClick={() => wordData.playAudio()}
-                                    />
-                                )}
-                            </div>
-                            <div className="word-define">
-                                {wordData.partOfSpeech && (
-                                    <span className="part-of-speech">
-                                        {wordData.partOfSpeech}
-                                    </span>
-                                )}
-                                {wordData.definition && (
-                                    <span className="definition">
-                                        {wordData.definition}
-                                    </span>
-                                )}
-                                {wordData.message && (
-                                    <div className="message">
-                                        {wordData.message}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="graph-button">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowGraph(!showGraph)}
-                                    className="show-graph-button"
-                                >
-                                    {showGraph ? 'Hide Graph' : 'Show Graph'}
-                                </button>
-                            </div>
-                        </>
-                    ) : (
-                        <span className="no-data">No data available</span>
-                    )}
+                        {selectedWord && wordData ? (
+                            <>
+                                <div className="word-control">
+                                    <h1>{wordData.word}</h1>
+                                    {wordData.pronunciation && (
+                                        <span className="pronunciation">
+                                            {wordData.pronunciation}
+                                        </span>
+                                    )}
+                                    {wordData.audio && (
+                                        <FontAwesomeIcon
+                                            className="play-audio-icon"
+                                            icon={faVolumeUp}
+                                            onClick={() => wordData.playAudio()}
+                                        />
+                                    )}
+                                </div>
+                                <div className="word-define">
+                                    {wordData.partOfSpeech && (
+                                        <span className="part-of-speech">
+                                            {wordData.partOfSpeech}
+                                        </span>
+                                    )}
+                                    {wordData.definition && (
+                                        <span className="definition">
+                                            {wordData.definition}
+                                        </span>
+                                    )}
+                                    {wordData.message && (
+                                        <div className="message">
+                                            {wordData.message}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="graph-button">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowGraph(!showGraph)}
+                                        className="show-graph-button"
+                                    >
+                                        {showGraph
+                                            ? "Hide Graph"
+                                            : "Show Graph"}
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <span className="no-data">No data available</span>
+                        )}
                     </section>
                 </CardWord>
                 {selectedAssessment && showGraph && (
                     <div className="graph">
-                        <button onClick={() => setShowGraph(!showGraph)} type="button" className="studentwordprogress-x">X</button>
+                        <button
+                            onClick={() => setShowGraph(!showGraph)}
+                            type="button"
+                            className="studentwordprogress-x"
+                        >
+                            X
+                        </button>
                         <CardTab
                             className="cardtab"
                             title="Word Assessment"
@@ -207,7 +263,7 @@ export default function StudentWordProgress() {
                             <section className="studentwordprogress-content">
                                 <section className="studentwordprogress-details">
                                     <span className="studentwordprogress-data">
-                                        <div>Accuracy</div> 
+                                        <div>Accuracy</div>
                                         <div>{selectedAssessment.accuracy}</div>
                                     </span>
                                     <span className="studentwordprogress-data">
@@ -225,7 +281,10 @@ export default function StudentWordProgress() {
                                 </section>
 
                                 <section className="studentwordprogress-graph">
-                                    <Bar data={chartData} />
+                                    <Bar
+                                        data={chartData}
+                                        options={chartOptions}
+                                    />
                                 </section>
                             </section>
                         </CardTab>

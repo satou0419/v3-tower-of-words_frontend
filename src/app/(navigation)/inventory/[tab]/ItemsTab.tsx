@@ -34,9 +34,7 @@ const ItemsTab: React.FC = () => {
     useEffect(() => {
         const currentPathSegments = pathname.split("/");
         const currentTab =
-            currentPathSegments.length > 2
-                ? currentPathSegments[2]
-                : "items";
+            currentPathSegments.length > 2 ? currentPathSegments[2] : "items";
         router.push(`/inventory/${currentTab}`);
     }, [pathname, router]);
 
@@ -72,15 +70,19 @@ const ItemsTab: React.FC = () => {
             <section className="inventory-item_detail">
                 <section className="inventory-item_detail-container">
                     <section className="inventory-item_detail-banner">
-                        {selectedItem.banner && (
+                        {selectedItem.banner && selectedItem.name ? (
                             <img
                                 src={selectedItem.banner}
                                 alt={selectedItem.name || ""}
                             />
+                        ) : (
+                            <div className="placeholder-message">
+                                Select an item
+                            </div>
                         )}
                     </section>
                     <section className="inventory-item_detail-container-description">
-                        <h1>{selectedItem.name}</h1>
+                        <h2>{selectedItem.name}</h2>
                         <span>{selectedItem.description}</span>
                     </section>
                 </section>

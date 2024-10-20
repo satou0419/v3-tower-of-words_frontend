@@ -199,3 +199,38 @@
 
     overflow-x: scroll;
 }
+
+.badges-sort {
+    position: relative;
+    .badges-type {
+        position: absolute;
+        top: -2em;
+    }
+}
+
+@media (max-width: 430px) {
+    .badges-container {
+        padding-top: 2em;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 800px) {
+    .wordarchive-container {
+        flex-direction: column;
+        justify-content: flex-start;
+        overflow: scroll;
+
+        .wordarchive-left {
+            width: 80%;
+        }
+
+        .wordarchive-spine {
+            height: 0;
+        }
+
+        .wordarchive-right {
+            width: 80%;
+        }
+    }
+}

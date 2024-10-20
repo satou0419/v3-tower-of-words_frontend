@@ -117,7 +117,7 @@ export default function Game() {
                             return (
                                 <CardRoomGame
                                     key={simulation.simulationID}
-                                    bannerClass="room-banner"
+                                    bannerClass="/assets/images/banner/banner-knight.png"
                                     title={simulation.name}
                                     description={
                                         user.studentInfo?.data?.username ??

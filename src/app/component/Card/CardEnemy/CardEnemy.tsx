@@ -126,8 +126,8 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                 )}
 
                 {showPopup && (
-                    <Draggable nodeRef={popupRef}>
-                        <div ref={popupRef} className="cardenemy-popup">
+                    <section>
+                        <div className="cardenemy-popup">
                             <button
                                 onClick={togglePopup}
                                 className="close-popup"
@@ -135,7 +135,7 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                                 X
                             </button>
                             <div
-                                onClick={() =>{
+                                onClick={() => {
                                     updateEnemyImagePath(
                                         index,
                                         "&melee_spring-a28-i11"
@@ -183,7 +183,7 @@ const CardEnemy: React.FC<CardEnemyProps> = ({
                                 <button>Crab</button>
                             </div>
                         </div>
-                    </Draggable>
+                    </section>
                 )}
             </section>
         </section>

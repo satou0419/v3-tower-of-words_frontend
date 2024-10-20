@@ -58,3 +58,21 @@
     flex-direction: column;
     gap: 2em;
 }
+
+@media (max-width: 1000px) {
+    .roominformation-content {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        .roominformation-card {
+            width: 100%;
+        }
+
+        .roominformation-setting {
+            width: 100%;
+            gap: 2em;
+            padding-bottom: 5em;
+        }
+    }
+}

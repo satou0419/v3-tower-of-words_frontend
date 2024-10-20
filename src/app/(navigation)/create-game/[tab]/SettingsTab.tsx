@@ -242,11 +242,11 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
                     isOpen={showPopup}
                     onClose={handleCloseModal}
                     buttons={[
-                        <button key="confirm" onClick={handleConfirmCreateGame}>
-                            Yes
-                        </button>,
                         <button key="No" onClick={handleCloseModal}>
                             Cancel
+                        </button>,
+                        <button key="confirm" onClick={handleConfirmCreateGame}>
+                            Yes
                         </button>,
                     ]}
                 />

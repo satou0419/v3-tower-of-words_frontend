@@ -95,32 +95,55 @@ const Badges = () => {
 
     return (
         <section className="badges-container">
-            {achievements.map((achievement) => {
-                const isOwned = userAchievements.some(
-                    (userAchievement) =>
-                        userAchievement.achievementID.achievementID ===
-                            achievement.achievementID &&
-                        userAchievement.unlocked === true
-                );
+            {achievements
+                .sort((a, b) => {
+                    // First, sort by achievementType
+                    if (a.achievementType < b.achievementType) return -1;
+                    if (a.achievementType > b.achievementType) return 1;
 
-                const unlockedDate = userAchievements.find(
-                    (userAchievement) =>
-                        userAchievement.achievementID.achievementID ===
-                        achievement.achievementID
-                )?.unlockedDate;
-                console.log(isOwned, achievement);
+                    // If achievementType is the same, sort by criteria
+                    return a.criteria - b.criteria;
+                })
+                .map((achievement) => {
+                    const isOwned = userAchievements.some(
+                        (userAchievement) =>
+                            userAchievement.achievementID.achievementID ===
+                                achievement.achievementID &&
+                            userAchievement.unlocked === true
+                    );
 
-                return (
-                    <CardAchievement
-                        key={achievement.achievementID}
-                        equip={equip === achievement.imagePath}
-                        badge={achievement}
-                        owned={isOwned}
-                        date={unlockedDate}
-                        onClick={() => handleBadgeClick(achievement)}
-                    />
-                );
-            })}
+                    const unlockedDate = userAchievements.find(
+                        (userAchievement) =>
+                            userAchievement.achievementID.achievementID ===
+                            achievement.achievementID
+                    )?.unlockedDate;
+
+                    // Render the achievement type header if it's the first achievement of this type
+                    return (
+                        <section
+                            key={achievement.achievementID}
+                            className="badges-sort"
+                        >
+                            {achievements.findIndex(
+                                (a) =>
+                                    a.achievementType ===
+                                    achievement.achievementType
+                            ) === achievements.indexOf(achievement) && (
+                                <span className="badges-type">
+                                    {achievement.achievementType}
+                                </span>
+                            )}
+                            <CardAchievement
+                                key={achievement.achievementID}
+                                equip={equip === achievement.imagePath}
+                                badge={achievement}
+                                owned={isOwned}
+                                date={unlockedDate}
+                                onClick={() => handleBadgeClick(achievement)}
+                            />
+                        </section>
+                    );
+                })}
             {selectedBadge && (
                 <Modal
                     className="confirmation-modal"

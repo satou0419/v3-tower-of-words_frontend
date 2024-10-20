@@ -52,6 +52,7 @@ const CharactersTab: React.FC = () => {
         characterDetails.idleFrame,
         characterDetails.attackFrame
     );
+    const [isBuyButtonClicked, setIsBuyButtonClicked] = useState(false);
 
     useEffect(() => {
         fetchAllCharacters();
@@ -60,16 +61,19 @@ const CharactersTab: React.FC = () => {
 
     const handleCharacterClick = (character: Character) => {
         if (selectedCharacter.characterID === character.characterID) {
-            setSelectedCharacter({
-                characterID: 0,
-                name: "",
-                imagePath: "",
-                description: "",
-                price: 0,
-            });
+            if (!isBuyButtonClicked && !selectedCharacter) {
+                setSelectedCharacter({
+                    characterID: 0,
+                    name: "",
+                    imagePath: "",
+                    description: "",
+                    price: 0,
+                });
+            }
         } else {
             setSelectedCharacter(character);
         }
+        setIsBuyButtonClicked(false);
     };
 
     const handleAttack = () => {
@@ -78,8 +82,10 @@ const CharactersTab: React.FC = () => {
     };
 
     const handleBuyClick = (character: Character) => {
-        setSelectedCharacter(character);
-        setIsConfirmationOpen(true);
+        // Set the buy button clicked state
+        setIsBuyButtonClicked(true);
+        setSelectedCharacter(character); // Always set the selected character
+        setIsConfirmationOpen(true); // Open the confirmation modal
     };
 
     const handleConfirmPurchase = async () => {

@@ -92,6 +92,22 @@ export default function StudentAssessment() {
         ],
     };
 
+    const chartOptions = {
+        indexAxis: "y" as const, // Make sure to use 'y' or 'x'
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+            },
+            y: {
+                grid: {
+                    display: false, // Hides the y-axis grid lines
+                },
+            },
+        },
+    };
+
     useEffect(() => {
         console.log("Student Assessment Data", chartData);
     });
@@ -169,7 +185,7 @@ export default function StudentAssessment() {
                             </span>
                         </section>
                         <section className="studentassessment-graph">
-                            <Bar data={chartData} />
+                            <Bar data={chartData} options={chartOptions} />
                         </section>
                     </section>
                 </CardTab>

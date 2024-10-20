@@ -24,7 +24,8 @@
             padding: 0.5em 1em;
             border: none;
             border-top: 4px solid #fff;
-            box-shadow: 0 6px 12px rgba(252, 87, 118, 0.4), 0 3px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(252, 87, 118, 0.4),
+                0 3px 6px rgba(0, 0, 0, 0.1);
         }
     }
 }
@@ -132,7 +133,7 @@
     flex-direction: row;
     width: 100%;
     position: relative;
-    button{
+    button {
         position: absolute;
         right: 5%;
         background-color: #ffaf40;
@@ -189,7 +190,7 @@ select {
         color: #000;
     }
 
-    button{
+    button {
         background-color: #ffaf40;
         height: 2.5em;
         width: 8em;
@@ -202,4 +203,22 @@ select {
     }
 }
 
+@media (max-width: 800px) {
+    .myword-wrapper {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
 
+        .myword-left_container,
+        .myword-right_container {
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: 600px) {
+    .setting {
+        width: 100%;
+    }
+}

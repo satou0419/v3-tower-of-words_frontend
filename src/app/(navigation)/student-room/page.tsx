@@ -73,7 +73,7 @@ export default function StudentRoom() {
                     {rooms.map((room) => (
                         <CardRoomGame
                             key={room.roomID}
-                            bannerClass="room-banner"
+                            bannerClass="/assets/images/banner/banner-tower.png"
                             title={room.name}
                             description={`Teacher ID: ${room.creatorID}`}
                             infoTitle="Game"

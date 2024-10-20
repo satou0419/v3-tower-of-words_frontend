@@ -58,6 +58,30 @@
             font-size: 1em;
         }
     }
+
+    @media (max-width: 1250px) {
+        .cardinventory-description {
+            span {
+                font-size: 0;
+            }
+        }
+    }
+
+    @media (max-width: 600px) {
+        .cardinventory-description {
+            h1 {
+                font-size: 1.5em;
+            }
+        }
+    }
+
+    @media (max-width: 500px) {
+        .cardinventory-description {
+            h1 {
+                font-size: 1em;
+            }
+        }
+    }
 }
 
 .cardinventory-quantity {
@@ -76,4 +100,10 @@
 }
 .grayscale {
     filter: grayscale(100%);
+}
+
+@media (max-width: 600px) {
+    .cardinventory-quantity {
+        height: 50%;
+    }
 }
