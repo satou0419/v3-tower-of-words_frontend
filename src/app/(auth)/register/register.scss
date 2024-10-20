@@ -113,36 +113,68 @@
 
 /* Media queries for responsiveness */
 
-@media (max-width: 1400px) {
-    .register-container {
-        width: 60%;
-    }
-}
+// @media (max-width: 1400px) {
+//     .register-container {
+//         width: 60%;
+//     }
+// }
 
 @media (max-width: 1024px) {
     .register-container {
         flex-direction: column;
         height: 90%;
+        width: 80%;
+        gap: 0;
     }
 
     .register-banner {
         width: 100%;
         height: 40%; /* Adjust banner height */
+        justify-content: center;
         img {
+            width: 50%;
             border-radius: 20px 20px 0 0; /* Adjust border radius */
         }
     }
 
     .register-form {
         height: 60%; /* Adjust form height */
-        width: 100%;
+        width: 80%;
         padding: 1em; /* Adjust padding */
+        margin-right: 0;
+    }
+
+    .register-wrapper {
+        height: 100%;
     }
 }
 
 @media (max-width: 768px) {
     .register-form {
         padding: 1em; /* Further adjust padding */
+        margin-right: 0;
+        width: 90%;
+        margin-bottom: 5%;
+    }
+
+    .register-wrapper{
+        height: 100%;
+        
+    }
+
+    .register-banner {
+        justify-content: center;
+        padding-top: 4%;
+        img {
+            width: 60%;
+        }
+    }
+
+    .register-container {
+        gap: 0;
+        width: 80%;
+        margin-top: 4%;
+        margin-bottom: 4%;
     }
 }
 
@@ -152,6 +184,10 @@
         height: 90%;
         width: 90%;
         margin-right: 0;
+
+        h1 {
+            font-size: 30px;
+        }
     }
 
     .register-container {
