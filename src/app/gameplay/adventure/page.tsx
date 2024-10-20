@@ -633,7 +633,7 @@ const AdventureGameplay = () => {
             router.push("/tower/spelling/?gameType=Silent")
         }
 
-        if (gameType === "Silent") {
+        if (gameType === "Syllables") {
             router.push("/tower/spelling/?gameType=Syllables")
         }
     }
