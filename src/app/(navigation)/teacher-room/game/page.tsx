@@ -20,7 +20,7 @@ interface SimulationParticipant {
     userID: number;
     score: number;
     duration: string | null;
-    mistake: number;
+    mistakes: number;
     accuracy: number;
     wordsProgress: any[];
     done: boolean;
@@ -54,7 +54,8 @@ interface SimulationDetails {
 
 export default function Game() {
     const { currentRoom, setCurrentRoom } = useRoomStore();
-    const { simulations, setCurrentSimulation, setSimulation } = useSimulationStore();
+    const { simulations, setCurrentSimulation, setSimulation } =
+        useSimulationStore();
     const router = useRouter();
     const searchParams = useSearchParams();
 
@@ -65,16 +66,19 @@ export default function Game() {
 
     useEffect(() => {
         const fetchSimulations = async () => {
-        try {
-            const roomSimulation = await viewRoomSimulations(roomID);
-            const room = await viewRoom(roomID);
-            setSimulation(roomSimulation);
-            setCurrentRoom(room);
-            console.log(roomSimulation);
-        } catch (error) {
-            console.error("Failed to fetch simulations for the room:", error);
-        }
-    };
+            try {
+                const roomSimulation = await viewRoomSimulations(roomID);
+                const room = await viewRoom(roomID);
+                setSimulation(roomSimulation);
+                setCurrentRoom(room);
+                console.log(roomSimulation);
+            } catch (error) {
+                console.error(
+                    "Failed to fetch simulations for the room:",
+                    error
+                );
+            }
+        };
         fetchSimulations();
     }, [setSimulation, setCurrentRoom]);
 
@@ -94,7 +98,7 @@ export default function Game() {
                     <h1>
                         {currentRoom.name} - Simulations | {currentRoom.code}
                     </h1>
-                    <button onClick={() =>handleRoomInfoClick(roomID)}>
+                    <button onClick={() => handleRoomInfoClick(roomID)}>
                         Room Information
                     </button>
                 </section>
@@ -107,12 +111,18 @@ export default function Game() {
                             title={simulation.name}
                             description={simulation.simulationType}
                             infoTitle="Student Done"
-                            counter={simulation.participants.filter((p) => p.done).length}
+                            counter={
+                                simulation.participants.filter((p) => p.done)
+                                    .length
+                            }
                             glow={false}
                             onClick={() => handleCardClick(simulation)}
                         />
                     ))}
-                    <CardNew title="+ Create Game" link={`/game-mode?roomID=${roomID}`} />
+                    <CardNew
+                        title="+ Create Game"
+                        link={`/game-mode?roomID=${roomID}`}
+                    />
                 </div>
             </section>
         </main>

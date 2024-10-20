@@ -260,7 +260,9 @@ const SimulationGameplay = () => {
     useEffect(() => {
         getUserDetails();
     }, []);
-    const characterDetails = useImageParse("&range_cannon-a22-i17");
+
+    const characterDetails = useImageParse(userEquipped.equippedCharacter);
+
     const enemyDetails = useImageParse(
         enemies[currentEnemyIndex]?.imagePath || ""
     );

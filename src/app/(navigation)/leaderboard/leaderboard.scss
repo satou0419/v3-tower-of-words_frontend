@@ -30,6 +30,24 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
+
+        .uneditable-settings {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            button[type="button"] {
+                background-color: #ffaf40;
+                height: 3em;
+                width: 10em;
+                box-shadow: var(--shadow-burst);
+                border: none;
+                border-radius: 5px;
+                border-top: 2px solid #fff;
+                color: #fff;
+                cursor: pointer;
+            }
+        }
     }
 }
 

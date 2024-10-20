@@ -10,7 +10,7 @@ interface SimulationParticipant {
     userID: number;
     score: number;
     duration: string | null;
-    mistake: number;
+    mistakes: number;
     accuracy: number;
     wordsProgress: any[];
     done: boolean;
