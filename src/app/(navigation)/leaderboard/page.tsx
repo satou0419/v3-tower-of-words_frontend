@@ -14,6 +14,9 @@ import useUserInfoStore from "@/store/userInfoStore";
 import editSimulation from "@/lib/simulation-endpoint/editSimulation";
 import Modal from "@/app/component/Modal/Modal";
 import deleteSimulation from "@/lib/simulation-endpoint/deleteSimulation";
+import { Workbook } from "exceljs";
+import { saveAs } from "file-saver";
+import getStudentInfo from "@/lib/user-endpoint/getStudentInfo";
 
 export default function Leaderboard() {
     const { currentRoom } = useRoomStore();
@@ -51,6 +54,60 @@ export default function Leaderboard() {
         };
         fetchSimulations();
     }, [setCurrentSimulation]);
+
+    const handleDownloadExcel = async () => {
+        const workbook = new Workbook();
+        const worksheet = workbook.addWorksheet("Leaderboard");
+
+        worksheet.columns = [
+            { header: "Rank", key: "rank", width: 10 },
+            { header: "Username", key: "username", width: 30 },
+            { header: "First Name", key: "firstname", width: 30 },
+            { header: "Last Name", key: "lastname", width: 30 },
+            { header: "Score", key: "score", width: 10 },
+            { header: "Accuracy", key: "accuracy", width: 10 },
+            { header: "Duration", key: "duration", width: 15 },
+            { header: "Mistakes", key: "mistakes", width: 10 },
+        ];
+
+        const sortedParticipants = currentSimulation.participants.sort((a, b) =>
+            b.score === a.score ? b.accuracy - a.accuracy : b.score - a.score
+        );
+
+        console.log(sortedParticipants);
+
+        const rows = await Promise.all(
+            sortedParticipants.map(async (participant, index) => {
+                const user = await getStudentInfo(participant.userID);
+                console.log(user);
+
+                console.log(participant);
+
+                return {
+                    rank: index + 1,
+                    username: user ? user.username : "Unknown",
+                    firstname: user ? user.firstname : "N/A",
+                    lastname: user ? user.lastname : "N/A",
+                    score: participant.score,
+                    accuracy: participant.accuracy,
+                    duration: participant.done
+                        ? participant.duration
+                        : "No Attempt",
+                    mistakes: participant.mistakes,
+                };
+            })
+        );
+
+        // Add all rows to the worksheet
+        worksheet.addRows(rows);
+
+        // Generate Excel file and download
+        const buffer = await workbook.xlsx.writeBuffer();
+        const blob = new Blob([buffer], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        saveAs(blob, `Leaderboard_Simulation_${currentSimulation.name}.xlsx`);
+    };
 
     const handleDelete = async () => {
         console.log("Delete button clicked");
@@ -236,7 +293,7 @@ export default function Leaderboard() {
                     </CardTab>
 
                     <section className="leaderboard-setting">
-                        <div className="button-group">
+                        <section className="button-group">
                             <button type="button" onClick={handleViewWordClick}>
                                 View Words
                             </button>
@@ -252,42 +309,56 @@ export default function Leaderboard() {
                             >
                                 Game Assessment
                             </button>
-                        </div>
+                        </section>
 
-                        <div className="uneditable-settings">
-                            <div className="setting-item">
-                                <span>Attack Interval: </span>
-                                <span>{currentSimulation.attackInterval}</span>
-                            </div>
-                            <div className="setting-item">
-                                <span>Student Life: </span>
-                                <span>{currentSimulation.studentLife}</span>
-                            </div>
-                            <div className="setting-item">
-                                <span>Items: </span>
-                                <input
-                                    type="checkbox"
-                                    checked={currentSimulation.items}
-                                    readOnly
-                                />
-                            </div>
-                            <div className="setting-item">
-                                <span>Description: </span>
-                                <input
-                                    type="checkbox"
-                                    checked={currentSimulation.description}
-                                    readOnly
-                                />
-                            </div>
-                            <div className="setting-item">
-                                <span>Pronunciation: </span>
-                                <input
-                                    type="checkbox"
-                                    checked={currentSimulation.pronunciation}
-                                    readOnly
-                                />
-                            </div>
-                        </div>
+                        <section className="uneditable-settings">
+                            <section className="uneditable-settings-top">
+                                <div className="setting-item">
+                                    <span>Attack Interval: </span>
+                                    <span>
+                                        {currentSimulation.attackInterval}
+                                    </span>
+                                </div>
+                                <div className="setting-item">
+                                    <span>Student Life: </span>
+                                    <span>{currentSimulation.studentLife}</span>
+                                </div>
+                                <div className="setting-item">
+                                    <span>Items: </span>
+                                    <input
+                                        type="checkbox"
+                                        checked={currentSimulation.items}
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="setting-item">
+                                    <span>Description: </span>
+                                    <input
+                                        type="checkbox"
+                                        checked={currentSimulation.description}
+                                        readOnly
+                                    />
+                                </div>
+                                <div className="setting-item">
+                                    <span>Pronunciation: </span>
+                                    <input
+                                        type="checkbox"
+                                        checked={
+                                            currentSimulation.pronunciation
+                                        }
+                                        readOnly
+                                    />
+                                </div>
+                            </section>
+                            <section className="uneditable-settings-top">
+                                <button
+                                    type="button"
+                                    onClick={handleDownloadExcel}
+                                >
+                                    Download Excel
+                                </button>
+                            </section>
+                        </section>
                         <CardSetting
                             title="Settings"
                             inputs={inputSetting}

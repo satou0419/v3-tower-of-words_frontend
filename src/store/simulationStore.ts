@@ -10,7 +10,7 @@ interface SimulationParticipant {
     userID: number;
     score: number;
     duration: string | null;
-    mistake: number;
+    mistakes: number;
     accuracy: number;
     wordsProgress: any[];
     done: boolean;
@@ -66,5 +66,6 @@ export const useSimulationStore = create<SimulationState>((set) => ({
         assessment: [],
     },
     setSimulation: (simulations) => set({ simulations }),
-    setCurrentSimulation: (simulation) => set({ currentSimulation: simulation }),
+    setCurrentSimulation: (simulation) =>
+        set({ currentSimulation: simulation }),
 }));
