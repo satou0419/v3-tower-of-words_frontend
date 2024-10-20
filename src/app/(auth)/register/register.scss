@@ -155,16 +155,24 @@
     }
 
     .register-container {
-        width: 95%;
-        gap: 3rem;
+        width: 100%;
+        gap: 0rem;
         height: 100%;
         flex-direction: column;
-        background-color: #218838;
+        padding-top: 5%;
+        // background-color: #218838;
     }
 
     .register-banner {
-        height: 70%;
+        height: 30%;
         justify-content: center;
+        img {
+            width: 70%;
+        }
+    }
+
+    .register-wrapper{
+        height: 100%;
     }
 
     // .register-wrapper {
