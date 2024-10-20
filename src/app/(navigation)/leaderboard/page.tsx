@@ -378,11 +378,11 @@ export default function Leaderboard() {
                     isOpen={showPopup}
                     onClose={handleCloseModal}
                     buttons={[
-                        <button key="confirm" onClick={handleClone}>
-                            Yes
-                        </button>,
                         <button key="No" onClick={handleCloseModal}>
                             Cancel
+                        </button>,
+                        <button key="confirm" onClick={handleClone}>
+                            Yes
                         </button>,
                     ]}
                 />
@@ -394,11 +394,11 @@ export default function Leaderboard() {
                     isOpen={showDeletePopup}
                     onClose={handleCloseDeleteModal}
                     buttons={[
-                        <button key="confirm" onClick={handleDelete}>
-                            Yes
-                        </button>,
                         <button key="No" onClick={handleCloseDeleteModal}>
                             Cancel
+                        </button>,
+                        <button key="confirm" onClick={handleDelete}>
+                            Yes
                         </button>,
                     ]}
                 />
