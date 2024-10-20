@@ -649,7 +649,13 @@ const AdventureGameplay = () => {
     }, [hasStartAchievementCheck])
 
     useEffect(() => {
-        if (gameStarted && word && word.playAudio && gameType === "Spelling") {
+        if (
+            (gameStarted &&
+                word &&
+                word.playAudio &&
+                gameType === "Spelling") ||
+            (gameStarted && word && word.playAudio && gameType === "Spelling")
+        ) {
             // Play audio on word change
             const timer = setTimeout(() => {
                 word.playAudio()
