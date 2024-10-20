@@ -496,6 +496,7 @@ const AdventureGameplay = () => {
 
     //Logic in submitting the answer
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+        console.log("Hello")
         event.preventDefault()
         setIsButtonDisabled(true)
         const currentEnemy = enemyData[currentEnemyIndex]
@@ -535,14 +536,21 @@ const AdventureGameplay = () => {
                 await addWord(currentWord || "")
                 updateFloor
                 achievementChecker("floors")
-                if (gameType === "Syllables")
-                    // achievementChecker("syllablefloors")
+                achievementChecker("words")
 
-                    // achievementChecker("spellingfloors")
+                if (gameType === "Syllables") {
+                    achievementChecker("syllablefloors")
+                }
 
-                    // achievementChecker("silentfloors")
+                if (gameType === "Silent") {
+                    achievementChecker("silentfloors")
+                }
 
-                    setHasStartAchievementChecker(true)
+                if (gameType === "Spelling") {
+                    achievementChecker("spellingfloors")
+                }
+
+                setHasStartAchievementChecker(true)
             }
 
             setTimeout(() => {
@@ -638,15 +646,13 @@ const AdventureGameplay = () => {
         }
     }
 
-    //Play only the audio in gameType 1
-
     useEffect(() => {
         if (hasStartAchievementCheck === true) {
             console.log("Start Checking")
             achievementChecker("words")
             setHasStartAchievementChecker(false)
         }
-    }, [hasStartAchievementCheck])
+    }, [hasStartAchievementCheck, setHasStartAchievementChecker])
 
     useEffect(() => {
         if (
