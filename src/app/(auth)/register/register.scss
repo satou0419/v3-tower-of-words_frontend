@@ -146,10 +146,32 @@
     }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 440px) {
     .register-form {
         padding: 0.5em; /* Further adjust padding */
+        height: 90%;
+        width: 90%;
+        margin-right: 0;
     }
+
+    .register-container {
+        width: 95%;
+        gap: 3rem;
+        height: 100%;
+        flex-direction: column;
+        background-color: #218838;
+    }
+
+    .register-banner {
+        height: 70%;
+        justify-content: center;
+    }
+
+    // .register-wrapper {
+    //     height: 100vh;
+    // }
+
+    
 }
 
 /* Custom styles for register modal */
