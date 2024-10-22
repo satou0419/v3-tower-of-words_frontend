@@ -1256,7 +1256,7 @@ const AdventureGameplay = () => {
                 className="conquer-floor-modal"
                 isOpen={showConquerFloorModal}
                 title="Floor Conquered!"
-                details="Congratulations! You've conquered this floor.?"
+                details="Congratulations! You've conquered this floor."
                 buttons={[
                     <button key="menu" onClick={returnMenu}>
                         Return to Main Menu
