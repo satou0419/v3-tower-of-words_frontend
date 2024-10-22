@@ -101,6 +101,7 @@ const ItemsTab: React.FC = () => {
                         imgSrc={`/assets/images/reward/${item.imagePath}`}
                         title={item.itemName}
                         price={item.itemPrice}
+                        description={item.itemDescription}
                         onClick={() => handleItemClick(item)}
                     />
                 ))}

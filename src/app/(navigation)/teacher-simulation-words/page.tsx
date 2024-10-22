@@ -12,22 +12,42 @@ import { faVolumeUp } from "@fortawesome/free-solid-svg-icons";
 import CardTab from "@/app/component/Card/CardTab/CardTab";
 import { viewSimulation } from "@/lib/simulation-endpoint/viewSimulation";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from "chart.js";
 import updateWordAssessment from "@/lib/assessment-endpoint/updateWordAssessment";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    PointElement,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 export default function TeacherSimulationWords() {
     const { currentSimulation, setCurrentSimulation } = useSimulationStore();
-    const [ simulationWordsID, setSimulationWordsID ] = useState<number[]>([]);
+    const [simulationWordsID, setSimulationWordsID] = useState<number[]>([]);
     const router = useRouter();
-    const [showGraph, setShowGraph] = useState(false); 
+    const [showGraph, setShowGraph] = useState(false);
     const searchParams = useSearchParams();
     const simulationIDParam = searchParams.get("simulationID");
-    const simulationID = simulationIDParam ? parseInt(simulationIDParam, 10) : NaN;
+    const simulationID = simulationIDParam
+        ? parseInt(simulationIDParam, 10)
+        : NaN;
     const [selectedWord, setSelectedWord] = useState<null | string>(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const simulationWords = useFetchAllSimulationWords(simulationWordsID).simulationWords;
+    const simulationWords =
+        useFetchAllSimulationWords(simulationWordsID).simulationWords;
     const [filteredWords, setFilteredWords] = useState(simulationWords);
 
     const wordData = useMerriam(selectedWord || "");
@@ -36,21 +56,26 @@ export default function TeacherSimulationWords() {
 
     useEffect(() => {
         const fetchSimulations = async () => {
-        try {
-            const simulation = await viewSimulation(simulationID);
-            updateWordAssessment(simulationID);
-            setCurrentSimulation(simulation);
-            console.log(simulation);
-        } catch (error) {
-            console.error("Failed to fetch simulations for the room:", error);
-        }
-    };
+            try {
+                const simulation = await viewSimulation(simulationID);
+                updateWordAssessment(simulationID);
+                setCurrentSimulation(simulation);
+                console.log(simulation);
+            } catch (error) {
+                console.error(
+                    "Failed to fetch simulations for the room:",
+                    error
+                );
+            }
+        };
         fetchSimulations();
     }, [setCurrentSimulation]);
 
     useEffect(() => {
         if (currentSimulation && currentSimulation.enemy) {
-            const wordsID = currentSimulation.assessment.flatMap(assessment => assessment.simulationWordID);
+            const wordsID = currentSimulation.assessment.flatMap(
+                (assessment) => assessment.simulationWordID
+            );
             setSimulationWordsID(wordsID);
         }
     }, [currentSimulation]);
@@ -80,37 +105,57 @@ export default function TeacherSimulationWords() {
         setSearchTerm(event.target.value);
     };
 
-    const selectedWordID = simulationWords.find(word => word.word === selectedWord)?.simulationWordsID;
+    const selectedWordID = simulationWords.find(
+        (word) => word.word === selectedWord
+    )?.simulationWordsID;
 
     const selectedAssessment = currentSimulation?.assessment.find(
-        assessment => assessment.simulationWordID === selectedWordID
+        (assessment) => assessment.simulationWordID === selectedWordID
     );
 
     const chartData = {
-        labels: selectedAssessment
-        ? [
-            `Accuracy: ${selectedAssessment.accuracy.toFixed(2)}`,
-            `Mistake: ${selectedAssessment.mistake}`,
-            `Duration: ${selectedAssessment.duration}`,
-            `Score: ${selectedAssessment.score}`,
-        ]
-        : ['Accuracy', 'Mistake', 'Duration', 'Score'],
+        labels: ["Accuracy", "Mistake", "Duration", "Score"],
         datasets: [
             {
-                label: 'Assessment Data',
-                data: selectedAssessment
-                    ? [selectedAssessment.accuracy, selectedAssessment.mistake, selectedAssessment.duration, selectedAssessment.score]
-                    : [],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
+                label: "Assessment Data",
+                data: [
+                    selectedAssessment?.accuracy,
+                    selectedAssessment?.mistake,
+                    selectedAssessment?.duration,
+                    selectedAssessment?.score,
+                ],
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                borderColor: "rgba(75, 192, 192, 1)",
                 borderWidth: 1,
             },
         ],
     };
 
+    const chartOptions = {
+        indexAxis: "y" as const, // Make sure to use 'y' or 'x'
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            x: {
+                beginAtZero: true,
+            },
+            y: {
+                grid: {
+                    display: false, // Hides the y-axis grid lines
+                },
+            },
+        },
+    };
+
     return (
         <main className="main-wrapper">
-            <button onClick={() => router.back()} type="button" className="wordassessment-button">Back</button>
+            <button
+                onClick={() => router.back()}
+                type="button"
+                className="wordassessment-button"
+            >
+                Back
+            </button>
             <section className="teachersimulationwords-container">
                 <CardWord className="teachersimulationwords-left">
                     <div className="left-container">
@@ -125,7 +170,9 @@ export default function TeacherSimulationWords() {
                                 filteredWords.map((word) => (
                                     <span
                                         key={word.word}
-                                        onClick={() => handleWordClick(word.word)}
+                                        onClick={() =>
+                                            handleWordClick(word.word)
+                                        }
                                         className={
                                             selectedWord === word.word
                                                 ? "active"
@@ -136,66 +183,76 @@ export default function TeacherSimulationWords() {
                                     </span>
                                 ))
                             ) : (
-                                <span className="no-results">No words found</span>
+                                <span className="no-results">
+                                    No words found
+                                </span>
                             )}
                         </div>
                     </div>
                 </CardWord>
                 <CardWord className="teachersimulationwords-right">
                     <section className="right-container">
-                    {selectedWord && wordData ? (
-                        <>
-                            <div className="word-control">
-                                <h1>{wordData.word}</h1>
-                                {wordData.pronunciation && (
-                                    <span className="pronunciation">
-                                        {wordData.pronunciation}
-                                    </span>
-                                )}
-                                {wordData.audio && (
-                                    <FontAwesomeIcon
-                                        className="play-audio-icon"
-                                        icon={faVolumeUp}
-                                        onClick={() => wordData.playAudio()}
-                                    />
-                                )}
-                            </div>
-                            <div className="word-define">
-                                {wordData.partOfSpeech && (
-                                    <span className="part-of-speech">
-                                        {wordData.partOfSpeech}
-                                    </span>
-                                )}
-                                {wordData.definition && (
-                                    <span className="definition">
-                                        {wordData.definition}
-                                    </span>
-                                )}
-                                {wordData.message && (
-                                    <div className="message">
-                                        {wordData.message}
-                                    </div>
-                                )}
-                            </div>
-                            <div className="graph-button">
-                                <button
-                                    type="button"
-                                    onClick={() => setShowGraph(!showGraph)}
-                                    className="show-graph-button"
-                                >
-                                    {showGraph ? 'Hide Graph' : 'Show Graph'}
-                                </button>
-                            </div>
-                        </>
-                    ) : (
-                        <span className="no-data">No data available</span>
-                    )}
+                        {selectedWord && wordData ? (
+                            <>
+                                <div className="word-control">
+                                    <h1>{wordData.word}</h1>
+                                    {wordData.pronunciation && (
+                                        <span className="pronunciation">
+                                            {wordData.pronunciation}
+                                        </span>
+                                    )}
+                                    {wordData.audio && (
+                                        <FontAwesomeIcon
+                                            className="play-audio-icon"
+                                            icon={faVolumeUp}
+                                            onClick={() => wordData.playAudio()}
+                                        />
+                                    )}
+                                </div>
+                                <div className="word-define">
+                                    {wordData.partOfSpeech && (
+                                        <span className="part-of-speech">
+                                            {wordData.partOfSpeech}
+                                        </span>
+                                    )}
+                                    {wordData.definition && (
+                                        <span className="definition">
+                                            {wordData.definition}
+                                        </span>
+                                    )}
+                                    {wordData.message && (
+                                        <div className="message">
+                                            {wordData.message}
+                                        </div>
+                                    )}
+                                </div>
+                                <div className="graph-button">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowGraph(!showGraph)}
+                                        className="show-graph-button"
+                                    >
+                                        {showGraph
+                                            ? "Hide Graph"
+                                            : "Show Graph"}
+                                    </button>
+                                </div>
+                            </>
+                        ) : (
+                            <span className="no-data">No data available</span>
+                        )}
                     </section>
                 </CardWord>
-                
+
                 {selectedAssessment && showGraph && (
                     <div className="graph">
-                        <button onClick={() => setShowGraph(!showGraph)} type="button" className="wordassessment-x">X</button>
+                        <button
+                            onClick={() => setShowGraph(!showGraph)}
+                            type="button"
+                            className="wordassessment-x"
+                        >
+                            X
+                        </button>
                         <CardTab
                             className="cardtab"
                             title="Word Assessment"
@@ -204,7 +261,7 @@ export default function TeacherSimulationWords() {
                             <section className="wordassessment-content">
                                 <section className="wordassessment-details">
                                     <span className="wordassessment-data">
-                                        <div>Accuracy</div> 
+                                        <div>Accuracy</div>
                                         <div>{selectedAssessment.accuracy}</div>
                                     </span>
                                     <span className="wordassessment-data">
@@ -222,13 +279,15 @@ export default function TeacherSimulationWords() {
                                 </section>
 
                                 <section className="wordassessment-graph">
-                                    <Bar data={chartData} />
+                                    <Bar
+                                        data={chartData}
+                                        options={chartOptions}
+                                    />
                                 </section>
                             </section>
                         </CardTab>
                     </div>
                 )}
-            
             </section>
         </main>
     );

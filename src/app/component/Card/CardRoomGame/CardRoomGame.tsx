@@ -22,11 +22,14 @@ const CardRoomGame: React.FC<CardRoomGameProps> = ({
     glow,
     onClick,
 }) => {
+    console.log(bannerClass);
     return (
         <div className="cardroomgame-card" onClick={onClick}>
             <section className="cardroomgame-container">
                 <section className={`cardroomgame-banner ${bannerClass}`}>
-                    <div className="banner-container"></div>
+                    <div className="banner-container">
+                        <img src={bannerClass} alt="" />
+                    </div>
                 </section>
                 <CardDetails title={title} description={description} />
                 <CardInfo title={infoTitle} counter={counter} glow={glow} />

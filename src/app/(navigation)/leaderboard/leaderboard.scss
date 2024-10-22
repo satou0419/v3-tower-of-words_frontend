@@ -77,3 +77,21 @@
     flex-direction: column;
     gap: 2em;
 }
+
+@media (max-width: 1000px) {
+    .leaderboard-content {
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+
+        .leaderboard-card {
+            width: 100%;
+        }
+
+        .leaderboard-setting {
+            width: 100%;
+            gap: 2em;
+            padding-bottom: 5em;
+        }
+    }
+}

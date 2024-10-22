@@ -11,12 +11,12 @@
     padding: 1em;
 
     &.selected {
-        background-color: #BDA4D4; // The background color when selected
+        background-color: #bda4d4; // The background color when selected
     }
 }
 
 .cardclone-card-top {
-    height: 50%;
+    height: 80%;
     width: 100%;
     display: flex;
     justify-content: space-evenly;
@@ -24,23 +24,23 @@
     flex-direction: column;
 
     .cardclone-card-name {
-        width: 50%;
+        width: 80%;
         font-size: 32px;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #D5C2E6;
+        background: #d5c2e6;
         color: white;
         border-radius: 5px;
         box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
     }
 
     .cardclone-card-code {
-        width: 50%;
+        width: 80%;
         display: flex;
         justify-content: center;
         align-items: center;
-        background: #D5C2E6;
+        background: #d5c2e6;
         color: white;
         border-radius: 5px;
         box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
@@ -52,19 +52,20 @@
     align-items: center;
     justify-content: flex-start;
     width: 100%;
+    height: 5em;
     position: relative;
 }
-  
+
 .line-text {
     position: relative;
     padding: 0 10px;
     background-color: white;
 
     &.selected {
-        background-color: #BDA4D4; // The background color when selected
+        background-color: #bda4d4; // The background color when selected
     }
 }
-  
+
 .line::before {
     content: "";
     flex: 1;
@@ -88,29 +89,28 @@
     flex-direction: column;
     gap: 1rem;
 
-    .cardclone-card-room-top{
+    .cardclone-card-room-top {
         display: flex;
         justify-content: center;
         align-items: center;
         gap: 1rem;
         flex-direction: row;
         width: 100%;
-        
+
         .cardclone-card-room-name {
             width: 50%;
             font-size: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #D5C2E6;
-            color: #662B9A;
+            background: #d5c2e6;
+            color: #662b9a;
             border-radius: 5px;
             box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
         }
     }
-    
 
-    .cardclone-card-room-bottom{
+    .cardclone-card-room-bottom {
         display: flex;
         justify-content: center;
         align-items: center;
@@ -124,11 +124,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: #D5C2E6;
-            color: #662B9A;
+            background: #d5c2e6;
+            color: #662b9a;
             border-radius: 5px;
             box-shadow: inset 0 5px 5px -5px rgba(0, 0, 0, 0.5);
         }
     }
 }
-

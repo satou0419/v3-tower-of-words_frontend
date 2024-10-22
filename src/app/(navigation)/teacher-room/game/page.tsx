@@ -107,7 +107,7 @@ export default function Game() {
                     {simulations.map((simulation) => (
                         <CardRoomGame
                             key={simulation.simulationID}
-                            bannerClass="room-banner"
+                            bannerClass="/assets/images/banner/banner-knight.png"
                             title={simulation.name}
                             description={simulation.simulationType}
                             infoTitle="Student Done"

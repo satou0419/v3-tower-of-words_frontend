@@ -15,7 +15,7 @@
     flex-direction: column;
 }
 
-.cardenemy-main{
+.cardenemy-main {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -86,7 +86,7 @@
     justify-content: space-evenly;
     flex-direction: column;
     height: 100%;
-    width: auto;    
+    width: auto;
 
     :first-child {
         background-color: #ff5a79;
@@ -114,9 +114,9 @@
 }
 
 .cardenemy-popup {
-    position: absolute;
+    position: fixed;
     top: 50%;
-    right: 25%;
+    left: 50%;
     transform: translate(-50%, -50%);
     background: white;
     padding: 20px;
@@ -124,6 +124,8 @@
     border-radius: 0.5em;
     z-index: 1000;
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 1em;
 
     .close-popup {
@@ -138,21 +140,21 @@
         justify-content: center;
     }
 
-    .cardenemy-assgin{
+    .cardenemy-assgin {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
     }
-    
-    button{
+
+    button {
         border: none;
         outline: none;
         background: #662b9a;
         color: white;
         width: 5em;
         height: 2em;
-        border-radius: .5em;
+        border-radius: 0.5em;
     }
 
     img {

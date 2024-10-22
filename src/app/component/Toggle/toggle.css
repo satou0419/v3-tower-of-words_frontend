@@ -10,11 +10,6 @@
     border-radius: 5px;
     color: var(--clr-gray_dark);
 
-    @media screen and (max-width: 600px) {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
     span {
         font-size: 0.8em;
     }
@@ -28,10 +23,6 @@
     display: flex;
     align-items: center;
     transition: background-color 0.3s;
-
-    @media screen and (max-width: 600px) {
-        width: 100%;
-    }
 }
 
 .toggle-container.enabled {

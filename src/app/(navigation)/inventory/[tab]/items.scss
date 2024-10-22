@@ -80,3 +80,30 @@
         text-align: center;
     }
 }
+
+@media (max-width: 1000px) {
+    .inventory_wrapper {
+        flex-direction: column;
+        width: 100%;
+
+        .inventory-item {
+            width: 100%;
+        }
+
+        .inventory-item_detail-container-description {
+            height: 100%;
+            width: 100%;
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .inventory_wrapper {
+        flex-direction: column;
+        width: 100%;
+
+        .inventory-item_detail {
+            width: 100%;
+        }
+    }
+}

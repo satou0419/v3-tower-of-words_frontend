@@ -274,3 +274,30 @@
         }
     }
 }
+
+@media (max-width: 700px) {
+    .wordarchive-container {
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 2em;
+
+        .left-section {
+            width: 80%;
+
+            .search-card {
+                width: 100%;
+            }
+        }
+
+        .wordarchive-right {
+            width: 80%;
+            .right-section {
+                width: 80%;
+
+                .search-card {
+                    width: 100%;
+                }
+            }
+        }
+    }
+}
