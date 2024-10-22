@@ -1,19 +1,19 @@
-import React from "react";
-import "./cardcharacterpreview.scss";
-import CardWord from "@/app/component/Card/CardWord/CardWord";
+import React from "react"
+import "./cardcharacterpreview.scss"
+import CardWord from "@/app/component/Card/CardWord/CardWord"
 
 interface CardCharacterPreviewProps {
-    bannerClass: string;
-    equip?: boolean;
-    animation: string;
+    bannerClass: string
+    equip?: boolean
+    animation: string
     character: {
-        attackType: string;
-        name: string;
-        attackFrame: number;
-        idleFrame: number;
-    };
-    onAttackClick?: () => void;
-    onEquipClick?: () => void;
+        attackType: string
+        name: string
+        attackFrame: number
+        idleFrame: number
+    }
+    onAttackClick?: () => void
+    onEquipClick?: () => void
 }
 
 const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
@@ -25,16 +25,16 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
     onEquipClick,
 }) => {
     if (!character.name || !bannerClass) {
-        return null;
+        return null
     }
     return (
         <div className="cardcharacterpreview-card">
             <section className="cardcharacterpreview-container">
-                <CardWord className={`cardcharacterpreview-banner ${bannerClass}`}>
+                <CardWord
+                    className={`cardcharacterpreview-banner ${bannerClass}`}
+                >
                     <div className="banner-container">
-                        <section
-                            className={`character-container`}
-                        >
+                        <section className={`character-container`}>
                             <div
                                 className={`character-sprite ${
                                     onAttackClick
@@ -43,11 +43,11 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
                                 }`}
                                 style={{
                                     position: "absolute",
-                                    bottom: 0,
-                                    right: 0,
+                                    transform: "scale(0.6)",
                                     backgroundImage: `url("/assets/images/sprite/${character.name}.png")`,
-                                    width: `100%`,
-                                    height: `100%`,
+                                    width: `360px`,
+                                    height: `360px`,
+
                                     animation: `${
                                         onAttackClick
                                             ? `attack-${character.name}`
@@ -63,9 +63,7 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
                                     }) infinite`,
                                 }}
                             >
-                                <style>
-                                    {`${animation}`}
-                                </style>
+                                <style>{`${animation}`}</style>
                             </div>
                         </section>
                     </div>
@@ -73,8 +71,8 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
                 <button className="attack-button" onClick={onAttackClick}>
                     Attack
                 </button>
-                {onEquipClick && (
-                    equip ? (
+                {onEquipClick &&
+                    (equip ? (
                         <button className="equipped-button" disabled>
                             Equipped
                         </button>
@@ -82,11 +80,10 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
                         <button className="equip-button" onClick={onEquipClick}>
                             Equip
                         </button>
-                    )
-                )}
+                    ))}
             </section>
         </div>
-    );
-};
+    )
+}
 
-export default CardCharacterPreview;
+export default CardCharacterPreview

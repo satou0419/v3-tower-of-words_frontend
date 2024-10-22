@@ -1,22 +1,22 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import useCharacterStore from "@/store/characterStore";
-import Modal from "@/app/component/Modal/Modal";
-import useProgressDashboardStore from "@/store/progressDashboardStore";
-import CardCharacter from "@/app/component/Card/CardCharacter/CardCharacter";
-import CardCharacterPreview from "@/app/component/Card/CardCharacterPreview/CardCharacterPreview";
-import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
-import useImageParse from "@/hook/useImageParse";
-import { useAuthStore } from "@/store/authStore";
-import equipped from "@/store/progressEquippedStore";
-import useBuyCharacter from "@/lib/character-endpoint/buyCharacter";
+"use client"
+import React, { useEffect, useState } from "react"
+import useCharacterStore from "@/store/characterStore"
+import Modal from "@/app/component/Modal/Modal"
+import useProgressDashboardStore from "@/store/progressDashboardStore"
+import CardCharacter from "@/app/component/Card/CardCharacter/CardCharacter"
+import CardCharacterPreview from "@/app/component/Card/CardCharacterPreview/CardCharacterPreview"
+import useAnimationKeyframes from "@/hook/useAnimationKeyframes"
+import useImageParse from "@/hook/useImageParse"
+import { useAuthStore } from "@/store/authStore"
+import equipped from "@/store/progressEquippedStore"
+import useBuyCharacter from "@/lib/character-endpoint/buyCharacter"
 
 interface Character {
-    characterID: number;
-    name: string;
-    imagePath: string;
-    description: string;
-    price: number;
+    characterID: number
+    name: string
+    imagePath: string
+    description: string
+    price: number
 }
 
 const CharactersTab: React.FC = () => {
@@ -25,39 +25,39 @@ const CharactersTab: React.FC = () => {
         userCharacters,
         fetchUserCharacters,
         fetchAllCharacters,
-    } = useCharacterStore();
+    } = useCharacterStore()
     const [selectedCharacter, setSelectedCharacter] = useState<Character>({
         characterID: 0,
         name: "",
         imagePath: "",
         description: "",
         price: 0,
-    });
-    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
-    const [isSuccessOpen, setIsSuccessOpen] = useState(false);
+    })
+    const [isConfirmationOpen, setIsConfirmationOpen] = useState(false)
+    const [isSuccessOpen, setIsSuccessOpen] = useState(false)
     const [isInsufficientBalanceOpen, setIsInsufficientBalanceOpen] =
-        useState(false);
+        useState(false)
     const [purchasedCharacterName, setPurchasedCharacterName] = useState<
         string | null
-    >(null);
-    const { userID } = useAuthStore.getState();
-    const { progressDashboard, setCreditAmount } = useProgressDashboardStore();
+    >(null)
+    const { userID } = useAuthStore.getState()
+    const { progressDashboard, setCreditAmount } = useProgressDashboardStore()
     const [isCharacterAttacking, setIsCharacterAttacking] =
-        useState<boolean>(false);
-    const characterDetails = useImageParse(selectedCharacter.imagePath);
-    const { buyCharacter } = useBuyCharacter();
+        useState<boolean>(false)
+    const characterDetails = useImageParse(selectedCharacter.imagePath)
+    const { buyCharacter } = useBuyCharacter()
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
         characterDetails.name,
         characterDetails.idleFrame,
         characterDetails.attackFrame
-    );
-    const [isBuyButtonClicked, setIsBuyButtonClicked] = useState(false);
+    )
+    const [isBuyButtonClicked, setIsBuyButtonClicked] = useState(false)
 
     useEffect(() => {
-        fetchAllCharacters();
-        fetchUserCharacters(userID);
-    }, [fetchAllCharacters, fetchUserCharacters]);
+        fetchAllCharacters()
+        fetchUserCharacters(userID)
+    }, [fetchAllCharacters, fetchUserCharacters])
 
     const handleCharacterClick = (character: Character) => {
         if (selectedCharacter.characterID === character.characterID) {
@@ -68,95 +68,93 @@ const CharactersTab: React.FC = () => {
                     imagePath: "",
                     description: "",
                     price: 0,
-                });
+                })
             }
         } else {
-            setSelectedCharacter(character);
+            setSelectedCharacter(character)
         }
-        setIsBuyButtonClicked(false);
-    };
+        setIsBuyButtonClicked(false)
+    }
 
     const handleAttack = () => {
-        setIsCharacterAttacking((prevState) => !prevState);
-        console.log("clicked");
-    };
+        setIsCharacterAttacking((prevState) => !prevState)
+        console.log("clicked")
+    }
 
     const handleBuyClick = (character: Character) => {
         // Set the buy button clicked state
-        setIsBuyButtonClicked(true);
-        setSelectedCharacter(character); // Always set the selected character
-        setIsConfirmationOpen(true); // Open the confirmation modal
-    };
+        setIsBuyButtonClicked(true)
+        setSelectedCharacter(character) // Always set the selected character
+        setIsConfirmationOpen(true) // Open the confirmation modal
+    }
 
     const handleConfirmPurchase = async () => {
         if (selectedCharacter) {
             if (progressDashboard.creditAmount < selectedCharacter.price) {
-                setIsInsufficientBalanceOpen(true);
-                setIsConfirmationOpen(false);
-                return;
+                setIsInsufficientBalanceOpen(true)
+                setIsConfirmationOpen(false)
+                return
             }
-            console.log("Purchase successful");
+            console.log("Purchase successful")
 
             try {
-                const result = await buyCharacter(
-                    selectedCharacter.characterID
-                );
+                const result = await buyCharacter(selectedCharacter.characterID)
                 setCreditAmount(
                     progressDashboard.creditAmount - selectedCharacter.price
-                );
-                console.log("Character purchased successfully:", result);
+                )
+                console.log("Character purchased successfully:", result)
             } catch (error) {
-                console.error("Error purchasing character:", error);
+                console.error("Error purchasing character:", error)
             }
 
-            setIsConfirmationOpen(false);
+            setIsConfirmationOpen(false)
             setSelectedCharacter({
                 characterID: 0,
                 name: "",
                 imagePath: "",
                 description: "",
                 price: 0,
-            });
+            })
         }
-    };
+    }
 
     const handleCloseConfirmation = () => {
-        setIsConfirmationOpen(false);
+        setIsConfirmationOpen(false)
         setSelectedCharacter({
             characterID: 0,
             name: "",
             imagePath: "",
             description: "",
             price: 0,
-        });
-    };
+        })
+    }
 
     const handleCloseSuccess = () => {
-        setIsSuccessOpen(false);
-        setPurchasedCharacterName(null);
-    };
+        setIsSuccessOpen(false)
+        setPurchasedCharacterName(null)
+    }
 
     const handleCloseInsufficientBalance = () => {
-        setIsInsufficientBalanceOpen(false);
-    };
+        setIsInsufficientBalanceOpen(false)
+    }
 
     const characterName = (imagePath: string) => {
-        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
-        return match ? match[1] : "unknown";
-    };
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/)
+        return match ? match[1] : "unknown"
+    }
 
     return (
         <section className="character-wrapper">
             <section className="character-container">
                 {characters.map((character) => {
-                    const profile = characterName(character.imagePath);
+                    const profile = characterName(character.imagePath)
                     const isOwned = userCharacters.some(
                         (userCharacter) =>
                             userCharacter.characterID.characterID ===
                                 character.characterID &&
                             userCharacter.owned === true
-                    );
-                    if (!character) return null;
+                    )
+                    if (!character) return null
 
                     return (
                         <CardCharacter
@@ -169,7 +167,7 @@ const CharactersTab: React.FC = () => {
                             onClick={() => handleCharacterClick(character)}
                             onBuyClick={() => handleBuyClick(character)}
                         />
-                    );
+                    )
                 })}
             </section>
             <section className="selected-character-container">
@@ -226,7 +224,7 @@ const CharactersTab: React.FC = () => {
                 ]}
             />
         </section>
-    );
-};
+    )
+}
 
-export default CharactersTab;
+export default CharactersTab
