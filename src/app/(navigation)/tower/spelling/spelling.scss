@@ -127,8 +127,8 @@
     width: 100%;
 }
 .spelling-banner {
-    height: 100%;
-    width: 100%;
+    width: 80%;
+    height: fit-content;
     background-image: url("/assets/images/background/tower.png");
     background-size: contain;
 }
@@ -140,254 +140,19 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
-    gap: 2em;
-    .floors {
-        position: relative;
-
-        .locked {
-            &::after {
-                content: "";
-                display: block;
-                width: 1em;
-                height: 1em;
-                background-image: url("/assets/images/icon/ic-locked.png");
-                background-size: cover;
-                position: absolute;
-                right: 10px;
-                top: 30%;
-                transform: translateY(-50%);
-            }
-        }
-
-        margin-left: 6em;
-
-        span {
-            width: 10em;
-            height: 4em;
-            border: 5px solid #593796;
-            border-radius: 10px;
-            background-color: rgba(198, 198, 198, 0.75);
-            color: #5e5e5e;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-    }
-
-    .active {
-        outline: 8px solid #909090;
-        border: 6px solid #666667;
-        border-radius: 10px;
-        padding: 0.5em 1em;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-}
-
-.spelling-lower {
-    width: 100%;
-    height: 20%;
-
-    flex-grow: 1;
-    border-top: 10px solid #662b9a;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    .progress-container {
-        display: flex;
-        gap: 2em;
-        height: 100%;
-        width: 80%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        h1 {
-            font-size: 2em;
-        }
-
-        span {
-            font-size: 1.5em;
-            background-color: #d9d9d9;
-            padding: 0.2em 0.5em;
-            color: #fff;
-            border: 1px solid #000;
-            cursor: pointer;
-        }
-    }
-}
-.spelling-wrapper {
-    height: 100%;
-    width: 100%;
-}
-
-.spelling-container {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.spelling-upper {
-    width: 100%;
-    height: 75%;
-    display: flex;
-    justify-content: space-between;
-
-    .tower {
-        height: 100%;
-        aspect-ratio: 0.72/1;
-        overflow-y: auto;
-    }
-
-    .reward {
-        width: 60%;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: flex-start;
-
-        button {
-            margin-left: 2em;
-        }
-
-        .reward-container {
-            height: 100%;
-            width: 100%;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            text-align: center;
-
-            h1 {
-                color: #fff;
-                font-size: 2.5em;
-                text-shadow: -2px 2px 0 black, 2px -2px 0 black,
-                    -2px 2px 0 black, 2px 2px 0 black;
-            }
-            .cardword-card {
-                width: 80%;
-                height: 90%;
-            }
-
-            .outer {
-                width: 95%;
-
-                .inner {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 4em;
-                    align-items: center;
-                    flex-wrap: wrap;
-                }
-            }
-        }
-    }
-
-    button {
-        color: #fff;
-        background-color: #ffaf40;
-        border: none;
-        width: 8em;
-        height: 4em;
-        border-top: 4px solid #fff;
-        border-radius: 10px;
-        outline: none;
-        cursor: pointer;
-    }
-}
-
-.reward-list {
-    display: flex;
-    width: 80%;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 2em;
-    flex-wrap: wrap;
-    overflow-y: auto;
-    h2 {
-        color: #fff;
-        font-size: 2em;
-    }
-    .reward-box {
-        height: 6em;
-        aspect-ratio: 1/1;
-        border-radius: 10px;
-        border: 5px solid #593796;
-        background-color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        .reward-banner {
-            height: 90%;
-            aspect-ratio: 1/1;
-            background-color: #666666;
-            border-radius: 10px;
-            display: flex;
-            position: relative;
-        }
-
-        span {
-            position: absolute;
-            right: 5px;
-            bottom: 0;
-            color: #d26500;
-            background-color: #ffc658;
-            border-radius: 5px;
-            padding: 0 0.2em;
-        }
-    }
-}
-
-.reward-item {
-    display: flex;
-    justify-content: space-evenly;
-    align-items: center;
-    width: 100%;
-}
-
-.spelling-banner {
-    width: 80%;
-    height: fit-content;
-    background-image: url("/assets/images/background/tower.png");
-    padding-top: 2em;
-    padding-bottom: 2em;
-}
-
-.floor-container {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: flex-start;
+    // gap: 50px;
+
     gap: 2em;
+
+    padding-bottom: 20px;
 
     .floors {
         position: relative;
-        margin-left: 6em;
+    }
 
-        span {
-            width: 10em;
-            height: 4em;
-            border: 5px solid #593796;
-            border-radius: 10px;
-            background-color: rgba(198, 198, 198, 0.75);
-            color: #5e5e5e;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-        }
-
-        .locked::after {
+    .locked {
+        &::after {
             content: "";
             display: block;
             width: 1em;
@@ -401,15 +166,29 @@
         }
     }
 
-    .active {
-        outline: 8px solid #909090;
-        border: 6px solid #666667;
+    span {
+        width: 10em;
+        height: 4em;
+        border: 5px solid #593796;
         border-radius: 10px;
-        padding: 0.5em 1em;
+        background-color: rgba(198, 198, 198, 0.75);
+        color: #5e5e5e;
+
         display: flex;
         align-items: center;
         justify-content: center;
+        cursor: pointer;
     }
+}
+
+.active {
+    outline: 8px solid #909090;
+    border: 6px solid #666667;
+    border-radius: 10px;
+    // padding: 0.5em 1em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .spelling-lower {
