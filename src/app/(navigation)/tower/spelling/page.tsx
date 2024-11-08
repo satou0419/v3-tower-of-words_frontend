@@ -311,67 +311,75 @@ const Spelling = () => {
                             </div>
                         </CardWord>
                     </section>
+
+                    {/* Tower To Edit */}
+
                     <section className="tower">
-                        <section
-                            className="spelling-banner"
-                            style={{
-                                backgroundImage: `url(${bannerImage})`,
-                            }}
-                        >
-                            <section className="floor-container">
-                                {floors
-                                    .slice()
-                                    .reverse()
-                                    .map((floor) => (
-                                        <div
-                                            key={floor.towerFloorID}
-                                            ref={
-                                                floor.towerFloorID ===
-                                                activeFloorId
-                                                    ? activeFloorRef
-                                                    : null
-                                            }
-                                            onClick={() =>
-                                                handleFloorClick(
-                                                    floor.towerFloorID,
-                                                    floor.towerSection,
-                                                    gameType // Pass gameType here
-                                                )
-                                            }
-                                            className={
-                                                floor.towerFloorID ===
-                                                activeFloorId
-                                                    ? "floors active"
-                                                    : "floors"
-                                            }
-                                        >
-                                            <span
-                                                className={
-                                                    gameType === "Syllables" &&
+                        <section className="tower-container">
+                            {floors
+                                .slice()
+                                .reverse()
+                                .map((floor) => {
+                                    const isActive =
+                                        floor.towerFloorID === activeFloorId
+                                    const isLocked = () => {
+                                        switch (gameType) {
+                                            case "Syllables":
+                                                return (
                                                     floor.towerFloorID >
-                                                        userProgress.syllableFloorID
-                                                        ? "locked"
-                                                        : gameType ===
-                                                              "Spelling" &&
-                                                          floor.towerFloorID >
-                                                              userProgress.spellingFloorID
-                                                        ? "locked"
-                                                        : gameType ===
-                                                              "Silent" &&
-                                                          floor.towerFloorID >
-                                                              userProgress.silentFloorID
-                                                        ? "locked"
-                                                        : ""
+                                                    userProgress.syllableFloorID
+                                                )
+                                            case "Spelling":
+                                                return (
+                                                    floor.towerFloorID >
+                                                    userProgress.spellingFloorID
+                                                )
+                                            case "Silent":
+                                                return (
+                                                    floor.towerFloorID >
+                                                    userProgress.silentFloorID
+                                                )
+                                            default:
+                                                return false
+                                        }
+                                    }
+
+                                    return (
+                                        <section
+                                            key={floor.towerFloorID}
+                                            className="img-container"
+                                        >
+                                            <img
+                                                src={bannerImage}
+                                                className="tower-img"
+                                            />
+                                            <div
+                                                className={`tower-floor ${
+                                                    isLocked() ? "locked" : ""
+                                                } ${isActive ? "active" : ""}`}
+                                                onClick={() =>
+                                                    handleFloorClick(
+                                                        floor.towerFloorID,
+                                                        floor.towerSection,
+                                                        gameType
+                                                    )
+                                                }
+                                                ref={
+                                                    isActive
+                                                        ? activeFloorRef
+                                                        : null
                                                 }
                                             >
                                                 Floor {floor.towerFloorID}
-                                            </span>
-                                        </div>
-                                    ))}
-                            </section>
+                                            </div>
+                                        </section>
+                                    )
+                                })}
                         </section>
                     </section>
                 </section>
+
+                {/* End of Tower to Edit */}
 
                 <section className="spelling-lower">
                     <section className="progress-container">

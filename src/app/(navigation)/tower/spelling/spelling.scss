@@ -20,6 +20,14 @@
         height: 100%;
         aspect-ratio: 0.72/1;
         overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        justify-content: end;
+
+        .tower-container {
+            background-color: white;
+            height: 100%;
+        }
     }
 
     .reward {
@@ -128,9 +136,33 @@
 }
 .spelling-banner {
     width: 80%;
-    height: fit-content;
-    background-image: url("/assets/images/background/tower.png");
     background-size: contain;
+    border: 2px solid black;
+}
+
+.tower-img {
+    height: fit-content;
+    width: 80%;
+}
+
+.img-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+
+    .tower-floor {
+        width: 40%;
+        height: 40%;
+        border: 5px solid #593796;
+        background-color: rgba(198, 198, 198, 0.75);
+        color: #5e5e5e;
+        position: absolute;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .floor-container {
@@ -149,21 +181,6 @@
 
     .floors {
         position: relative;
-    }
-
-    .locked {
-        &::after {
-            content: "";
-            display: block;
-            width: 1em;
-            height: 1em;
-            background-image: url("/assets/images/icon/ic-locked.png");
-            background-size: cover;
-            position: absolute;
-            right: 10px;
-            top: 30%;
-            transform: translateY(-50%);
-        }
     }
 
     span {
@@ -191,6 +208,20 @@
     justify-content: center;
 }
 
+.locked {
+    &::after {
+        content: "";
+        display: block;
+        width: 1em;
+        height: 1em;
+        background-image: url("/assets/images/icon/ic-locked.png");
+        background-size: cover;
+        position: absolute;
+        right: 10px;
+        top: 30%;
+        transform: translateY(-50%);
+    }
+}
 .spelling-lower {
     width: 100%;
     height: 20%;
