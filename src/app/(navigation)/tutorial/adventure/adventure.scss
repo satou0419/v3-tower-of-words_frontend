@@ -1,0 +1,85 @@
+#tutorial-wrapper {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    #tutorial-container {
+        height: 100%; // Set to fill the available height
+        width: 100%; // Set to fill the available width
+        background-color: white;
+        border-radius: 10px;
+        border: 2px solid black;
+        padding: 0.5em 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center; // Center content vertically if needed
+        gap: 0.5em;
+
+        #tutorial-img {
+            width: 95%;
+            border: 5px solid #666666;
+            border-radius: 5px;
+            background-color: #beb6ed;
+            flex-grow: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #tutorial-description {
+            width: 100%;
+            background-color: #662b9a;
+            color: white;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #tutorial-controls {
+            width: 100%;
+            background-color: white;
+            flex-grow: 0.1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5em;
+
+            button {
+                background-color: #ffaf40;
+                color: white;
+                outline: none;
+                border: none;
+                cursor: pointer;
+                height: 2.5em;
+                width: 5em;
+                border-radius: 0.5em;
+            }
+
+            #indicator {
+                display: flex;
+                gap: 0.5em;
+
+                .icons {
+                    aspect-ratio: 1/1;
+                    height: 1em;
+                    border-radius: 50%;
+                    background-color: #d9d9d9;
+
+                    &.active {
+                        background-color: #9d7add;
+                    }
+
+                    &.inactive {
+                        background-color: #d9d9d9;
+                    }
+                }
+            }
+        }
+    }
+}

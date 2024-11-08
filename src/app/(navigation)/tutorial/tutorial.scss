@@ -1,0 +1,31 @@
+#tutorial-wrapper {
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    #tutorial-section {
+        height: 80%;
+        width: 90%;
+        background-color: #d9d9d9;
+        display: flex;
+
+        #tutorial-side {
+            width: 30%;
+            background-color: green;
+            display: flex; // Ensure this is a flex container if needed
+            flex-direction: column; // Adjust as necessary
+        }
+
+        #tutorial-main {
+            height: 100%; // Ensure this takes the full height of the section
+            background-color: red;
+            width: 70%; // Adjust to fill the space next to #tutorial-side
+            display: flex; // This will allow Adventure to use flex properties
+            justify-content: center; // Center child components horizontally
+            align-items: center; // Center child components vertically
+        }
+    }
+}

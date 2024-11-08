@@ -480,7 +480,6 @@ const AdventureGameplay = () => {
         useState(false)
 
     const { lives, subtractLives, addLives } = useGameplayStore()
-    // Other state and hooks...
 
     const [silentIndex, setSilentIndex] = useState("")
 
@@ -496,7 +495,6 @@ const AdventureGameplay = () => {
 
     //Logic in submitting the answer
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        console.log("Hello")
         event.preventDefault()
         setIsButtonDisabled(true)
         const currentEnemy = enemyData[currentEnemyIndex]
@@ -632,7 +630,6 @@ const AdventureGameplay = () => {
 
     const router = useRouter()
     const returnMenu = () => {
-        console.log("Click menu")
         if (gameType === "Spelling") {
             router.push("/tower/spelling/?gameType=Spelling")
         }
