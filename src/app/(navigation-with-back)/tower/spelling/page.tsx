@@ -262,10 +262,6 @@ const Spelling = () => {
 
     const router = useRouter()
 
-    const handleBackClick = () => {
-        router.back()
-    }
-
     const [activeFloorsInSection, setActiveFloorsInSection] = useState<any[]>(
         []
     ) // Store floors of the active section
@@ -308,7 +304,6 @@ const Spelling = () => {
         <main className="spelling-wrapper">
             <section className="spelling-container">
                 <section className="spelling-upper">
-                    <BackButton />
                     <section className="reward">
                         <section className="reward-container">
                             <h1>Floor {rewardData?.towerFloorID}</h1>

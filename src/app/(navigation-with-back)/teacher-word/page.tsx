@@ -135,7 +135,6 @@ const TeacherWord = () => {
                     onClose={() => setToastMessage(null)}
                 />
             )}
-            <button onClick={() => router.back()}>Back</button>
             <section className="wordarchive-container">
                 <section className="left-section">
                     <section className="search-card">

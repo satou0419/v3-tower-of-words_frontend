@@ -6,7 +6,9 @@
 
 .content-wrapper {
     flex-grow: 1;
-    overflow: auto; /* Ensures the content is scrollable if it overflows the viewport */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .navigation {
