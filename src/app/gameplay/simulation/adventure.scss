@@ -56,6 +56,21 @@
         justify-content: center;
         color: #fff;
     }
+
+    .life-time-track {
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        .life-track {
+            display: flex;
+            gap: 1rem;
+            padding: 0.3em;
+            border-radius: 17px;
+            border: 5px solid #593796;
+            background: rgba(132, 113, 165, 0.56);
+        }
+    }
 }
 
 .enemy-track {

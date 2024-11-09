@@ -12,17 +12,12 @@ interface SimulationProgress {
     mistake: number;
 }
 
-const useStudentWordProgress = (simulationID: number, studentID: any, wordID: any) => {
-    const [wordProgress, setWordProgress] = useState<SimulationProgress>({
-        studentWordProgressID: 0,
-        simulationWordsID: 0,
-        studentID: 0,
-        correct: false,
-        score: 0,
-        duration: 0,
-        accuracy: 0,
-        mistake: 0,
-    });
+const useStudentWordProgress = (
+    simulationID: number,
+    studentID: any,
+    wordID: any
+) => {
+    const [wordProgress, setWordProgress] = useState<SimulationProgress>();
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
 
@@ -33,9 +28,12 @@ const useStudentWordProgress = (simulationID: number, studentID: any, wordID: an
                     `${BASE_URL}/student_word_progress/view_one_by/student/${studentID}/simulation/${simulationID}/word/${wordID}`
                 );
                 if (!response.ok) {
-                    throw new Error(`Failed to fetch word progress data for StudentID: ${studentID}, SimulationID: ${simulationID}, and WordID: ${wordID}`);
+                    throw new Error(
+                        `Failed to fetch word progress data for StudentID: ${studentID}, SimulationID: ${simulationID}, and WordID: ${wordID}`
+                    );
                 }
                 const data = await response.json();
+                console.log("Full API response:", data);
                 setWordProgress(data.data);
             } catch (error) {
                 setError(error as Error);
