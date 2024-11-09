@@ -14,6 +14,7 @@ interface CardCharacterPreviewProps {
     }
     onAttackClick?: () => void
     onEquipClick?: () => void
+    attackButtonText: string // Added prop to dynamically change button text
 }
 
 const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
@@ -23,10 +24,12 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
     character,
     onAttackClick,
     onEquipClick,
+    attackButtonText, // Destructure the new prop
 }) => {
     if (!character.name || !bannerClass) {
         return null
     }
+
     return (
         <div className="cardcharacterpreview-card">
             <section className="cardcharacterpreview-container">
@@ -47,7 +50,6 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
                                     backgroundImage: `url("/assets/images/sprite/${character.name}.png")`,
                                     width: `360px`,
                                     height: `360px`,
-
                                     animation: `${
                                         onAttackClick
                                             ? `attack-${character.name}`
@@ -69,7 +71,7 @@ const CardCharacterPreview: React.FC<CardCharacterPreviewProps> = ({
                     </div>
                 </CardWord>
                 <button className="attack-button" onClick={onAttackClick}>
-                    Attack
+                    {attackButtonText} {/* Dynamically change button text */}
                 </button>
                 {onEquipClick &&
                     (equip ? (

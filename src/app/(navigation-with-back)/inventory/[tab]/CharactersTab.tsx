@@ -1,23 +1,23 @@
-"use client";
+"use client"
 
-import React, { useEffect, useState } from "react";
-import useCharacterStore from "@/store/characterStore";
-import Modal from "@/app/component/Modal/Modal";
-import CardCharacter from "@/app/component/Card/CardCharacter/CardCharacter";
-import CardCharacterPreview from "@/app/component/Card/CardCharacterPreview/CardCharacterPreview";
-import { useAuthStore } from "@/store/authStore";
-import equipped from "@/store/progressEquippedStore";
-import useAnimationKeyframes from "@/hook/useAnimationKeyframes";
-import useImageParse from "@/hook/useImageParse";
-import useEquipCharacter from "@/hook/useEquipCharacter";
-import useProgressEquippedStore from "@/store/progressEquippedStore";
+import React, { useEffect, useState } from "react"
+import useCharacterStore from "@/store/characterStore"
+import Modal from "@/app/component/Modal/Modal"
+import CardCharacter from "@/app/component/Card/CardCharacter/CardCharacter"
+import CardCharacterPreview from "@/app/component/Card/CardCharacterPreview/CardCharacterPreview"
+import { useAuthStore } from "@/store/authStore"
+import equipped from "@/store/progressEquippedStore"
+import useAnimationKeyframes from "@/hook/useAnimationKeyframes"
+import useImageParse from "@/hook/useImageParse"
+import useEquipCharacter from "@/hook/useEquipCharacter"
+import useProgressEquippedStore from "@/store/progressEquippedStore"
 
 interface Character {
-    characterID: number;
-    name: string;
-    imagePath: string;
-    description: string;
-    price: number;
+    characterID: number
+    name: string
+    imagePath: string
+    description: string
+    price: number
 }
 
 const CharactersTab: React.FC = () => {
@@ -26,39 +26,47 @@ const CharactersTab: React.FC = () => {
         userCharacters,
         fetchUserCharacters,
         fetchAllCharacters,
-    } = useCharacterStore();
+    } = useCharacterStore()
     const [selectedCharacter, setSelectedCharacter] = useState<Character>({
         characterID: 0,
         name: "",
         imagePath: "",
         description: "",
         price: 0,
-    });
+    })
     const [isEquipConfirmationOpen, setIsEquipConfirmationOpen] =
-        useState(false);
-    const [isEquipped, setIsEquipped] = useState(false);
-    const { userID } = useAuthStore.getState();
-    const character = equipped();
-    const { setEquippedCharacter } = useProgressEquippedStore();
-    const { equipCharacter } = useEquipCharacter();
+        useState(false)
+    const [isEquipped, setIsEquipped] = useState(false)
+    const { userID } = useAuthStore.getState()
+    const character = equipped()
+    const { setEquippedCharacter } = useProgressEquippedStore()
+    const { equipCharacter } = useEquipCharacter()
     const [isCharacterAttacking, setIsCharacterAttacking] =
-        useState<boolean>(false);
-    const characterDetails = useImageParse(selectedCharacter.imagePath);
+        useState<boolean>(false)
+    const characterDetails = useImageParse(selectedCharacter.imagePath)
     const characterAnimation = useAnimationKeyframes(
         isCharacterAttacking ? "attack" : "idle",
         characterDetails.name,
         characterDetails.idleFrame,
         characterDetails.attackFrame
-    );
+    )
 
-    const equip = character.progressEquipped.equippedCharacter;
+    const equip = character.progressEquipped.equippedCharacter
 
     useEffect(() => {
-        fetchAllCharacters();
-        fetchUserCharacters(userID);
-    }, [fetchAllCharacters, fetchUserCharacters]);
+        fetchAllCharacters()
+        fetchUserCharacters(userID)
+    }, [fetchAllCharacters, fetchUserCharacters])
 
-    console.log(userCharacters);
+    useEffect(() => {
+        // Set the default selected character to the first user character if available
+        const defaultCharacter = userCharacters.find(
+            (userCharacter) => userCharacter.owned
+        )
+        if (defaultCharacter) {
+            setSelectedCharacter(defaultCharacter.characterID)
+        }
+    }, [userCharacters])
 
     const handleCharacterClick = (character: Character) => {
         if (selectedCharacter.characterID === character.characterID) {
@@ -68,47 +76,46 @@ const CharactersTab: React.FC = () => {
                 imagePath: "",
                 description: "",
                 price: 0,
-            });
+            })
         } else {
-            setSelectedCharacter(character);
+            setSelectedCharacter(character)
         }
-        console.log(character);
-    };
+    }
 
     const handleAttack = () => {
-        setIsCharacterAttacking((prevState) => !prevState);
-    };
+        setIsCharacterAttacking((prevState) => !prevState)
+    }
 
     const handleEquip = async () => {
-        setIsEquipConfirmationOpen(true);
+        setIsEquipConfirmationOpen(true)
         try {
-            const result = await equipCharacter(selectedCharacter.characterID);
-            console.log("Character equipped successfully:", result);
-            setEquippedCharacter(selectedCharacter.imagePath);
+            const result = await equipCharacter(selectedCharacter.characterID)
+            console.log("Character equipped successfully:", result)
+            setEquippedCharacter(selectedCharacter.imagePath)
         } catch (error) {
-            console.error("Error purchasing character:", error);
+            console.error("Error purchasing character:", error)
         }
-    };
+    }
 
     const handleConfirmEquip = () => {
         if (selectedCharacter) {
-            setIsEquipped(true);
-            setIsEquipConfirmationOpen(false);
+            setIsEquipped(true)
+            setIsEquipConfirmationOpen(false)
         }
-    };
+    }
 
     const handleCloseEquipConfirmation = () => {
-        setIsEquipConfirmationOpen(false);
-    };
+        setIsEquipConfirmationOpen(false)
+    }
 
     const handleCloseEquippedModal = () => {
-        setIsEquipped(false);
-    };
+        setIsEquipped(false)
+    }
 
     const characterName = (imagePath: string) => {
-        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/);
-        return match ? match[1] : "unknown";
-    };
+        const match = imagePath.match(/&\w+_(\w+)-a\d+-i\d+/)
+        return match ? match[1] : "unknown"
+    }
 
     return (
         <section className="character-wrapper">
@@ -116,9 +123,9 @@ const CharactersTab: React.FC = () => {
                 {userCharacters
                     .filter((userCharacter) => userCharacter.owned)
                     .map((userCharacter) => {
-                        const character = userCharacter.characterID;
-                        const profile = characterName(character.imagePath);
-                        if (!character) return null;
+                        const character = userCharacter.characterID
+                        const profile = characterName(character.imagePath)
+                        if (!character) return null
 
                         return (
                             <CardCharacter
@@ -129,7 +136,7 @@ const CharactersTab: React.FC = () => {
                                 infoTitle={character.name}
                                 onClick={() => handleCharacterClick(character)}
                             />
-                        );
+                        )
                     })}
             </section>
             <section className="selected-character-container">
@@ -140,6 +147,9 @@ const CharactersTab: React.FC = () => {
                         animation={characterAnimation}
                         character={characterDetails}
                         onAttackClick={handleAttack}
+                        attackButtonText={
+                            isCharacterAttacking ? "Stop ⏹️" : "Attack"
+                        }
                         onEquipClick={handleEquip}
                     />
                 ) : (
@@ -176,7 +186,7 @@ const CharactersTab: React.FC = () => {
                 ]}
             />
         </section>
-    );
-};
+    )
+}
 
-export default CharactersTab;
+export default CharactersTab

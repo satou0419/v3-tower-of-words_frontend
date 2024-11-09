@@ -43,7 +43,7 @@ const CharactersTab: React.FC = () => {
     const { userID } = useAuthStore.getState()
     const { progressDashboard, setCreditAmount } = useProgressDashboardStore()
     const [isCharacterAttacking, setIsCharacterAttacking] =
-        useState<boolean>(false)
+        useState<boolean>(false) // Default set to false
     const characterDetails = useImageParse(selectedCharacter.imagePath)
     const { buyCharacter } = useBuyCharacter()
     const characterAnimation = useAnimationKeyframes(
@@ -82,7 +82,6 @@ const CharactersTab: React.FC = () => {
     }
 
     const handleBuyClick = (character: Character) => {
-        // Set the buy button clicked state
         setIsBuyButtonClicked(true)
         setSelectedCharacter(character) // Always set the selected character
         setIsConfirmationOpen(true) // Open the confirmation modal
@@ -177,6 +176,9 @@ const CharactersTab: React.FC = () => {
                         animation={characterAnimation}
                         character={characterDetails}
                         onAttackClick={handleAttack}
+                        attackButtonText={
+                            isCharacterAttacking ? "Stop ⏹️" : "Attack"
+                        } // Set button text
                     />
                 ) : (
                     <div className="placeholder-message">

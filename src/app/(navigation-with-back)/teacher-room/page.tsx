@@ -1,63 +1,66 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame";
-import "./teacherroom.scss";
-import CardNew from "@/app/component/Card/CardNew/CardNew";
-import { useRoomStore } from "@/store/roomStore";
-import { useSimulationStore } from "@/store/simulationStore";
-import { useRouter } from "next/navigation";
-import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom";
-import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations";
-import Loading from "@/app/loading";
+import { useEffect, useState } from "react"
+import CardRoomGame from "@/app/component/Card/CardRoomGame/CardRoomGame"
+import "./teacherroom.scss"
+import CardNew from "@/app/component/Card/CardNew/CardNew"
+import { useRoomStore } from "@/store/roomStore"
+import { useSimulationStore } from "@/store/simulationStore"
+import { useRouter } from "next/navigation"
+import viewCreatedRoom from "@/lib/room-endpoint/viewCreatedRoom"
+import viewRoomSimulations from "@/lib/simulation-endpoint/viewRoomSimulations"
+import Loading from "@/app/loading"
 
 export default function TeacherRoom() {
-    const { rooms, setRoom, setCurrentRoom } = useRoomStore();
-    const { setSimulation } = useSimulationStore();
-    const [isClicked, setIsClicked] = useState(false);
-    const router = useRouter();
-    const [loading, setLoading] = useState(true);
+    const { rooms, setRoom, setCurrentRoom } = useRoomStore()
+    const { setSimulation } = useSimulationStore()
+    const [isClicked, setIsClicked] = useState(false)
+    const [loading, setLoading] = useState(true)
+    const [loadingSimulation, setLoadingSimulation] = useState(false) // State for simulation loading
+    const router = useRouter()
 
     useEffect(() => {
         const fetchRooms = async () => {
-            setLoading(true);
+            setLoading(true)
             try {
-                const roomData = await viewCreatedRoom();
-                setRoom(roomData);
+                const roomData = await viewCreatedRoom()
+                setRoom(roomData)
             } catch (error) {
-                console.error("Failed to fetch rooms:", error);
+                console.error("Failed to fetch rooms:", error)
             } finally {
-                setLoading(false);
+                setLoading(false)
             }
-        };
+        }
 
-        fetchRooms();
-    }, [setRoom]);
+        fetchRooms()
+    }, [setRoom])
 
     const handleCardClick = async (room: any) => {
-        if (isClicked) return;
-        setIsClicked(true);
+        if (isClicked) return
+        setIsClicked(true)
+        setLoadingSimulation(true) // Set to true when fetching simulations
 
         try {
-            const roomSimulation = await viewRoomSimulations(room.roomID);
-            router.push(`teacher-room/game?roomID=${room.roomID}`);
-            setSimulation(roomSimulation);
-            setCurrentRoom(room);
-            console.log(roomSimulation);
-            console.log(room);
+            const roomSimulation = await viewRoomSimulations(room.roomID)
+            router.push(`teacher-room/game?roomID=${room.roomID}`)
+            setSimulation(roomSimulation)
+            setCurrentRoom(room)
+            console.log(roomSimulation)
+            console.log(room)
         } catch (error) {
-            console.error("Failed to fetch simulations for the room:", error);
+            console.error("Failed to fetch simulations for the room:", error)
         } finally {
-            setIsClicked(false);
+            setIsClicked(false)
+            setLoadingSimulation(false) // Set to false when done loading simulations
         }
-    };
+    }
 
     const handleMyWordsClick = () => {
-        router.push("/teacher-word");
-    };
+        router.push("/teacher-word")
+    }
 
-    if (loading) {
-        return <Loading />;
+    if (loading || loadingSimulation) {
+        return <Loading /> // Show loading component if either is loading
     }
 
     return (
@@ -87,5 +90,5 @@ export default function TeacherRoom() {
                 </div>
             </section>
         </main>
-    );
+    )
 }

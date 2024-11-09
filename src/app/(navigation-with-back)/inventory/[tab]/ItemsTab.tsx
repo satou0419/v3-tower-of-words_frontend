@@ -1,50 +1,61 @@
-// InventoryTab.tsx
-import React, { useEffect, useState } from "react";
-import CardInventory from "@/app/component/Card/CardInventory/CardInventory";
-import { useRouter, usePathname } from "next/navigation";
-import { useItemStore } from "@/store/itemStore";
-import getAllItems from "@/lib/item-endpoint/getAllItem";
+import React, { useEffect, useState } from "react"
+import CardInventory from "@/app/component/Card/CardInventory/CardInventory"
+import { useRouter, usePathname } from "next/navigation"
+import { useItemStore } from "@/store/itemStore"
+import getAllItems from "@/lib/item-endpoint/getAllItem"
 
 const ItemsTab: React.FC = () => {
-    const { items, setItems } = useItemStore();
-    const router = useRouter();
-    const pathname = usePathname();
+    const { items, setItems } = useItemStore()
+    const router = useRouter()
+    const pathname = usePathname()
     const [selectedItem, setSelectedItem] = useState<{
-        name: string | null;
-        description: string | null;
-        banner: string | null;
+        name: string | null
+        description: string | null
+        banner: string | null
     }>({
         name: null,
         description: null,
         banner: null,
-    });
+    })
 
+    // Fetch items and set default selection (first item if available)
     useEffect(() => {
         getAllItems().then((fetchedItems) => {
             // Sort items so those with quantity 0 are at the bottom
             const sortedItems = fetchedItems.sort((a: any, b: any) => {
-                if (a.quantity === 0 && b.quantity !== 0) return 1;
-                if (a.quantity !== 0 && b.quantity === 0) return -1;
-                return 0;
-            });
-            setItems(sortedItems);
-        });
-    }, [setItems]);
+                if (a.quantity === 0 && b.quantity !== 0) return 1
+                if (a.quantity !== 0 && b.quantity === 0) return -1
+                return 0
+            })
+            setItems(sortedItems)
 
+            // Set default selected item if there are items available
+            if (sortedItems.length > 0) {
+                const defaultItem = sortedItems[0] // Choose first item as default
+                setSelectedItem({
+                    name: defaultItem.itemName,
+                    description: defaultItem.itemDescription,
+                    banner: `/assets/images/reward/${defaultItem.imagePath}`,
+                })
+            }
+        })
+    }, [setItems])
+
+    // Update the router when the pathname changes
     useEffect(() => {
-        const currentPathSegments = pathname.split("/");
+        const currentPathSegments = pathname.split("/")
         const currentTab =
-            currentPathSegments.length > 2 ? currentPathSegments[2] : "items";
-        router.push(`/inventory/${currentTab}`);
-    }, [pathname, router]);
+            currentPathSegments.length > 2 ? currentPathSegments[2] : "items"
+        router.push(`/inventory/${currentTab}`)
+    }, [pathname, router])
 
     const handleItemClick = (item: any) => {
         setSelectedItem({
             name: item.itemName,
             description: item.itemDescription,
             banner: `/assets/images/reward/${item.imagePath}`,
-        });
-    };
+        })
+    }
 
     return (
         <section className="inventory_wrapper">
@@ -88,7 +99,7 @@ const ItemsTab: React.FC = () => {
                 </section>
             </section>
         </section>
-    );
-};
+    )
+}
 
-export default ItemsTab;
+export default ItemsTab
