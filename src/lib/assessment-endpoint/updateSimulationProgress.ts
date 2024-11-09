@@ -1,7 +1,7 @@
 import BASE_URL from "@/util/baseUrl";
 
 interface SimulationProgress {
-    studentWordProgressID: number;
+    studentWordProgressID: number | undefined;
     simulationWordsID: number;
     studentID: number;
     correct: boolean;
@@ -11,7 +11,7 @@ interface SimulationProgress {
     mistake: number;
 }
 
-const updateSimulationProgress = async (progressData: SimulationProgress) => {
+const updateSimulationProgress = async (progressData?: SimulationProgress) => {
     try {
         const response = await fetch(
             `${BASE_URL}/student_word_progress/edit/wordProgress/${progressData?.studentWordProgressID}`,

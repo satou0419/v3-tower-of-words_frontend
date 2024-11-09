@@ -293,6 +293,7 @@ const SimulationGameplay = () => {
     const currentWordID = currentEnemy?.words[currentWordIndex];
     const simuWord = useFetchSimulationWords(currentWordID);
     const currentWord = simuWord.word;
+
     const word = useMerriam(currentWord || ""); // Pass the currentWord to the custom hook
     const silentIndex = simuWord.silentIndex;
     const studentWordProgress = useStudentWordProgress(
@@ -300,6 +301,8 @@ const SimulationGameplay = () => {
         userID,
         currentWordID
     );
+    console.log(studentWordProgress);
+    console.log(currentWordID);
 
     const [isButtonDisabled, setIsButtonDisabled] = useState(false);
     const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
@@ -491,7 +494,7 @@ const SimulationGameplay = () => {
 
         const updatedStudentProgress = {
             studentWordProgressID:
-                studentWordProgress.wordProgress.studentWordProgressID,
+                studentWordProgress.wordProgress?.studentWordProgressID,
             simulationWordsID: currentWordID,
             studentID: userID,
             correct: false,
@@ -500,6 +503,11 @@ const SimulationGameplay = () => {
             accuracy: 0,
             mistake: mistakes + 1,
         };
+
+        console.log(
+            "Word Progress Data:",
+            studentWordProgress.wordProgress?.studentWordProgressID
+        );
 
         console.log(updatedStudentProgress);
 
@@ -674,7 +682,7 @@ const SimulationGameplay = () => {
 
             const updatedStudentProgress = {
                 studentWordProgressID:
-                    studentWordProgress.wordProgress.studentWordProgressID,
+                    studentWordProgress.wordProgress?.studentWordProgressID,
                 simulationWordsID: currentWordID,
                 studentID: userID,
                 correct: true,
@@ -758,7 +766,7 @@ const SimulationGameplay = () => {
             console.log("Incorrect word entered.");
             const updatedStudentProgress = {
                 studentWordProgressID:
-                    studentWordProgress.wordProgress.studentWordProgressID,
+                    studentWordProgress.wordProgress?.studentWordProgressID,
                 simulationWordsID: currentWordID,
                 studentID: userID,
                 correct: false,
@@ -909,8 +917,28 @@ const SimulationGameplay = () => {
                     <div className="platform-indicator">
                         {simulationDetails.simulationDetails?.name}
                     </div>
-                    <p>Lives: {lives}</p>
-                    <p>Time: {enemyInterval.time}</p>
+                    <section className="life-time-track">
+                        <div className="life-track">
+                            {Array.from({ length: studentLife }, (_, index) => (
+                                <span
+                                    key={index}
+                                    style={{
+                                        width: "20px",
+                                        height: "20px",
+                                        borderRadius: "50%",
+                                        backgroundColor:
+                                            index < lives
+                                                ? "#FFAF40"
+                                                : "#D9D9D9",
+                                        border: "2px solid #D26500",
+                                        display: "inline-block",
+                                    }}
+                                />
+                            ))}
+                        </div>
+                        <p>Time: {enemyInterval.time}</p>
+                    </section>
+
                     <section className="enemy-track">
                         {enemies.map((enemy, enemyIndex) => {
                             const enemyName = extractEnemyName(enemy.imagePath);
