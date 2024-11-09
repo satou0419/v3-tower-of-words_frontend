@@ -32,19 +32,26 @@
 
     .reward {
         width: 60%;
-        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        align-items: flex-start;
+        align-items: center;
+        flex-wrap: wrap;
 
         .reward-container {
-            height: 100%;
-            width: 100%;
+            width: 70%;
+            height: 80%;
             display: flex;
-            justify-content: flex-end;
+            flex-direction: column;
             align-items: center;
+            justify-content: space-evenly;
             text-align: center;
+            background: var(--linear-violet);
+
+            outline: 10px solid #95a299;
+            border: 15px solid #666667;
+            border-radius: 10px;
+            flex-wrap: wrap;
 
             h1 {
                 color: #fff;
@@ -52,19 +59,50 @@
                 text-shadow: -2px 2px 0 black, 2px -2px 0 black,
                     -2px 2px 0 black, 2px 2px 0 black;
             }
-            .cardword-card {
+
+            .reward-list {
+                display: flex;
                 width: 80%;
-                height: 90%;
-            }
-
-            .outer {
-                width: 95%;
-
-                .inner {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 2em;
+                flex-wrap: wrap;
+                h2 {
+                    color: #fff;
+                    font-size: 2em;
+                }
+                .reward-box {
+                    height: 6rem;
+                    aspect-ratio: 1/1;
+                    border-radius: 10px;
+                    border: 5px solid #593796;
+                    background-color: #fff;
                     display: flex;
-                    flex-direction: column;
-                    gap: 4em;
+                    justify-content: center;
                     align-items: center;
+
+                    .reward-banner {
+                        height: 90%;
+                        aspect-ratio: 1/1;
+                        background-color: #666666;
+                        border-radius: 10px;
+                        display: flex;
+                        position: relative;
+                    }
+
+                    span {
+                        position: absolute;
+                        right: 5px;
+                        bottom: 0;
+                        color: #d26500;
+                        background-color: #ffc658;
+                        border-radius: 5px;
+                        padding: 0 0.2em;
+                    }
+                }
+
+                img {
+                    width: 100%;
                 }
             }
         }
@@ -80,51 +118,6 @@
         border-radius: 10px;
         outline: none;
         cursor: pointer;
-    }
-}
-
-.reward-list {
-    display: flex;
-    width: 80%;
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 2em;
-    h2 {
-        color: #fff;
-        font-size: 2em;
-    }
-    .reward-box {
-        height: 6em;
-        aspect-ratio: 1/1;
-        border-radius: 10px;
-        border: 5px solid #593796;
-        background-color: #fff;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        .reward-banner {
-            height: 90%;
-            aspect-ratio: 1/1;
-            background-color: #666666;
-            border-radius: 10px;
-            display: flex;
-            position: relative;
-        }
-
-        span {
-            position: absolute;
-            right: 5px;
-            bottom: 0;
-            color: #d26500;
-            background-color: #ffc658;
-            border-radius: 5px;
-            padding: 0 0.2em;
-        }
-    }
-
-    img {
-        width: 100%;
     }
 }
 
@@ -259,5 +252,44 @@
         .done-section {
             // background-color: #ffc658;
         }
+    }
+}
+/* CSS */
+.glowing {
+    animation: glow 1.5s ease-in-out infinite alternate;
+    border: 2px solid #ffd700; /* Optional sparkling color */
+}
+
+@keyframes glow {
+    from {
+        box-shadow: 0 0 5px #ffd700, 0 0 10px #ffd700, 0 0 15px #ffd700;
+    }
+    to {
+        box-shadow: 0 0 20px #ffd700, 0 0 30px #ffd700, 0 0 40px #ffd700;
+    }
+}
+.tower-floor {
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.glowing {
+    box-shadow: 0 0 10px rgba(255, 223, 0, 1); /* Glowing effect */
+    border: 2px solid rgba(255, 223, 0, 0.8);
+    animation: glow-animation 1.5s ease-in-out infinite;
+}
+
+@keyframes glow-animation {
+    0% {
+        box-shadow: 0 0 10px rgba(255, 223, 0, 1);
+        border: 2px solid rgba(255, 223, 0, 0.8);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(255, 223, 0, 1);
+        border: 2px solid rgba(255, 223, 0, 1);
+    }
+    100% {
+        box-shadow: 0 0 10px rgba(255, 223, 0, 1);
+        border: 2px solid rgba(255, 223, 0, 0.8);
     }
 }

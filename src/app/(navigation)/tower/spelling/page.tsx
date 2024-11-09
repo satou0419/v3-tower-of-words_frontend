@@ -22,6 +22,8 @@ const Spelling = () => {
     const [loading, setLoading] = useState(true) // Loading state
     const [activeGameType, setActiveGameType] = useState<string | null>(null)
     const activeFloorRef = useRef<HTMLDivElement>(null)
+    const activeSectionRef = useRef<HTMLDivElement>(null)
+
     const navigation = useRouter()
     const [bannerImage, setBannerImage] = useState("")
 
@@ -114,6 +116,19 @@ const Spelling = () => {
         }
     }, [activeFloorId, floors, uniqueTowerSections])
 
+    // Create a ref for each section
+    const sectionRefs = useRef<any>({})
+
+    useEffect(() => {
+        if (activeSection !== null && sectionRefs.current[activeSection]) {
+            // Scroll to the section when it is active
+            sectionRefs.current[activeSection].scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            })
+        }
+    }, [activeSection]) // Dependency on activeSection
+
     useEffect(() => {
         if (activeFloorId) {
             fetchRewardData(activeFloorId)
@@ -160,30 +175,32 @@ const Spelling = () => {
             return
         }
 
-        if (
-            gameType === "Syllables" &&
-            floorId <= userProgress.syllableFloorID
-        ) {
-            setActiveFloorId(floorId)
-            setActiveSection(section)
-            setActiveGameType(gameType)
-        } else if (
-            gameType === "Spelling" &&
-            floorId <= userProgress.spellingFloorID
-        ) {
-            setActiveFloorId(floorId)
-            setActiveSection(section)
-            setActiveGameType(gameType)
-        } else if (
-            gameType === "Silent" &&
-            floorId <= userProgress.silentFloorID
-        ) {
-            setActiveFloorId(floorId)
-            setActiveSection(section)
-            setActiveGameType(gameType)
+        // Check if the floor is locked based on the game type and user progress
+        const isLocked = () => {
+            switch (gameType) {
+                case "Syllables":
+                    return floorId > userProgress.syllableFloorID
+                case "Spelling":
+                    return floorId > userProgress.spellingFloorID
+                case "Silent":
+                    return floorId > userProgress.silentFloorID
+                default:
+                    return false
+            }
         }
-    }
 
+        // Only allow the user to enter if the floor is not locked
+        if (isLocked()) {
+            alert(
+                "This floor is locked. Please complete previous floors to proceed."
+            )
+            return
+        }
+
+        setActiveFloorId(floorId)
+        setActiveSection(section)
+        setActiveGameType(gameType)
+    }
     const getNextFloorAndSection = () => {
         // Find the next floor and its section based on the current user progress
         const currentFloorIndex = floors.findIndex(
@@ -204,13 +221,81 @@ const Spelling = () => {
     }
 
     const handleEnterClick = () => {
-        if (activeFloorId && activeSection && enemyData) {
-            const { nextFloorId, nextSection } = getNextFloorAndSection()
-            const isCleared = activeFloorId < activeFloorId
+        if (!activeFloorId || !activeSection || !enemyData) {
+            return // Ensure the necessary data is available
+        }
 
-            navigation.push(
-                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
+        // Check if the current floor is locked before proceeding
+        const isLocked = () => {
+            switch (activeGameType) {
+                case "Syllables":
+                    return activeFloorId > userProgress.syllableFloorID
+                case "Spelling":
+                    return activeFloorId > userProgress.spellingFloorID
+                case "Silent":
+                    return activeFloorId > userProgress.silentFloorID
+                default:
+                    return false
+            }
+        }
+
+        // If the floor is locked, prevent the user from proceeding
+        if (isLocked()) {
+            alert(
+                "This floor is locked. Please complete previous floors to proceed."
             )
+            return // Prevent the navigation
+        }
+
+        // Get the next floor and section to navigate to
+        const { nextFloorId, nextSection } = getNextFloorAndSection()
+
+        // Calculate whether the current floor is cleared
+        const isCleared = activeFloorId < activeFloorId
+
+        // Proceed to the gameplay only if the floor is unlocked
+        navigation.push(
+            `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
+        )
+    }
+
+    const router = useRouter()
+
+    const handleBackClick = () => {
+        router.back()
+    }
+
+    const [activeFloorsInSection, setActiveFloorsInSection] = useState<any[]>(
+        []
+    ) // Store floors of the active section
+    const [activeFloorIds, setActiveFloorIds] = useState<number[]>([])
+
+    // Scroll to the selected section when it becomes active
+    useEffect(() => {
+        if (activeSection !== null && sectionRefs.current[activeSection]) {
+            sectionRefs.current[activeSection]?.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+            })
+        }
+    }, [activeSection])
+
+    const handleSectionClick = (section: number) => {
+        setActiveSection(section) // Set the active section
+
+        // Filter floors by the selected section
+        const sectionFloors = floors.filter(
+            (floor) => floor.towerSection === section
+        )
+
+        // Set the active floors for the selected section
+        setActiveFloorsInSection(sectionFloors)
+
+        // Automatically set the last floor of the section as the active floor
+        if (sectionFloors.length > 0) {
+            setActiveFloorId(
+                sectionFloors[sectionFloors.length - 1].towerFloorID
+            ) // Set the active floor to the last floor
         }
     }
 
@@ -222,8 +307,10 @@ const Spelling = () => {
         <main className="spelling-wrapper">
             <section className="spelling-container">
                 <section className="spelling-upper">
+                    <button onClick={handleBackClick}>Back</button>
+
                     <section className="reward">
-                        <CardWord className="reward-container">
+                        <section className="reward-container">
                             <h1>Floor {rewardData?.towerFloorID}</h1>
                             <section className="reward-list">
                                 <h2>Rewards:</h2>
@@ -309,7 +396,7 @@ const Spelling = () => {
                                     Enter
                                 </button>
                             </div>
-                        </CardWord>
+                        </section>
                     </section>
 
                     {/* Tower To Edit */}
@@ -322,6 +409,13 @@ const Spelling = () => {
                                 .map((floor) => {
                                     const isActive =
                                         floor.towerFloorID === activeFloorId
+                                    const isInActiveSection =
+                                        activeFloorsInSection.some(
+                                            (f) =>
+                                                f.towerFloorID ===
+                                                floor.towerFloorID
+                                        ) // Check if the floor belongs to the active section
+
                                     const isLocked = () => {
                                         switch (gameType) {
                                             case "Syllables":
@@ -352,11 +446,16 @@ const Spelling = () => {
                                             <img
                                                 src={bannerImage}
                                                 className="tower-img"
+                                                alt={`Banner for floor ${floor.towerFloorID}`}
                                             />
                                             <div
                                                 className={`tower-floor ${
                                                     isLocked() ? "locked" : ""
-                                                } ${isActive ? "active" : ""}`}
+                                                } ${isActive ? "active" : ""} ${
+                                                    isInActiveSection
+                                                        ? "glowing"
+                                                        : ""
+                                                }`}
                                                 onClick={() =>
                                                     handleFloorClick(
                                                         floor.towerFloorID,
@@ -392,19 +491,20 @@ const Spelling = () => {
                                         activeSection === section
                                             ? "active-section"
                                             : gameType === "Syllables" &&
-                                              userProgress.syllableFloorID >
+                                              userProgress.syllableFloorID >=
                                                   section
                                             ? "done-section"
                                             : gameType === "Spelling" &&
-                                              userProgress.spellingFloorID >
+                                              userProgress.spellingFloorID >=
                                                   section
                                             ? "done-section"
                                             : gameType === "Silent" &&
-                                              userProgress.silentFloorID >
+                                              userProgress.silentFloorID >=
                                                   section
                                             ? "done-section"
                                             : ""
                                     }`}
+                                    onClick={() => handleSectionClick(section)} // Add onClick handler
                                 >
                                     Section {section}
                                 </span>
