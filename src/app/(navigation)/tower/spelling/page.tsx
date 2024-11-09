@@ -9,6 +9,7 @@ import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID"
 import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID"
 import useUserProgressStore from "@/store/userProgressStore"
 import Loading from "@/app/loading"
+import BackButton from "@/app/component/Button/Back/Back"
 
 const Spelling = () => {
     const { floors, getSilentFloors, getSpellingFloors, getSyllableFloors } =
@@ -307,8 +308,7 @@ const Spelling = () => {
         <main className="spelling-wrapper">
             <section className="spelling-container">
                 <section className="spelling-upper">
-                    <button onClick={handleBackClick}>Back</button>
-
+                    <BackButton />
                     <section className="reward">
                         <section className="reward-container">
                             <h1>Floor {rewardData?.towerFloorID}</h1>
@@ -391,11 +391,12 @@ const Spelling = () => {
                                     </section>
                                 </section>
                             </section>
-                            <div className="btn-enter">
-                                <button onClick={handleEnterClick}>
-                                    Enter
-                                </button>
-                            </div>
+                            <button
+                                className="btn-enter"
+                                onClick={handleEnterClick}
+                            >
+                                Enter
+                            </button>
                         </section>
                     </section>
 

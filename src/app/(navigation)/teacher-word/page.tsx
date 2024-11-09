@@ -1,120 +1,130 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { usePathname } from "next/navigation";
-import CardWord from "@/app/component/Card/CardWord/CardWord";
-import { InputBox, InputLine } from "@/app/component/Input/Input";
-import "./teacherword.scss";
-import viewSimulationWords from "@/lib/simulation-endpoint/viewSimulationWords";
-import useMerriam from "@/hook/useMerriam";
-import useAddWordBank from "@/hook/useAddWordBank";
-import Toast from "@/app/component/Toast/Toast";
-import useRemoveWordBank from "@/hook/useRemoveWordBank";
+"use client"
+import React, { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { usePathname } from "next/navigation"
+import CardWord from "@/app/component/Card/CardWord/CardWord"
+import { InputBox, InputLine } from "@/app/component/Input/Input"
+import "./teacherword.scss"
+import viewSimulationWords from "@/lib/simulation-endpoint/viewSimulationWords"
+import useMerriam from "@/hook/useMerriam"
+import useAddWordBank from "@/hook/useAddWordBank"
+import Toast from "@/app/component/Toast/Toast"
+import useRemoveWordBank from "@/hook/useRemoveWordBank"
 
 const TeacherWord = () => {
-    const router = useRouter();
-    const pathname = usePathname();
-    const [word, setWord] = useState<string>("");
-    const [selectedWord, setSelectedWord] = useState<string>("");
-    const [simulationWords, setSimulationWords] = useState<any[]>([]);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const router = useRouter()
+    const pathname = usePathname()
+    const [word, setWord] = useState<string>("")
+    const [selectedWord, setSelectedWord] = useState<string>("")
+    const [simulationWords, setSimulationWords] = useState<any[]>([])
+    const [toastMessage, setToastMessage] = useState<string | null>(null)
     const [toastType, setToastType] = useState<"success" | "error" | "warning">(
         "success"
-    );
-    const [silentLetters, setSilentLetters] = useState<string>("");
-    const merriamData = useMerriam(word);
-    const { addWordBank } = useAddWordBank();
-    const { removeWordBank } = useRemoveWordBank();
+    )
+    const [silentLetters, setSilentLetters] = useState<string>("")
+    const merriamData = useMerriam(word)
+    const { addWordBank } = useAddWordBank()
+    const { removeWordBank } = useRemoveWordBank()
 
     // Function to fetch simulation words
     const fetchSimulationWords = async () => {
         try {
-            const data = await viewSimulationWords();
-            setSimulationWords(data || []);
+            const data = await viewSimulationWords()
+            setSimulationWords(data || [])
         } catch (error) {
-            console.error("Error fetching simulation words:", error);
-            setSimulationWords([]);
+            console.error("Error fetching simulation words:", error)
+            setSimulationWords([])
         }
-    };
+    }
 
     // Fetch words on component mount
     useEffect(() => {
-        fetchSimulationWords();
-    }, []);
+        fetchSimulationWords()
+    }, [])
 
     useEffect(() => {
-        setSelectedWord(word);
-        setSilentLetters(word ? "0".repeat(word.length) : ""); // Initialize silentLetters with 0s
-    }, [word]);
-
+        setSelectedWord(word)
+        setSilentLetters(word ? "0".repeat(word.length) : "") // Initialize silentLetters with 0s
+    }, [word])
     const handleWordClick = (selectedWord: string) => {
-        setWord(selectedWord);
+        // Find the selected word data, including the silentIndex
         const selectedWordData = simulationWords.find(
             (wordItem) => wordItem.word === selectedWord
-        );
+        )
+
         if (selectedWordData) {
-            console.log(
-                "Selected Word ID:",
-                selectedWordData.simulationWordsID
-            );
+            setWord(selectedWord)
+            setSilentLetters(
+                selectedWordData.silentIndex || "0".repeat(selectedWord.length)
+            )
         }
-    };
+    }
+
+    useEffect(() => {
+        if (word) {
+            const selectedWordData = simulationWords.find(
+                (wordItem) => wordItem.word === word
+            )
+            if (selectedWordData) {
+                setSilentLetters(
+                    selectedWordData.silentIndex || "0".repeat(word.length)
+                )
+            }
+        }
+    }, [word, simulationWords])
 
     const handleRemoveWordBank = async () => {
         const selectedWordData = simulationWords.find(
             (wordItem) => wordItem.word === selectedWord
-        );
+        )
         if (selectedWordData) {
-            console.log(
-                "Selected Word ID:",
-                selectedWordData.simulationWordsID
-            );
+            console.log("Selected Word ID:", selectedWordData.simulationWordsID)
             try {
-                await removeWordBank(selectedWordData.simulationWordsID);
-                setToastMessage("Word removed successfully!");
-                setToastType("success");
-                await fetchSimulationWords();
+                await removeWordBank(selectedWordData.simulationWordsID)
+                setToastMessage("Word removed successfully!")
+                setToastType("success")
+                await fetchSimulationWords()
             } catch (error) {
-                setToastMessage("Failed to remove word from word bank");
-                setToastType("error");
+                setToastMessage("Failed to remove word from word bank")
+                setToastType("error")
             }
         }
-    };
+    }
 
     const handleAddWord = async () => {
         if (simulationWords.some((wordItem) => wordItem.word === word)) {
-            setToastMessage("Word already exists in the word bank");
-            setToastType("warning");
-            return;
+            setToastMessage("Word already exists in the word bank")
+            setToastType("warning")
+            return
         }
 
         try {
-            await addWordBank(word, silentLetters);
-            setToastMessage("Word added successfully!");
-            setToastType("success");
-            await fetchSimulationWords();
+            await addWordBank(word, silentLetters)
+            setToastMessage("Word added successfully!")
+            setToastType("success")
+            await fetchSimulationWords()
         } catch (error) {
-            setToastMessage("Failed to add word to word bank");
-            setToastType("error");
+            setToastMessage("Failed to add word to word bank")
+            setToastType("error")
         }
-    };
+    }
 
     const handleLetterClick = (index: number) => {
-        const newSilentLetters = silentLetters.split("");
-        newSilentLetters[index] = newSilentLetters[index] === "0" ? "1" : "0";
-        const updatedSilentLetters = newSilentLetters.join("");
-        setSilentLetters(updatedSilentLetters);
+        const newSilentLetters = silentLetters.split("")
+        newSilentLetters[index] = newSilentLetters[index] === "0" ? "1" : "0"
+        const updatedSilentLetters = newSilentLetters.join("")
+        setSilentLetters(updatedSilentLetters)
 
-        console.log("Updated Silent Letters:", updatedSilentLetters);
-    };
+        console.log("Updated Silent Letters:", updatedSilentLetters)
+    }
 
     const formatWord = (word: string) => {
-        return word.toUpperCase().split("").join(" ");
-    };
+        return word.toUpperCase().split("").join(" ")
+    }
 
-    const isWordSelected = word || selectedWord;
+    const isWordSelected = word || selectedWord
     const hasMerriamData =
-        merriamData && merriamData.word && merriamData.definition;
+        merriamData && merriamData.word && merriamData.definition
 
     return (
         <main className="main-wrapper">
@@ -220,6 +230,7 @@ const TeacherWord = () => {
                                                     ))}
                                             </section>
                                         </section>
+
                                         <button onClick={handleAddWord}>
                                             Add to Word Bank
                                         </button>
@@ -235,7 +246,7 @@ const TeacherWord = () => {
                 </CardWord>
             </section>
         </main>
-    );
-};
+    )
+}
 
-export default TeacherWord;
+export default TeacherWord

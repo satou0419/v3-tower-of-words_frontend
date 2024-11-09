@@ -1,0 +1,17 @@
+/* styles/BackButton.css */
+.back-button {
+    padding: 8px 16px;
+    background-color: #fc5776;
+    color: #fff;
+    border: none;
+    max-height: 3em;
+    min-width: 6em;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 2em;
+    margin-top: 2em;
+}
+
+.back-button:hover {
+    background-color: #005bb5;
+}
