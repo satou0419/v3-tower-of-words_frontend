@@ -1,17 +1,16 @@
 "use client"
 import React, { useEffect, useState, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import CardWord from "@/app/component/Card/CardWord/CardWord"
-import "./spelling.scss"
+import "./adventure-mode.scss"
 import { useFloorStore } from "@/store/floorStore"
 import { RewardData } from "@/store/rewardStore"
 import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID"
 import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID"
 import useUserProgressStore from "@/store/userProgressStore"
 import Loading from "@/app/loading"
-import BackButton from "@/app/component/Button/Back/Back"
+import Adventure from "../tutorial/adventure/page"
 
-const Spelling = () => {
+const AdventureMode = () => {
     const { floors, getSilentFloors, getSpellingFloors, getSyllableFloors } =
         useFloorStore()
     const { userProgress } = useUserProgressStore()
@@ -441,9 +440,11 @@ const Spelling = () => {
                                         >
                                             <img
                                                 src={bannerImage}
+                                                loading="lazy"
                                                 className="tower-img"
                                                 alt={`Banner for floor ${floor.towerFloorID}`}
                                             />
+
                                             <div
                                                 className={`tower-floor ${
                                                     isLocked() ? "locked" : ""
@@ -513,4 +514,4 @@ const Spelling = () => {
     )
 }
 
-export default Spelling
+export default AdventureMode

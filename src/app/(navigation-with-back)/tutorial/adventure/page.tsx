@@ -32,7 +32,7 @@ const tutorialData = [
     },
 ]
 
-export default function Adventure() {
+export default function AdventureSpelling() {
     const [currentIndex, setCurrentIndex] = useState(0)
 
     const handleNext = () => {

@@ -14,21 +14,21 @@ export default function SelectTower() {
                 <CardTower
                     progressValue={userTower.spellingFloorCount}
                     modeTitle="Spelling"
-                    link="/tower/spelling?gameType=Spelling"
+                    link="/adventure-mode?gameType=Spelling"
                     className="dashboard-card"
                     bannerSrc="/assets/images/banner/spelling-tower-banner.webp"
                 />
                 <CardTower
                     progressValue={userTower.syllableFloorCount}
                     modeTitle="Syllable"
-                    link="/tower/spelling?gameType=Syllables"
+                    link="/adventure-mode?gameType=Syllables"
                     className="dashboard-card"
                     bannerSrc="/assets/images/banner/syllable-tower-banner.webp"
                 />
                 <CardTower
                     progressValue={userTower.silentFloorCount}
                     modeTitle="Silent Letters"
-                    link="/tower/spelling?gameType=Silent"
+                    link="/adventure-mode?gameType=Silent"
                     className="dashboard-card"
                     bannerSrc="/assets/images/banner/silent-tower-banner.webp"
                 />
