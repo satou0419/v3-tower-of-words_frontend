@@ -1,23 +1,23 @@
-"use client";
-import React, { useState, useEffect } from "react";
-import { InputBox } from "@/app/component/Input/Input";
-import "./register.scss";
-import Link from "next/link";
-import registerUser from "@/lib/auth-endpoint/registerUser";
-import Toast from "@/app/component/Toast/Toast";
-import { useRouter } from "next/navigation";
-import Modal from "@/app/component/Modal/Modal";
-import Loading from "@/app/loading";
-import useCheckUsername from "@/hook/useCheckUsername";
+"use client"
+import React, { useState, useEffect } from "react"
+import { InputBox } from "@/app/component/Input/Input"
+import "./register.scss"
+import Link from "next/link"
+import registerUser from "@/lib/auth-endpoint/registerUser"
+import Toast from "@/app/component/Toast/Toast"
+import { useRouter } from "next/navigation"
+import Modal from "@/app/component/Modal/Modal"
+import Loading from "@/app/loading"
+import useCheckUsername from "@/hook/useCheckUsername"
 
 interface FormData {
-    username: string;
-    email: string;
-    firstname: string;
-    lastname: string;
-    userType: string;
-    password: string;
-    confirmPassword: string;
+    username: string
+    email: string
+    firstname: string
+    lastname: string
+    userType: string
+    password: string
+    confirmPassword: string
 }
 
 const initialFormData: FormData = {
@@ -28,18 +28,18 @@ const initialFormData: FormData = {
     userType: "",
     password: "",
     confirmPassword: "",
-};
+}
 
 const Register: React.FC = () => {
-    const [formData, setFormData] = useState<FormData>(initialFormData);
-    const [toastMessage, setToastMessage] = useState<string>("");
+    const [formData, setFormData] = useState<FormData>(initialFormData)
+    const [toastMessage, setToastMessage] = useState<string>("")
     const [toastType, setToastType] = useState<"success" | "error" | "warning">(
         "success"
-    );
-    const [showToast, setShowToast] = useState<boolean>(false);
-    const [showModal, setShowModal] = useState<boolean>(false);
-    const [loading, setLoading] = useState<boolean>(false);
-    const [showTooltip, setShowTooltip] = useState<string | null>(null);
+    )
+    const [showToast, setShowToast] = useState<boolean>(false)
+    const [showModal, setShowModal] = useState<boolean>(false)
+    const [loading, setLoading] = useState<boolean>(false)
+    const [showTooltip, setShowTooltip] = useState<string | null>(null)
 
     const [inputStyles, setInputStyles] = useState<Record<string, string>>({
         username: "",
@@ -49,39 +49,39 @@ const Register: React.FC = () => {
         password: "",
         confirmPassword: "",
         userType: "",
-    });
+    })
 
     const validateName = (name: string) => {
-        const nameRegex = /^[A-Za-z]+$/;
-        return nameRegex.test(name) && name.length >= 2;
-    };
+        const nameRegex = /^[A-Za-z\s]+$/
+        return nameRegex.test(name) && name.length >= 2
+    }
 
     const validateUsername = (username: string) => {
-        const usernameRegex = /^[a-z][a-z._]*[a-z._]?$/;
+        const usernameRegex = /^[a-z][a-z._]*[a-z._]?$/
 
-        return usernameRegex.test(username) && username.length >= 3;
-    };
+        return usernameRegex.test(username) && username.length >= 3
+    }
 
     const validatePassword = (password: string) => {
         const passwordRegex =
-            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-        return passwordRegex.test(password);
-    };
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+        return passwordRegex.test(password)
+    }
 
     const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return emailRegex.test(email)
+    }
 
     const validateForm = () => {
-        const isFirstnameValid = validateName(formData.firstname);
-        const isLastnameValid = validateName(formData.lastname);
-        const isUsernameValid = validateUsername(formData.username);
-        const isPasswordValid = validatePassword(formData.password);
-        const isEmailValid = validateEmail(formData.email);
+        const isFirstnameValid = validateName(formData.firstname)
+        const isLastnameValid = validateName(formData.lastname)
+        const isUsernameValid = validateUsername(formData.username)
+        const isPasswordValid = validatePassword(formData.password)
+        const isEmailValid = validateEmail(formData.email)
         const isConfirmPasswordValid =
-            formData.confirmPassword === formData.password;
-        const isUserTypeValid = formData.userType !== "";
+            formData.confirmPassword === formData.password
+        const isUserTypeValid = formData.userType !== ""
 
         return (
             isFirstnameValid &&
@@ -91,17 +91,17 @@ const Register: React.FC = () => {
             isEmailValid &&
             isConfirmPasswordValid &&
             isUserTypeValid
-        );
-    };
+        )
+    }
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target
         setFormData((prevState) => ({
             ...prevState,
             [name]: value,
-        }));
+        }))
 
         switch (name) {
             case "username":
@@ -112,8 +112,8 @@ const Register: React.FC = () => {
                             ? "valid-input"
                             : "invalid-input"
                         : "",
-                }));
-                break;
+                }))
+                break
             case "password":
                 setInputStyles((prevStyles) => ({
                     ...prevStyles,
@@ -126,8 +126,8 @@ const Register: React.FC = () => {
                         formData.confirmPassword === value
                             ? "valid-input"
                             : "invalid-input",
-                }));
-                break;
+                }))
+                break
             case "confirmPassword":
                 setInputStyles((prevStyles) => ({
                     ...prevStyles,
@@ -135,8 +135,8 @@ const Register: React.FC = () => {
                         value === formData.password
                             ? "valid-input"
                             : "invalid-input",
-                }));
-                break;
+                }))
+                break
             case "email":
                 setInputStyles((prevStyles) => ({
                     ...prevStyles,
@@ -145,67 +145,67 @@ const Register: React.FC = () => {
                             ? "valid-input"
                             : "invalid-input"
                         : "",
-                }));
-                break;
+                }))
+                break
             case "firstname":
             case "lastname":
             case "userType":
                 setInputStyles((prevStyles) => ({
                     ...prevStyles,
                     [name]: value ? "valid-input" : "",
-                }));
-                break;
+                }))
+                break
             default:
-                break;
+                break
         }
-    };
+    }
 
-    const route = useRouter();
+    const route = useRouter()
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
+        e.preventDefault()
         if (formData.password !== formData.confirmPassword) {
-            setToastMessage("Passwords do not match");
-            setToastType("error");
-            setShowToast(true);
-            return;
+            setToastMessage("Passwords do not match")
+            setToastType("error")
+            setShowToast(true)
+            return
         }
 
-        const { confirmPassword, ...userData } = formData;
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 60000);
+        const { confirmPassword, ...userData } = formData
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 60000)
 
         try {
-            setLoading(true);
+            setLoading(true)
             const response = await registerUser(userData, {
                 signal: controller.signal,
-            });
-            clearTimeout(timeoutId);
+            })
+            clearTimeout(timeoutId)
 
-            console.log("User registered successfully:", response);
-            setToastMessage("User registered successfully");
-            setToastType("success");
-            setShowToast(true);
-            setShowModal(true);
-            setLoading(false);
+            console.log("User registered successfully:", response)
+            setToastMessage("User registered successfully")
+            setToastType("success")
+            setShowToast(true)
+            setShowModal(true)
+            setLoading(false)
         } catch (error) {
             if (controller.signal.aborted) {
-                console.error("Registration failed due to timeout.");
-                setToastMessage("Registration failed. Request timed out.");
+                console.error("Registration failed due to timeout.")
+                setToastMessage("Registration failed. Request timed out.")
             } else {
-                console.error("Registration failed:", error);
-                setToastMessage("Registration failed. Please try again.");
+                console.error("Registration failed:", error)
+                setToastMessage("Registration failed. Please try again.")
             }
-            setToastType("error");
-            setShowToast(true);
-            setLoading(false);
+            setToastType("error")
+            setShowToast(true)
+            setLoading(false)
         }
-    };
+    }
 
     const handleCloseModal = () => {
-        setShowModal(false);
-        route.push("/login");
-    };
+        setShowModal(false)
+        route.push("/login")
+    }
 
     return (
         <main className="register-wrapper">
@@ -364,7 +364,7 @@ const Register: React.FC = () => {
                 </form>
             </section>
         </main>
-    );
-};
+    )
+}
 
-export default Register;
+export default Register

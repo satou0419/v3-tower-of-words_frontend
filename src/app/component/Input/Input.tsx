@@ -27,7 +27,6 @@ const Input = ({ children, className = "", ...props }: InputProps) => {
         </main>
     )
 }
-
 const InputBox = forwardRef<HTMLInputElement, InputFieldProps>(
     ({ className = "", type = "text", label, ...props }, ref) => {
         const [isFocused, setIsFocused] = useState(false) // State to track focus
@@ -43,7 +42,9 @@ const InputBox = forwardRef<HTMLInputElement, InputFieldProps>(
         }
 
         return (
-            <div className="input-wrapper">
+            <label className="input-wrapper">
+                {" "}
+                {/* Wrap in label */}
                 <input
                     type={type}
                     className={`input-box ${className} ${
@@ -55,14 +56,14 @@ const InputBox = forwardRef<HTMLInputElement, InputFieldProps>(
                     onBlur={handleBlur}
                     placeholder=""
                 />
-                <label
+                <span
                     className={`input-label ${
                         isFocused || props.value ? "filled" : ""
                     }`}
                 >
                     {label}
-                </label>
-            </div>
+                </span>
+            </label>
         )
     }
 )
@@ -82,7 +83,9 @@ const InputLine = forwardRef<HTMLInputElement, InputFieldProps>(
         }
 
         return (
-            <div className="input-wrapper">
+            <label className="input-wrapper">
+                {" "}
+                {/* Wrap in label */}
                 <input
                     type={type}
                     className={`input-line ${className} ${
@@ -93,14 +96,14 @@ const InputLine = forwardRef<HTMLInputElement, InputFieldProps>(
                     onFocus={handleFocus}
                     onBlur={handleBlur}
                 />
-                <label
+                <span
                     className={`input-label ${
                         isFocused || props.value ? "filled" : ""
                     }`}
                 >
                     {label}
-                </label>
-            </div>
+                </span>
+            </label>
         )
     }
 )
