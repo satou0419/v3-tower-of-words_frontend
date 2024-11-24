@@ -553,7 +553,7 @@ const AdventureGameplay = () => {
 
             setTimeout(() => {
                 setIsCharacterAttacking(false)
-                if (gameType === "Syllables") setRangeValue(1)
+                if (gameType === "Syllables") setRangeValue(0)
                 if (gameType === "Silent") clearSelections()
 
                 if (currentWordIndex === currentEnemy.words.length - 1) {
@@ -720,7 +720,7 @@ const AdventureGameplay = () => {
         if (gameType !== "Syllables") {
             setRangeValue(0)
         } else {
-            setRangeValue(1)
+            setRangeValue(0)
         }
     }, [gameType])
 
@@ -1094,14 +1094,21 @@ const AdventureGameplay = () => {
                                     <p className="syllable-word">
                                         {currentWord}
                                     </p>
-                                    <input
-                                        className="syllable-range"
-                                        type="range"
-                                        min="1"
-                                        max="10"
-                                        value={rangeValue}
-                                        onChange={handleRangeChange}
-                                    />
+                                    <div className="syllable-range-container">
+                                        <input
+                                            className="syllable-range"
+                                            type="range"
+                                            min="0" // Start from 0
+                                            max="10" // Go up to 10
+                                            value={rangeValue}
+                                            onChange={handleRangeChange}
+                                        />
+                                        <div className="syllable-range-labels">
+                                            {[...Array(11)].map((_, index) => (
+                                                <span key={index}>{index}</span> // Create labels for 0-10
+                                            ))}
+                                        </div>
+                                    </div>
                                     <span className="range-value">
                                         {rangeValue}
                                     </span>

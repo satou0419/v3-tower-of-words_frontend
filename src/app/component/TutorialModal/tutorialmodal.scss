@@ -1,0 +1,35 @@
+.tm-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.tm-modal-content {
+    background: white;
+    padding: 1.5rem; // Use rem for consistent spacing
+    position: relative;
+    border-radius: 0.5rem;
+    width: 80%; // Set width to 80% of the viewport for responsiveness
+    max-width: 40rem; // Cap the width at a max size for larger screens
+    height: 60%; // Set fixed height based on percentage of the viewport
+    max-height: 80vh; // Limit max height to prevent overflow on small screens
+    overflow-y: auto; // Enable scrolling if content exceeds max height
+    box-sizing: border-box;
+}
+
+.tm-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}

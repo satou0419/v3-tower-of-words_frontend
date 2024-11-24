@@ -1,93 +1,79 @@
 "use client"
-import useAchievementChecker from "@/hook/useAchievementChecker"
-import { useState, useEffect } from "react"
+import React, { useEffect, useState } from "react"
+import useUserGameTutorialStatusStore from "@/store/userGameTutorialStatusStore"
+import useTutorialStatus from "@/hook/useTutorialStatus"
 
-const AudioToText = () => {
-    const [transcript, setTranscript] = useState<string>("")
-    const [recognition, setRecognition] = useState<any>(null)
-    const [isListening, setIsListening] = useState<boolean>(false)
-    const [audioUrl, setAudioUrl] = useState<string | null>(null)
-    const [audioFile, setAudioFile] = useState<File | null>(null)
+const TutorialStatusComponent = () => {
+    const { error, loading } = useTutorialStatus() // Using the custom hook
+    const tutorialStatus = useUserGameTutorialStatusStore(
+        (state) => state.tutorialStatus
+    ) // Accessing Zustand store
+    const [tutorialMessage, setTutorialMessage] = useState("")
 
     useEffect(() => {
-        const SpeechRecognition =
-            (window as any).SpeechRecognition ||
-            (window as any).webkitSpeechRecognition
-        if (SpeechRecognition) {
-            const recog = new SpeechRecognition()
-            recog.lang = "en-GB"
-            recog.continuous = true
-
-            recog.onresult = (event: any) => {
-                let interimTranscript = ""
-                for (let i = event.resultIndex; i < event.results.length; i++) {
-                    interimTranscript += event.results[i][0].transcript
-                }
-                setTranscript(interimTranscript)
-            }
-
-            recog.onerror = (event: any) => {
-                console.error("Speech recognition error:", event.error)
-            }
-
-            setRecognition(recog)
-        } else {
-            console.error(
-                "Speech Recognition is not supported in this browser."
+        if (tutorialStatus.firstGamePlayground) {
+            setTutorialMessage("You've completed the Playground tutorial!")
+        } else if (tutorialStatus.firstGameSilentSimu) {
+            setTutorialMessage(
+                "You've completed the Silent Simulation tutorial!"
             )
+        } else if (tutorialStatus.firstGameSpellingSimu) {
+            setTutorialMessage(
+                "You've completed the Spelling Simulation tutorial!"
+            )
+        } else if (tutorialStatus.firstGameSyllableSimu) {
+            setTutorialMessage(
+                "You've completed the Syllable Simulation tutorial!"
+            )
+        } else {
+            setTutorialMessage("You haven't completed any tutorial yet.")
         }
-    }, [])
+    }, [tutorialStatus]) // When tutorialStatus changes, update the message
 
-    const startListening = () => {
-        if (recognition && !isListening) {
-            recognition.start()
-            setIsListening(true)
-        }
+    if (loading) {
+        return <div>Loading tutorial status...</div>
     }
 
-    const stopListening = () => {
-        if (recognition && isListening) {
-            recognition.stop()
-            setIsListening(false)
-        }
-    }
-
-    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const file = event.target.files?.[0]
-        if (file) {
-            setAudioFile(file)
-            const fileUrl = URL.createObjectURL(file)
-            setAudioUrl(fileUrl)
-        }
-    }
-
-    const playAndTranscribeAudio = () => {
-        if (audioUrl && audioFile) {
-            const audio = new Audio(audioUrl)
-            audio.play()
-            startListening()
-
-            audio.onended = () => {
-                stopListening()
-            }
-        }
+    if (error) {
+        return <div>Error: {error}</div>
     }
 
     return (
         <div>
-            <h1>Upload Audio File and Convert to Text</h1>
-            <input type="file" accept="audio/*" onChange={handleFileUpload} />
-            {audioUrl && (
-                <button onClick={playAndTranscribeAudio}>
-                    Play and Transcribe
-                </button>
-            )}
+            <h2>Welcome to the Tutorial Status Page!</h2>
+            <p>{tutorialMessage}</p>
+            {/* Display details from Zustand store */}
             <div>
-                <h2>Transcript:</h2>
-                <p>{transcript}</p>
+                <h3>Your Tutorial Progress:</h3>
+                <ul>
+                    <li>
+                        Playground Tutorial:{" "}
+                        {tutorialStatus.firstGamePlayground
+                            ? "Completed"
+                            : "Not Completed"}
+                    </li>
+                    <li>
+                        Silent Simulation Tutorial:{" "}
+                        {tutorialStatus.firstGameSilentSimu
+                            ? "Completed"
+                            : "Not Completed"}
+                    </li>
+                    <li>
+                        Spelling Simulation Tutorial:{" "}
+                        {tutorialStatus.firstGameSpellingSimu
+                            ? "Completed"
+                            : "Not Completed"}
+                    </li>
+                    <li>
+                        Syllable Simulation Tutorial:{" "}
+                        {tutorialStatus.firstGameSyllableSimu
+                            ? "Completed"
+                            : "Not Completed"}
+                    </li>
+                </ul>
             </div>
         </div>
     )
 }
 
-export default AudioToText
+export default TutorialStatusComponent

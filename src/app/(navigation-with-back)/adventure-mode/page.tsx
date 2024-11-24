@@ -8,7 +8,14 @@ import { getEnemyByFloorID } from "@/lib/floor-endpoint/getEnemyByFloorID"
 import { getRewardByFloorId } from "@/lib/reward-endpoint/getRewatdByFloorID"
 import useUserProgressStore from "@/store/userProgressStore"
 import Loading from "@/app/loading"
-import Adventure from "../tutorial/adventure/page"
+import AdventureSilent from "../tutorial/adventure-silent/page"
+import AdventureSpelling from "../tutorial/adventure-spelling/page"
+import AdventureSyllable from "../tutorial/adventure-syllable/page"
+import TutorialModal from "@/app/component/TutorialModal/TutorialModal"
+import useTutorialStatus from "@/hook/useTutorialStatus"
+import useUserGameTutorialStatusStore from "@/store/userGameTutorialStatusStore"
+import useUpdateTutorialStatus from "@/hook/useUpdateTutorialStatus "
+import { useTutorialStore } from "@/store/useTutorialStore"
 
 const AdventureMode = () => {
     const { floors, getSilentFloors, getSpellingFloors, getSyllableFloors } =
@@ -21,6 +28,8 @@ const AdventureMode = () => {
     const [enemyData, setEnemyData] = useState<any | null>(null) // Adjust this type as per your actual enemy data structure
     const [loading, setLoading] = useState(true) // Loading state
     const [activeGameType, setActiveGameType] = useState<string | null>(null)
+    const [showTutorial, setShowTutorial] = useState(false)
+
     const activeFloorRef = useRef<HTMLDivElement>(null)
     const activeSectionRef = useRef<HTMLDivElement>(null)
 
@@ -109,6 +118,13 @@ const AdventureMode = () => {
             }
         }
     }, [floors, userProgress, gameType])
+
+    const [closeModalTut, setCloseModalTut] = useState(false)
+    useEffect(() => {
+        if (showTutorial === false) {
+            setCloseModalTut(true)
+        }
+    }, [setShowTutorial])
 
     useEffect(() => {
         if (activeFloorRef.current) {
@@ -247,16 +263,19 @@ const AdventureMode = () => {
             return // Prevent the navigation
         }
 
+        if (gameType) {
+            setShowTutorial(true) // Show the tutorial if the game type is set
+        }
+
         // Get the next floor and section to navigate to
         const { nextFloorId, nextSection } = getNextFloorAndSection()
 
         // Calculate whether the current floor is cleared
         const isCleared = activeFloorId < activeFloorId
 
-        // Proceed to the gameplay only if the floor is unlocked
-        navigation.push(
-            `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${isCleared}&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
-        )
+        if (closeModalTut === true) {
+            setShowTutorial(true)
+        }
     }
 
     const router = useRouter()
@@ -295,12 +314,93 @@ const AdventureMode = () => {
         }
     }
 
+    useEffect(() => {
+        const gameType = new URLSearchParams(window.location.search).get(
+            "gameType"
+        )
+        setActiveGameType(gameType)
+        // if (gameType) {
+        //     setShowTutorial(true) // Show the tutorial if the game type is set
+        // }
+    }, [])
+
+    const { error } = useTutorialStatus() // Using the custom hook
+    const tutorialStatus = useUserGameTutorialStatusStore(
+        (state) => state.tutorialStatus
+    )
+
+    const handleTutorialFinish = async () => {
+        const { nextFloorId, nextSection } = getNextFloorAndSection()
+
+        try {
+            if (
+                gameType === "Silent" &&
+                !tutorialStatus.firstGameSilentAdventure
+            ) {
+            } else if (
+                gameType === "Spelling" &&
+                !tutorialStatus.firstGameSpellingAdventure
+            ) {
+            } else if (
+                gameType === "Syllables" &&
+                !tutorialStatus.firstGameSyllableAdventure
+            ) {
+            }
+
+            // Navigate only after updating tutorial status
+            navigation.push(
+                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=true&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
+            )
+        } catch (error) {
+            console.error(
+                "Failed to update tutorial status before navigating:",
+                error
+            )
+        }
+    }
+
+    const renderTutorialPage = () => {
+        switch (activeGameType) {
+            case "Silent":
+                if (!tutorialStatus.firstGameSilentAdventure) {
+                    return <AdventureSilent />
+                } else {
+                    handleTutorialFinish()
+                    return null // Always return JSX or null, not undefined
+                }
+            case "Spelling":
+                if (!tutorialStatus.firstGameSpellingAdventure) {
+                    return <AdventureSpelling />
+                } else {
+                    handleTutorialFinish()
+                    return null // Always return JSX or null, not undefined
+                }
+            case "Syllables":
+                if (!tutorialStatus.firstGameSyllableAdventure) {
+                    return <AdventureSyllable />
+                } else {
+                    handleTutorialFinish()
+                    return null // Always return JSX or null, not undefined
+                }
+            default:
+                return null // Always return JSX or null, not undefined
+        }
+    }
+
     if (loading) {
         return <Loading /> // Render Loading component while fetching data
     }
 
     return (
         <main className="spelling-wrapper">
+            {showTutorial && (
+                <TutorialModal
+                    isOpen={showTutorial}
+                    onClose={() => setShowTutorial(false)} // Wrap in an arrow function
+                    renderTutorialPage={renderTutorialPage}
+                />
+            )}
+
             <section className="spelling-container">
                 <section className="spelling-upper">
                     <section className="reward">

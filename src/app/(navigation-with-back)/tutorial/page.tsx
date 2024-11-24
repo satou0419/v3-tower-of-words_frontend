@@ -1,4 +1,4 @@
-import Adventure from "./adventure/page"
+import Adventure from "./adventure-spelling/page"
 import "./tutorial.scss"
 
 export default function Tutorial() {
