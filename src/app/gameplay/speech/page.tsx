@@ -682,7 +682,7 @@ const SpeechGameplay = () => {
                     <button
                         key="exit"
                         onClick={() =>
-                            (window.location.href = "/tower/spelling")
+                            (window.location.href = "/adventure-mode")
                         }
                     >
                         Exit to Main Menu
@@ -699,7 +699,7 @@ const SpeechGameplay = () => {
                     <button
                         key="menu"
                         onClick={() =>
-                            (window.location.href = "/tower/spelling")
+                            (window.location.href = "/adventure-mode")
                         }
                     >
                         Return to Main Menu

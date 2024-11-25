@@ -92,16 +92,6 @@ const AdventureGameplay = () => {
         return message // For some older browsers
     }
 
-    // useEffect(() => {
-    //     // Add event listener when the component mounts
-    //     window.addEventListener("beforeunload", handleUnload)
-
-    //     // Cleanup function to remove the event listener
-    //     return () => {
-    //         window.removeEventListener("beforeunload", handleUnload)
-    //     }
-    // }, []) // Empty dependency array ensures this effect runs once on mount
-
     const { useItemFunction } = useItem()
 
     const handleUseItem = (itemID: number, itemName: string) => {
@@ -631,15 +621,15 @@ const AdventureGameplay = () => {
     const router = useRouter()
     const returnMenu = () => {
         if (gameType === "Spelling") {
-            router.push("/tower/spelling/?gameType=Spelling")
+            router.push("/adventure-mode/?gameType=Spelling")
         }
 
         if (gameType === "Silent") {
-            router.push("/tower/spelling/?gameType=Silent")
+            router.push("/adventure-mode/?gameType=Silent")
         }
 
         if (gameType === "Syllables") {
-            router.push("/tower/spelling/?gameType=Syllables")
+            router.push("/adventure-mode/?gameType=Syllables")
         }
     }
 
@@ -1227,7 +1217,7 @@ const AdventureGameplay = () => {
                     <button
                         key="exit"
                         onClick={() =>
-                            (window.location.href = "/tower/spelling")
+                            (window.location.href = "/adventure-mode")
                         }
                     >
                         Exit to Main Menu
