@@ -181,6 +181,8 @@ const AdventureMode = () => {
         }
     }
 
+    const [currentFloor, setCurrentFloor] = useState(0)
+
     const handleFloorClick = (
         floorId: number,
         section: number,
@@ -195,10 +197,13 @@ const AdventureMode = () => {
         const isLocked = () => {
             switch (gameType) {
                 case "Syllables":
+                    setCurrentFloor(userProgress.syllableFloorID)
                     return floorId > userProgress.syllableFloorID
                 case "Spelling":
+                    setCurrentFloor(userProgress.spellingFloorID)
                     return floorId > userProgress.spellingFloorID
                 case "Silent":
+                    setCurrentFloor(userProgress.silentFloorID)
                     return floorId > userProgress.silentFloorID
                 default:
                     return false
@@ -349,7 +354,9 @@ const AdventureMode = () => {
 
             // Navigate only after updating tutorial status
             navigation.push(
-                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=true&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
+                `/gameplay/adventure?floorId=${activeFloorId}&section=${activeSection}&clear=${
+                    (activeFloorId || 0) <= currentFloor
+                }&nextFloorId=${nextFloorId}&nextSection=${nextSection}&gameType=${activeGameType}`
             )
         } catch (error) {
             console.error(

@@ -518,7 +518,7 @@ const AdventureGameplay = () => {
             setSpelledWords(updatedSpelledWords)
 
             // Archive the correctly spelled word
-            if (isClear === "true") {
+            if (isClear === "false") {
                 await addWord(currentWord || "")
                 achievementChecker("floors")
                 achievementChecker("words")
@@ -550,10 +550,10 @@ const AdventureGameplay = () => {
                         currentEnemyIndex,
                     ])
 
-                    setTimeout(() => {
+                    setTimeout(async () => {
                         if (currentEnemyIndex === enemyData.length - 1) {
                             // All enemies defeated, show confetti
-                            if (isClear === "true") {
+                            if (isClear === "false") {
                                 console.log("Now it is clear")
 
                                 if (gameType === "Syllables") {
@@ -561,7 +561,7 @@ const AdventureGameplay = () => {
                                         nextFloorId,
                                         nextSection
                                     )
-                                    redeemReward(floorId)
+                                    await redeemReward(floorId)
                                     incrementFloor()
                                     incrementSyllableFloor()
                                     achievementChecker("syllablefloors")
@@ -572,7 +572,7 @@ const AdventureGameplay = () => {
                                         nextFloorId,
                                         nextSection
                                     )
-                                    redeemReward(floorId)
+                                    await redeemReward(floorId)
                                     incrementFloor()
                                     incrementSilentFloor()
                                     achievementChecker("silentfloors")
@@ -583,7 +583,7 @@ const AdventureGameplay = () => {
                                         nextFloorId,
                                         nextSection
                                     )
-                                    redeemReward(floorId)
+                                    await redeemReward(floorId)
                                     incrementFloor()
                                     incrementSpellingFloor()
                                     achievementChecker("spellingfloors")
@@ -606,8 +606,6 @@ const AdventureGameplay = () => {
                 }
             }, (characterDetails.attackFrame / 12) * 1000) // Adjust timing as needed
         } else {
-            // Check if lives have reached 0
-
             console.log("Missed attacked!!!")
 
             handleMissedAttack()
