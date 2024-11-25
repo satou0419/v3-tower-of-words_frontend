@@ -9,23 +9,78 @@
     #tutorial-section {
         height: 80%;
         width: 90%;
-        background-color: #d9d9d9;
+        background-color: #909090;
+        border-radius: 10px;
         display: flex;
-
         #tutorial-side {
             width: 30%;
-            background-color: green;
-            display: flex; // Ensure this is a flex container if needed
-            flex-direction: column; // Adjust as necessary
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            #side-content {
+                background: var(--linear-violet);
+                display: flex;
+                flex-direction: column;
+                height: 90%;
+                width: 90%;
+                border: 10px solid #666667;
+                border-radius: 10px;
+                padding: 10px; /* Adds padding for spacing */
+                box-sizing: border-box; /* Ensures padding doesn't affect layout */
+
+                span {
+                    cursor: pointer;
+                    color: white;
+                    padding: 1em;
+                    font-size: 1.2em;
+                    margin-bottom: 10px; /* Space between the span elements */
+                    text-align: center; /* Centers text in each span */
+                    transition: all 0.5s ease;
+
+                    &:hover {
+                        font-size: 1.5em;
+                        transform: scale(
+                            1.05
+                        ); /* Slight zoom on hover for better interaction */
+                    }
+                }
+            }
+
+            .active {
+                font-size: 1.5em;
+                padding-left: 10px;
+                padding-right: 10px; /* Adds padding to both sides */
+                display: flex;
+                align-items: center;
+                border-radius: 10px;
+                background: linear-gradient(
+                    to left,
+                    transparent 0%,
+                    #f99417 100%
+                );
+                height: 2.5em; /* Increases height for better clickability */
+                width: 100%;
+                margin-bottom: 10px; /* Adds space between active spans */
+                transition: all 0.3s ease;
+
+                /* Add an inner shadow for better contrast when selected */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            }
         }
 
         #tutorial-main {
             height: 100%; // Ensure this takes the full height of the section
-            background-color: red;
             width: 70%; // Adjust to fill the space next to #tutorial-side
             display: flex; // This will allow Adventure to use flex properties
             justify-content: center; // Center child components horizontally
             align-items: center; // Center child components vertically
+
+            #main-content {
+                height: 90%;
+                width: 90%;
+            }
         }
     }
 }

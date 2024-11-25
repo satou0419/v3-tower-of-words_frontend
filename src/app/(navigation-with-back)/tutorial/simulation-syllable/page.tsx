@@ -1,6 +1,5 @@
 "use client"
-
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useTutorialStore } from "@/store/useTutorialStore"
 import useUpdateTutorialStatus from "@/hook/useUpdateTutorialStatus "
 import "../game-tutorial.scss"
@@ -13,55 +12,52 @@ interface TutorialData {
 
 const tutorialData: TutorialData[] = [
     {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_1.png",
+        imagePath: "assets/images/tutorial/simulation_all/simulation_all_1.png",
         title: "First Tutorial",
-        description: "Click the audio button to hear the word.",
+        description:
+            "In simulation, you have ‘Chances’ instead of ‘HP’. Each word you encounter (not enemies) has chances. ",
     },
     {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_2.png",
+        imagePath: "assets/images/tutorial/simulation_all/simulation_all_2.png",
         title: "Second Tutorial",
         description:
-            "Type the spelling of the word that you heard in the input box.",
+            "If you incorrectly given an answer, the enemy will attack you and you will lose 1 ‘chance’. ",
     },
     {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_3.png",
+        imagePath: "assets/images/tutorial/simulation_all/simulation_all_3.png",
         title: "Third Tutorial",
-        description: "Click the ‘Go!’ button after spelling the word.",
+        description:
+            "If all chances are gone, it means you failed to give a correct answer for that word and you will proceed to the next word. ",
     },
     {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_4.png",
+        imagePath: "assets/images/tutorial/simulation_all/simulation_all_4.png",
         title: "Fourth Tutorial",
         description:
-            "If the spelling is correct, you attack and damage the enemy. If it's incorrect, the enemy will attack you.",
+            "‘Attack intervals’ are the amount of time you are given to give an answer, if the time runs out the enemy will attack you and you will lose 1 chance. ",
     },
     {
         imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_5.png",
+            "assets/images/tutorial/simulation_syllable/simulation_syllable_5.png",
         title: "Fifth Tutorial",
         description:
-            "If the enemy attacks you, you lose 1 HP. If you lose all your HP, it's game over.",
+            "Read the word given and identify how many syllables it has.",
     },
     {
         imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_6.png",
+            "assets/images/tutorial/simulation_syllable/simulation_syllable_6.png",
         title: "Sixth Tutorial",
         description:
-            "Each enemy can hold multiple words. Defeat the enemy by correctly spelling the words of the enemy.",
+            "Scroll the slider to the number of the syllables of the word. ",
     },
     {
         imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_7.png",
+            "assets/images/tutorial/simulation_syllable/simulation_syllable_7.png",
         title: "Seventh Tutorial",
-        description:
-            "Defeat all enemies on the floor to proceed to the next floor.",
+        description: "Press the ‘Go!’ to submit the answer.",
     },
 ]
 
-export default function AdventureSpelling() {
+export default function SimulationSyllable() {
     const { onFinish, setOnFinish } = useTutorialStore() // Access Zustand store
     const [currentIndex, setCurrentIndex] = useState<number>(0)
     const {
@@ -71,10 +67,11 @@ export default function AdventureSpelling() {
     } = useUpdateTutorialStatus()
 
     const callbackRef = useRef(() => {
-        updateTutorialStatus("spellingadventure")
+        updateTutorialStatus("syllablesimu")
     })
 
     useEffect(() => {
+        // Set the onFinish callback only once on mount
         setOnFinish(callbackRef.current)
     }, [setOnFinish]) // Run only once on mount
 
@@ -82,8 +79,9 @@ export default function AdventureSpelling() {
         if (currentIndex < tutorialData.length - 1) {
             setCurrentIndex((prevIndex) => prevIndex + 1)
         } else {
+            // Trigger onFinish when tutorial is complete
             if (onFinish) {
-                onFinish() // Trigger the onFinish callback when the last step is reached
+                onFinish() // This will update tutorial status and can navigate or perform other actions
             }
         }
     }

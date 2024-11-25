@@ -1,8 +1,8 @@
 "use client"
 import { useEffect, useState, useRef } from "react"
-import "./adventure.scss"
 import { useTutorialStore } from "@/store/useTutorialStore"
 import useUpdateTutorialStatus from "@/hook/useUpdateTutorialStatus "
+import "../game-tutorial.scss"
 
 interface TutorialData {
     imagePath: string

@@ -19,9 +19,9 @@
         align-items: center;
         justify-content: center; // Center content vertically if needed
         gap: 0.5em;
-
         #tutorial-img {
             width: 95%;
+            height: 100%;
             border: 5px solid #666666;
             border-radius: 5px;
             background-color: #beb6ed;
@@ -29,9 +29,17 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
+            overflow: hidden; /* Ensure content doesn't spill outside the container */
 
             img {
-                width: 100%;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                width: 100%; /* Ensure it takes up full width */
+                height: 100%; /* Ensure it takes up full height */
+                object-fit: contain; /* Maintain aspect ratio while fitting the container */
             }
         }
 
@@ -43,6 +51,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 0.8em;
+
+            p {
+                text-align: center;
+            }
         }
 
         #tutorial-controls {

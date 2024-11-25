@@ -1,67 +1,31 @@
 "use client"
-
-import { useState, useEffect, useRef } from "react"
+import { useEffect, useState, useRef } from "react"
+import "../game-tutorial.scss"
 import { useTutorialStore } from "@/store/useTutorialStore"
 import useUpdateTutorialStatus from "@/hook/useUpdateTutorialStatus "
-import "../game-tutorial.scss"
 
 interface TutorialData {
     imagePath: string
-    title: string
     description: string
 }
 
 const tutorialData: TutorialData[] = [
     {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_1.png",
-        title: "First Tutorial",
-        description: "Click the audio button to hear the word.",
-    },
-    {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_2.png",
-        title: "Second Tutorial",
+        imagePath: "assets/images/tutorial/playground/playground_1.png",
         description:
-            "Type the spelling of the word that you heard in the input box.",
+            "Playground is Tower of Word’s endless mode. You will encounter enemies that hold random words. The difficulty of words is undetermined.",
     },
     {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_3.png",
-        title: "Third Tutorial",
-        description: "Click the ‘Go!’ button after spelling the word.",
+        imagePath: "assets/images/tutorial/playground/playground_2.png",
+        description: "Correctly spelling the words gives you credit.",
     },
     {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_4.png",
-        title: "Fourth Tutorial",
-        description:
-            "If the spelling is correct, you attack and damage the enemy. If it's incorrect, the enemy will attack you.",
-    },
-    {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_5.png",
-        title: "Fifth Tutorial",
-        description:
-            "If the enemy attacks you, you lose 1 HP. If you lose all your HP, it's game over.",
-    },
-    {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_6.png",
-        title: "Sixth Tutorial",
-        description:
-            "Each enemy can hold multiple words. Defeat the enemy by correctly spelling the words of the enemy.",
-    },
-    {
-        imagePath:
-            "assets/images/tutorial/adventure_spelling/adventure_spelling_7.png",
-        title: "Seventh Tutorial",
-        description:
-            "Defeat all enemies on the floor to proceed to the next floor.",
+        imagePath: "assets/images/tutorial/playground/playground_3.png",
+        description: "Items are locked, so you can’t use healing items.",
     },
 ]
 
-export default function AdventureSpelling() {
+export default function Playground() {
     const { onFinish, setOnFinish } = useTutorialStore() // Access Zustand store
     const [currentIndex, setCurrentIndex] = useState<number>(0)
     const {
@@ -71,10 +35,11 @@ export default function AdventureSpelling() {
     } = useUpdateTutorialStatus()
 
     const callbackRef = useRef(() => {
-        updateTutorialStatus("spellingadventure")
+        updateTutorialStatus("playground")
     })
 
     useEffect(() => {
+        // Set the onFinish callback only once on mount
         setOnFinish(callbackRef.current)
     }, [setOnFinish]) // Run only once on mount
 
@@ -82,8 +47,9 @@ export default function AdventureSpelling() {
         if (currentIndex < tutorialData.length - 1) {
             setCurrentIndex((prevIndex) => prevIndex + 1)
         } else {
+            // Trigger onFinish when tutorial is complete
             if (onFinish) {
-                onFinish() // Trigger the onFinish callback when the last step is reached
+                onFinish() // This will update tutorial status and can navigate or perform other actions
             }
         }
     }
@@ -107,7 +73,6 @@ export default function AdventureSpelling() {
                 </section>
 
                 <section id="tutorial-description">
-                    <h1>{tutorialData[currentIndex].title}</h1>
                     <p>{tutorialData[currentIndex].description}</p>
                 </section>
 

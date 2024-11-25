@@ -1,122 +1,131 @@
-"use client";
-import React, { useEffect, useRef, useState } from "react";
-import "./navigation.css";
-import { useRouter } from "next/navigation";
-import { getGreeting } from "@/util/greetings";
-import useUserInfoStore from "@/store/userInfoStore";
-import getUserInfo from "@/lib/user-endpoint/getUserInfo";
-import useProgressDashboardStore from "@/store/progressDashboardStore";
-import getUserDetails from "@/lib/user-endpoint/getUserDetails";
-import Link from "next/link";
-import Modal from "@/app/component/Modal/Modal"; // Adjust import as needed
+"use client"
+import React, { useEffect, useRef, useState } from "react"
+import "./navigation.css"
+import { useRouter } from "next/navigation"
+import { getGreeting } from "@/util/greetings"
+import useUserInfoStore from "@/store/userInfoStore"
+import getUserInfo from "@/lib/user-endpoint/getUserInfo"
+import useProgressDashboardStore from "@/store/progressDashboardStore"
+import getUserDetails from "@/lib/user-endpoint/getUserDetails"
+import Link from "next/link"
+import Modal from "@/app/component/Modal/Modal" // Adjust import as needed
+import useTutorialStatus from "@/hook/useTutorialStatus"
+import useUserGameTutorialStatusStore from "@/store/userGameTutorialStatusStore"
 
 const Navigation = () => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [isShrinking, setIsShrinking] = useState(false);
-    const [showList, setShowList] = useState(false);
-    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false); // New state for logout modal
+    const [isOpen, setIsOpen] = useState(false)
+    const [isShrinking, setIsShrinking] = useState(false)
+    const [showList, setShowList] = useState(false)
+    const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false)
+
     const userDashboard = useProgressDashboardStore(
         (state) => state.progressDashboard
-    );
-    const router = useRouter();
+    )
+
+    const router = useRouter()
+
+    const { error, loading } = useTutorialStatus()
 
     const toDashboard = () => {
-        router.push("/dashboard");
-    };
+        router.push("/dashboard")
+    }
 
     useEffect(() => {
-        getUserDetails();
-    }, [getUserDetails]);
+        getUserDetails()
+    }, [getUserDetails])
 
     const { firstname, lastname, setFirstname, setLastname } =
-        useUserInfoStore();
-    const username = useUserInfoStore((state) => state.username);
+        useUserInfoStore()
+    const username = useUserInfoStore((state) => state.username)
 
     const getInitial = (username: string) => {
-        return username ? username.charAt(0).toUpperCase() : "";
-    };
+        return username ? username.charAt(0).toUpperCase() : ""
+    }
 
     const toggleDropdown = () => {
-        setIsOpen((prev) => !prev);
-        setIsShrinking((prev) => !prev); // Toggle shrink/expand state
-    };
+        setIsOpen((prev) => !prev)
+        setIsShrinking((prev) => !prev)
+    }
 
     const handleOverlayClick = () => {
         if (isOpen) {
-            setIsOpen(false);
-            setIsShrinking(true); // Start shrinking animation
-            setShowList(false);
+            setIsOpen(false)
+            setIsShrinking(true)
+            setShowList(false)
         }
-    };
+    }
 
     const handleLogoutClick = () => {
-        setIsLogoutModalOpen(true); // Open the logout confirmation modal
-    };
+        setIsLogoutModalOpen(true)
+    }
 
     const confirmLogout = () => {
-        localStorage.removeItem("auth-user");
-        router.push("/login");
-    };
+        localStorage.removeItem("auth-user")
+        router.push("/login")
+    }
 
     const cancelLogout = () => {
-        setIsLogoutModalOpen(false); // Close the logout confirmation modal
-    };
+        setIsLogoutModalOpen(false)
+    }
 
-    const toggleRef = useRef<HTMLDivElement>(null);
+    const toggleRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const handler = (e: MouseEvent) => {
-            // Clicks inside dropdown list should not close the dropdown
             if (
                 toggleRef.current &&
                 !toggleRef.current.contains(e.target as Node)
             ) {
-                setIsOpen(false);
-                setIsShrinking(true); // Start shrinking animation
-                setShowList(false);
+                setIsOpen(false)
+                setIsShrinking(true)
+                setShowList(false)
             }
-        };
+        }
 
-        document.addEventListener("mousedown", handler);
+        document.addEventListener("mousedown", handler)
         return () => {
-            document.removeEventListener("mousedown", handler);
-        };
-    }, []);
+            document.removeEventListener("mousedown", handler)
+        }
+    }, [])
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
+        let timer: NodeJS.Timeout
         if (isOpen) {
-            setIsShrinking(false); // Ensure it's expanding
+            setIsShrinking(false)
             timer = setTimeout(() => {
-                setShowList(true);
-            }, 300); // Delay should match the expand animation duration
+                setShowList(true)
+            }, 300)
         } else {
-            setShowList(false);
-            setIsShrinking(true); // Start shrinking animation
+            setShowList(false)
+            setIsShrinking(true)
         }
-        return () => clearTimeout(timer);
-    }, [isOpen]);
+        return () => clearTimeout(timer)
+    }, [isOpen])
 
     useEffect(() => {
         if (!isOpen) {
             const timer = setTimeout(() => {
-                setShowList(false);
-            }, 300); // Match this delay with the shrink animation duration
-            return () => clearTimeout(timer);
+                setShowList(false)
+            }, 300)
+            return () => clearTimeout(timer)
         }
-    }, [isShrinking]);
+    }, [isShrinking])
 
     useEffect(() => {
-        getUserInfo();
-    }, []);
+        getUserInfo()
+    }, [])
 
     useEffect(() => {
-        const userInfo = useUserInfoStore.getState();
-        setFirstname(userInfo.firstname);
-        setLastname(userInfo.lastname);
-    }, [setFirstname, setLastname]);
+        const userInfo = useUserInfoStore.getState()
+        setFirstname(userInfo.firstname)
+        setLastname(userInfo.lastname)
+    }, [setFirstname, setLastname])
 
-    const greeting = getGreeting();
+    const greeting = getGreeting()
+
+    // Determine if any tutorial status is true
+    const isTutorialAvailable =
+        !loading && !error && useUserGameTutorialStatusStore.getState()
 
     return (
         <nav className={`navigation ${isOpen ? "expanded" : ""}`}>
@@ -125,7 +134,7 @@ const Navigation = () => {
                 <span>{firstname}</span>
                 <span>{lastname} |</span>
                 <div className="currency"></div>
-                <span> {userDashboard.creditAmount}</span>
+                <span>{userDashboard.creditAmount}</span>
             </section>
             <div className="navigation_logo">
                 <img
@@ -151,25 +160,26 @@ const Navigation = () => {
                 <div className="profile">{getInitial(username)}</div>
                 {showList && (
                     <section className="drop-list">
-                        <Link href="/inventory/items">Inventory</Link>{" "}
+                        <Link href="/inventory/items">Inventory</Link>
                         <Link href="/shop/items">Shop</Link>
+                        {isTutorialAvailable && (
+                            <Link href="/tutorial">Tutorial</Link>
+                        )}
                         <Link href="/setting/personal-information">
                             Settings
                         </Link>
-                        <a onClick={handleLogoutClick}>Logout</a>{" "}
-                        {/* Updated to handle logout click */}
+                        <a onClick={handleLogoutClick}>Logout</a>
                     </section>
                 )}
             </section>
             {isOpen && <div className="overlay" onClick={handleOverlayClick} />}
 
-            {/* Logout Confirmation Modal */}
             <Modal
                 className="logout-modal"
                 title="Confirm Logout"
                 details="Are you sure you want to logout?"
                 isOpen={isLogoutModalOpen}
-                onClose={cancelLogout} // Close modal on overlay click
+                onClose={cancelLogout}
                 buttons={[
                     <button key="cancel" onClick={cancelLogout}>
                         Cancel
@@ -180,7 +190,7 @@ const Navigation = () => {
                 ]}
             />
         </nav>
-    );
-};
+    )
+}
 
-export default Navigation;
+export default Navigation
