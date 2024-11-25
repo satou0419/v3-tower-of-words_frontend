@@ -1,0 +1,24 @@
+.nav-layout-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.content-wrapper {
+    flex-grow: 1;
+    overflow: hidden; /* Ensures the content is scrollable if it overflows the viewport */
+    display: flex;
+    flex-direction: column;
+}
+
+.navigation {
+    flex-shrink: 0; /* Prevents the navigation from shrinking */
+}
+
+.button {
+    background-color: red;
+}
+
+.btn-container {
+    position: absolute;
+}
