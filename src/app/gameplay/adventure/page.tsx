@@ -32,7 +32,6 @@ import {
 } from "react-icons/fa"
 import useAchievementChecker from "@/hook/useAchievementChecker"
 import AchievementToast from "@/app/component/AchievementToast/AchievementToast"
-import useIncrementSyllableFloor from "@/hook/useIncrementSyllableFloor"
 import useFloorSyllableIncrement from "@/hook/useIncrementSyllableFloor"
 import useFloorSpellingIncrement from "@/hook/useFloorSpellingIncrement"
 import useFloorSilentIncrement from "@/hook/useFloorSilentIncrement"
@@ -155,6 +154,9 @@ const AdventureGameplay = () => {
 
     const isClear = searchParams.get("clear")
 
+    useEffect(() => {
+        console.log(isClear)
+    })
     // Convert parameters to numbers with fallback to NaN if conversion fails
     const floorId = floorIdParam ? parseInt(floorIdParam, 10) : NaN
     const section = sectionParam ? parseInt(sectionParam, 10) : NaN
@@ -474,11 +476,6 @@ const AdventureGameplay = () => {
     const [silentIndex, setSilentIndex] = useState("")
 
     useEffect(() => {
-        // console.log("Current Word", currentWord)
-        // console.log("Current WordIndex", currentWordIndex)
-        // console.log("Current Enemy", currentEnemy)
-        // console.log("Current EnemyIndex", currentEnemyIndex)
-
         const data = currentEnemy?.words[currentWordIndex].silentIndex
         setSilentIndex(data)
     })
@@ -489,8 +486,8 @@ const AdventureGameplay = () => {
         setIsButtonDisabled(true)
         const currentEnemy = enemyData[currentEnemyIndex]
 
-        console.log("Silent Index", silentIndex)
-        console.log("Selected Index", selectedIndex)
+        // console.log("Silent Index", silentIndex)
+        // console.log("Selected Index", selectedIndex)
         //#region Assigning the value of currentWord base on gameplay
         if (gameType === "Silent") {
             const currentWord =
@@ -505,6 +502,7 @@ const AdventureGameplay = () => {
         //#endregion
 
         //#region Logic for correct answer
+
         if (
             (gameType === "Spelling" &&
                 typedWord.toLowerCase() === currentWord) ||
@@ -520,9 +518,8 @@ const AdventureGameplay = () => {
             setSpelledWords(updatedSpelledWords)
 
             // Archive the correctly spelled word
-            if (isClear === "false") {
+            if (isClear === "true") {
                 await addWord(currentWord || "")
-                updateFloor
                 achievementChecker("floors")
                 achievementChecker("words")
 
@@ -556,7 +553,7 @@ const AdventureGameplay = () => {
                     setTimeout(() => {
                         if (currentEnemyIndex === enemyData.length - 1) {
                             // All enemies defeated, show confetti
-                            if (isClear === "false") {
+                            if (isClear === "true") {
                                 console.log("Now it is clear")
 
                                 if (gameType === "Syllables") {
@@ -565,7 +562,7 @@ const AdventureGameplay = () => {
                                         nextSection
                                     )
                                     redeemReward(floorId)
-
+                                    incrementFloor()
                                     incrementSyllableFloor()
                                     achievementChecker("syllablefloors")
                                 }
@@ -578,6 +575,7 @@ const AdventureGameplay = () => {
                                     redeemReward(floorId)
                                     incrementFloor()
                                     incrementSilentFloor()
+                                    achievementChecker("silentfloors")
                                 }
 
                                 if (gameType === "Spelling") {
@@ -589,6 +587,7 @@ const AdventureGameplay = () => {
                                     incrementFloor()
                                     incrementSpellingFloor()
                                     achievementChecker("spellingfloors")
+                                    console.log(redeemReward)
                                 }
                             } else {
                                 console.log("It is cleared previously")

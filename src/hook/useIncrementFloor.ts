@@ -1,40 +1,40 @@
-import useUserInfoStore from "@/store/userInfoStore";
-import BASE_URL from "@/util/baseUrl";
-import { useState } from "react";
+import useUserInfoStore from "@/store/userInfoStore"
+import BASE_URL from "@/util/baseUrl"
+import { useState } from "react"
 
 const useIncrementFloor = () => {
-    const [loading, setLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState<boolean>(false);
-    const userDetailsID = useUserInfoStore((state) => state.userDetailsID);
+    const [loading, setLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string | null>(null)
+    const [success, setSuccess] = useState<boolean>(false)
+    const userDetailsID = useUserInfoStore((state) => state.userDetailsID)
 
     const incrementFloor = async () => {
-        setLoading(true);
-        setError(null);
-        setSuccess(false);
+        setLoading(true)
+        setError(null)
+        setSuccess(false)
 
         try {
             const response = await fetch(
                 `${BASE_URL}/user_details/increment_floor?userDetailsID=${userDetailsID}`,
                 {
-                    method: "POST", // Assuming this is a POST request, adjust if it's GET or another method
+                    method: "POST",
                 }
-            );
+            )
 
             if (!response.ok) {
-                throw new Error("Failed to increment floor");
+                throw new Error("Failed to increment floor")
             }
 
-            const result = await response.json();
-            setSuccess(true);
+            const result = await response.json()
+            setSuccess(true)
         } catch (error) {
-            setError((error as Error).message);
+            setError((error as Error).message)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
-    return { incrementFloor, loading, error, success };
-};
+    return { incrementFloor, loading, error, success }
+}
 
-export default useIncrementFloor;
+export default useIncrementFloor

@@ -44,7 +44,7 @@ const useUpdateProgress = () => {
             const response = await fetch(
                 `${BASE_URL}/tower_progress/update_user_progress?userProgressID=${userProgress.userProgressID}`,
                 {
-                    method: "PUT",
+                    method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
                     },
