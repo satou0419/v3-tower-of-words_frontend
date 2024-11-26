@@ -30,6 +30,7 @@ const useRewardCredit = () => {
                 throw new Error("Failed to update credit")
             }
 
+            console.log("Credited", response)
             setSuccess(true)
         } catch (error) {
             setError((error as Error).message)

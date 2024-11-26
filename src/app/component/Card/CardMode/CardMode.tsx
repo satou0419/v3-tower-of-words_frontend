@@ -1,17 +1,18 @@
-import React from "react";
-import "./cardmode.scss";
-import CardInfo from "../CardInfo/CardInfo";
-import CardDetails from "../CardDetails/CardDetails";
-import Link from "next/link";
+import React from "react"
+import "./cardmode.scss"
+import CardInfo from "../CardInfo/CardInfo"
+import CardDetails from "../CardDetails/CardDetails"
+import Link from "next/link"
 
 interface CardModeProps {
-    className?: string;
-    bannerSrc?: string;
-    progressHeader?: string;
-    progressValue?: number;
-    modeTitle?: string;
-    modeDescription?: string;
-    link: string;
+    className?: string
+    bannerSrc?: string
+    progressHeader?: string
+    progressValue?: number
+    modeTitle?: string
+    modeDescription?: string
+    link?: string // Made optional to handle cases without navigation
+    onClick?: () => void // Optional click handler
 }
 
 const CardMode: React.FC<CardModeProps> = ({
@@ -22,11 +23,23 @@ const CardMode: React.FC<CardModeProps> = ({
     modeTitle = "Adventure",
     modeDescription = "Lorem ipsum dolor sit amet, consectetur adipiscing",
     link = "#",
+    onClick, // Destructure the new prop
 }) => {
+    const handleClick = (e: React.MouseEvent) => {
+        if (onClick) {
+            e.preventDefault() // Prevent default link behavior if `onClick` is provided
+            onClick()
+        }
+    }
+
     return (
         <main className={`${className ? className : ""}`}>
             <section className="cardmode-container">
-                <Link href={link} className="cardmode-card">
+                <Link
+                    href={link}
+                    className="cardmode-card"
+                    onClick={handleClick}
+                >
                     <section className="cardmode-banner">
                         <img src={bannerSrc} alt="Banner" />
                     </section>
@@ -40,7 +53,7 @@ const CardMode: React.FC<CardModeProps> = ({
                 </Link>
             </section>
         </main>
-    );
-};
+    )
+}
 
-export default CardMode;
+export default CardMode

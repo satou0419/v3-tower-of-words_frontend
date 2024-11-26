@@ -18,7 +18,7 @@ import useUpdateProgress from "@/hook/useUpdateProgress"
 import useRedeemReward from "@/hook/useRedeemReward"
 import { useGameplayStore } from "@/store/gameplayStore"
 import useIncrementFloor from "@/hook/useIncrementFloor"
-import { FaSignOutAlt, FaVolumeUp } from "react-icons/fa"
+import { FaVolumeUp } from "react-icons/fa"
 import useRandomEnemy from "@/hook/useRandomEnemy"
 import useRandomWord from "@/hook/useRandomWord"
 import useRewardCredit from "@/hook/useRewardCredit"
@@ -73,7 +73,6 @@ const PlaygroundGameplay = () => {
     //#endRegion
 
     const [showGameOverModal, setShowGameOverModal] = useState<boolean>(false)
-    const [showExitModal, setShowExitModal] = useState<boolean>(false)
 
     // Handler for restarting the game
     const handleGameOverRestart = () => {
@@ -103,14 +102,6 @@ const PlaygroundGameplay = () => {
         isLoading: isAddingWord,
         error: addWordError,
     } = useAddWord()
-
-    const handleExitModal = () => {
-        setShowExitModal(true)
-    }
-
-    const handleCancelExitModal = () => {
-        setShowExitModal(false)
-    }
 
     useEffect(() => {
         if (enemies.length > 0) {
@@ -291,6 +282,8 @@ const PlaygroundGameplay = () => {
     }
     const { lives, subtractLives, addLives } = useGameplayStore()
     // Other state and hooks...
+    const [earnings, setEarnings] = useState(0)
+    const [wordCounter, setWordCounter] = useState(0)
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault()
         setIsButtonDisabled(true)
@@ -306,6 +299,8 @@ const PlaygroundGameplay = () => {
             addWord(currentWord || "")
             awardCredit(2)
             handleCharacterAttack()
+            setEarnings(earnings + 2)
+            setWordCounter(wordCounter + 1)
 
             setTimeout(() => {
                 setIsCharacterAttacking(false)
@@ -405,45 +400,20 @@ const PlaygroundGameplay = () => {
         return match ? match[1] : "unknown" // Return the name or 'unknown' if not found
     }
 
-    const [showTutorial, setShowTutorial] = useState(false)
-    const [currentStep, setCurrentStep] = useState(0)
-
     const welcomeModalButtons = [
         <button
             key="start-game"
             onClick={() => {
                 setShowWelcomeModal(false)
-                setGameStarted(true)
-                setShowTutorial(true)
+                setGameStarted(true) // Start the game when the modal is closed
             }}
         >
-            Continue
+            Start Game
         </button>,
     ]
 
-    const steps = [
-        "Welcome to the Playground! Let's walk through the basics.",
-        "Step 1: An audio will prompt the of word to spell. You can repeat the audio by clicking the audio button.",
-        "Step 2: Fill out your answer at the input box.",
-        "Step 3: Check pronunciation and description guide for any additional hints.",
-        "Step 4: Press 'Go' to attack the enemy.",
-        "Be careful! If your spelling is incorrect, the enemy will attack you!",
-        "Now you're ready! Press 'Start' to begin the game.",
-    ]
-
-    const handleNextStep = () => {
-        if (currentStep < steps.length - 1) {
-            setCurrentStep(currentStep + 1)
-        } else {
-            setShowTutorial(false)
-        }
-    }
-
     return (
         <main className="adventure-wrapper">
-            <div className="game-exit">
-                <FaSignOutAlt onClick={handleExitModal} />
-            </div>
             {/* Welcome Modal */}
             <Modal
                 className="welcome-modal"
@@ -453,28 +423,14 @@ const PlaygroundGameplay = () => {
                 buttons={welcomeModalButtons}
             />
 
-            <Modal
-                className="welcome-modal"
-                isOpen={showTutorial}
-                title="Tutorial"
-                details={steps[currentStep]}
-                buttons={[
-                    <button
-                        key="start-game"
-                        onClick={() => {
-                            handleNextStep()
-                        }}
-                    >
-                        {currentStep === steps.length - 1 ? "Start" : "Next"}
-                    </button>,
-                ]}
-            />
-
             {/* Game Content */}
             {gameStarted && !loading && (
                 <section className="adventure-platform">
                     <div className="platform-indicator">Playground</div>
                     <div className="lives-container">{renderHearts()}</div>
+                    <span>
+                        Earned: {earnings} | Word Spelled: {wordCounter}
+                    </span>
 
                     <section className="enemy-track">
                         {enemyData.map((enemy, enemyIndex) => {
@@ -721,25 +677,6 @@ const PlaygroundGameplay = () => {
             />
 
             <Modal
-                className="logout-modal"
-                isOpen={showExitModal}
-                title="Confirm Exit"
-                onClose={handleGameOverRestart}
-                details="Are you sure you want to leave?"
-                buttons={[
-                    <button
-                        key="exit"
-                        onClick={() => (window.location.href = "/dashboard")}
-                    >
-                        Exit
-                    </button>,
-                    <button key="cancel" onClick={handleCancelExitModal}>
-                        Cancel
-                    </button>,
-                ]}
-            />
-
-            <Modal
                 className="conquer-floor-modal"
                 isOpen={showConquerFloorModal}
                 title="Floor Conquered!"
@@ -748,7 +685,7 @@ const PlaygroundGameplay = () => {
                     <button
                         key="menu"
                         onClick={() =>
-                            (window.location.href = "/adventure-mode")
+                            (window.location.href = "/tower/spelling")
                         }
                     >
                         Return to Main Menu
