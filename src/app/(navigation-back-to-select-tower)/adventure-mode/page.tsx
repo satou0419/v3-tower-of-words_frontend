@@ -593,17 +593,17 @@ const AdventureMode = () => {
                                     key={section}
                                     className={`section ${
                                         activeSection === section
-                                            ? "active-section"
+                                            ? "done-section"
                                             : gameType === "Syllables" &&
-                                              userProgress.syllableFloorID >=
+                                              userProgress.syllableSectionProgress >=
                                                   section
                                             ? "done-section"
                                             : gameType === "Spelling" &&
-                                              userProgress.spellingFloorID >=
+                                              userProgress.syllableSectionProgress >=
                                                   section
                                             ? "done-section"
                                             : gameType === "Silent" &&
-                                              userProgress.silentFloorID >=
+                                              userProgress.syllableSectionProgress >=
                                                   section
                                             ? "done-section"
                                             : ""
