@@ -1,11 +1,11 @@
-"use client";
+"use client"
 
-import React, { useEffect, useState } from "react";
-import CardTab from "@/app/component/Card/CardTab/CardTab";
-import "./gameassessment.scss";
-import { useRouter, useSearchParams } from "next/navigation";
-import viewSimulationAssessment from "@/lib/assessment-endpoint/viewSimulationAssessment";
-import { Bar } from "react-chartjs-2";
+import React, { useEffect, useState } from "react"
+import CardTab from "@/app/component/Card/CardTab/CardTab"
+import "./gameassessment.scss"
+import { useRouter, useSearchParams } from "next/navigation"
+import viewSimulationAssessment from "@/lib/assessment-endpoint/viewSimulationAssessment"
+import { Bar } from "react-chartjs-2"
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -15,8 +15,8 @@ import {
     Title,
     Tooltip,
     Legend,
-} from "chart.js";
-import updateGameAssessment from "@/lib/assessment-endpoint/updateGameAssessment";
+} from "chart.js"
+import updateGameAssessment from "@/lib/assessment-endpoint/updateGameAssessment"
 
 ChartJS.register(
     CategoryScale,
@@ -26,41 +26,41 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend
-);
+)
 
 export default function GameAssessment() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
+    const router = useRouter()
+    const searchParams = useSearchParams()
 
-    const simulationIDParam = searchParams.get("simulationID");
+    const simulationIDParam = searchParams.get("simulationID")
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
-        : NaN;
+        : NaN
 
-    const [assessmentData, setAssessmentData] = useState<any>(null);
-    const [loading, setLoading] = useState<boolean>(true);
-    const [error, setError] = useState<string | null>(null);
+    const [assessmentData, setAssessmentData] = useState<any>(null)
+    const [loading, setLoading] = useState<boolean>(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
         const fetchAssessmentData = async () => {
             try {
-                setLoading(true);
-                const data = await viewSimulationAssessment(simulationID);
-                updateGameAssessment(simulationID);
-                console.log(data);
-                setAssessmentData(data);
-                setLoading(false);
+                setLoading(true)
+                const data = await viewSimulationAssessment(simulationID)
+                updateGameAssessment(simulationID)
+                console.log(data)
+                setAssessmentData(data)
+                setLoading(false)
             } catch (error) {
-                console.error("Error fetching assessment data:", error);
-                setError("Failed to fetch assessment data.");
-                setLoading(false);
+                console.error("Error fetching assessment data:", error)
+                setError("Failed to fetch assessment data.")
+                setLoading(false)
             }
-        };
+        }
 
         if (!isNaN(simulationID)) {
-            fetchAssessmentData();
+            fetchAssessmentData()
         }
-    }, [simulationID]);
+    }, [simulationID])
 
     const chartData = {
         labels: assessmentData
@@ -92,7 +92,7 @@ export default function GameAssessment() {
                 borderWidth: 1,
             },
         ],
-    };
+    }
 
     const chartOptions = {
         indexAxis: "y" as const, // Make sure to use 'y' or 'x'
@@ -108,7 +108,7 @@ export default function GameAssessment() {
                 },
             },
         },
-    };
+    }
 
     return (
         <main className="gameassessment-wrapper">
@@ -162,5 +162,5 @@ export default function GameAssessment() {
                 </CardTab>
             </section>
         </main>
-    );
+    )
 }
