@@ -13,7 +13,7 @@ export default function NavigationLayout({
             <Navigation />
             <div className="content-wrapper">
                 <div className="btn-container">
-                    <BackButton customRoute="/select-tower" />
+                    <BackButton />
                 </div>
                 {children}
             </div>
