@@ -122,7 +122,9 @@ export default function StudentAssessment() {
         <main className="studentassessment-wrapper">
             <section className="studentassessment-container">
                 <div className="studentassessment-buttons">
-                    <h1>{user.studentInfo?.data?.username}</h1>
+                    <h1 className="studentassessment-studentname">
+                        {user.studentInfo?.data?.username}
+                    </h1>
                     <button
                         className="button-next"
                         onClick={handleWordProgress}
