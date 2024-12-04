@@ -563,7 +563,7 @@ const AdventureGameplay = () => {
                                     )
                                     await redeemReward(floorId)
                                     incrementFloor()
-                                    incrementSyllableFloor()
+                                    await incrementSyllableFloor()
                                     achievementChecker("syllablefloors")
                                 }
 
@@ -574,7 +574,7 @@ const AdventureGameplay = () => {
                                     )
                                     await redeemReward(floorId)
                                     incrementFloor()
-                                    incrementSilentFloor()
+                                    await incrementSilentFloor()
                                     achievementChecker("silentfloors")
                                 }
 
@@ -585,7 +585,7 @@ const AdventureGameplay = () => {
                                     )
                                     await redeemReward(floorId)
                                     incrementFloor()
-                                    incrementSpellingFloor()
+                                    await incrementSpellingFloor()
                                     achievementChecker("spellingfloors")
                                     console.log(redeemReward)
                                 }
