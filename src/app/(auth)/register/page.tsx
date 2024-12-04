@@ -52,12 +52,12 @@ const Register: React.FC = () => {
     })
 
     const validateName = (name: string) => {
-        const nameRegex = /^[A-Za-z\s]+$/
+        const nameRegex = /^[A-Za-z\s-]+$/
         return nameRegex.test(name) && name.length >= 2
     }
 
     const validateUsername = (username: string) => {
-        const usernameRegex = /^[a-z][a-z._-]*[a-z._-]?$/
+        const usernameRegex = /^[a-z][a-z._]*[a-z._]?$/
 
         return usernameRegex.test(username) && username.length >= 3
     }
