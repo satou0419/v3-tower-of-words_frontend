@@ -1,17 +1,17 @@
-"use client";
-import CardWord from "@/app/component/Card/CardWord/CardWord";
-import "./teachersimulationwords.scss";
-import { InputLine } from "@/app/component/Input/Input";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useSimulationStore } from "@/store/simulationStore";
-import useFetchAllSimulationWords from "@/hook/useAllSimulationWords";
-import useMerriam from "@/hook/useMerriam";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faVolumeUp } from "@fortawesome/free-solid-svg-icons";
-import CardTab from "@/app/component/Card/CardTab/CardTab";
-import { viewSimulation } from "@/lib/simulation-endpoint/viewSimulation";
-import { Bar } from "react-chartjs-2";
+"use client"
+import CardWord from "@/app/component/Card/CardWord/CardWord"
+import "./teachersimulationwords.scss"
+import { InputLine } from "@/app/component/Input/Input"
+import { useEffect, useState } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { useSimulationStore } from "@/store/simulationStore"
+import useFetchAllSimulationWords from "@/hook/useAllSimulationWords"
+import useMerriam from "@/hook/useMerriam"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
+import { faVolumeUp } from "@fortawesome/free-solid-svg-icons"
+import CardTab from "@/app/component/Card/CardTab/CardTab"
+import { viewSimulation } from "@/lib/simulation-endpoint/viewSimulation"
+import { Bar } from "react-chartjs-2"
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -21,8 +21,8 @@ import {
     Title,
     Tooltip,
     Legend,
-} from "chart.js";
-import updateWordAssessment from "@/lib/assessment-endpoint/updateWordAssessment";
+} from "chart.js"
+import updateWordAssessment from "@/lib/assessment-endpoint/updateWordAssessment"
 
 ChartJS.register(
     CategoryScale,
@@ -32,86 +32,86 @@ ChartJS.register(
     Title,
     Tooltip,
     Legend
-);
+)
 
 export default function TeacherSimulationWords() {
-    const { currentSimulation, setCurrentSimulation } = useSimulationStore();
-    const [simulationWordsID, setSimulationWordsID] = useState<number[]>([]);
-    const router = useRouter();
-    const [showGraph, setShowGraph] = useState(false);
-    const searchParams = useSearchParams();
-    const simulationIDParam = searchParams.get("simulationID");
+    const { currentSimulation, setCurrentSimulation } = useSimulationStore()
+    const [simulationWordsID, setSimulationWordsID] = useState<number[]>([])
+    const router = useRouter()
+    const [showGraph, setShowGraph] = useState(false)
+    const searchParams = useSearchParams()
+    const simulationIDParam = searchParams.get("simulationID")
     const simulationID = simulationIDParam
         ? parseInt(simulationIDParam, 10)
-        : NaN;
-    const [selectedWord, setSelectedWord] = useState<null | string>(null);
-    const [searchTerm, setSearchTerm] = useState("");
+        : NaN
+    const [selectedWord, setSelectedWord] = useState<null | string>(null)
+    const [searchTerm, setSearchTerm] = useState("")
     const simulationWords =
-        useFetchAllSimulationWords(simulationWordsID).simulationWords;
-    const [filteredWords, setFilteredWords] = useState(simulationWords);
+        useFetchAllSimulationWords(simulationWordsID).simulationWords
+    const [filteredWords, setFilteredWords] = useState(simulationWords)
 
-    const wordData = useMerriam(selectedWord || "");
+    const wordData = useMerriam(selectedWord || "")
 
-    console.log(currentSimulation);
+    console.log(currentSimulation)
 
     useEffect(() => {
         const fetchSimulations = async () => {
             try {
-                const simulation = await viewSimulation(simulationID);
-                updateWordAssessment(simulationID);
-                setCurrentSimulation(simulation);
-                console.log(simulation);
+                const simulation = await viewSimulation(simulationID)
+                updateWordAssessment(simulationID)
+                setCurrentSimulation(simulation)
+                console.log(simulation)
             } catch (error) {
                 console.error(
                     "Failed to fetch simulations for the room:",
                     error
-                );
+                )
             }
-        };
-        fetchSimulations();
-    }, [setCurrentSimulation]);
+        }
+        fetchSimulations()
+    }, [setCurrentSimulation])
 
     useEffect(() => {
         if (currentSimulation && currentSimulation.enemy) {
             const wordsID = currentSimulation.assessment.flatMap(
                 (assessment) => assessment.simulationWordID
-            );
-            setSimulationWordsID(wordsID);
+            )
+            setSimulationWordsID(wordsID)
         }
-    }, [currentSimulation]);
+    }, [currentSimulation])
 
     useEffect(() => {
         const updatedFilteredWords = simulationWords.filter((word) =>
             word.word.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-        setFilteredWords(updatedFilteredWords);
+        )
+        setFilteredWords(updatedFilteredWords)
         if (updatedFilteredWords.length > 0) {
             if (
                 selectedWord === null ||
                 !updatedFilteredWords.some((word) => word.word === selectedWord)
             ) {
-                setSelectedWord(updatedFilteredWords[0].word);
+                setSelectedWord(updatedFilteredWords[0].word)
             }
         } else {
-            setSelectedWord(null);
+            setSelectedWord(null)
         }
-    }, [searchTerm, simulationWords]);
+    }, [searchTerm, simulationWords])
 
     const handleWordClick = (word: string) => {
-        setSelectedWord(word);
-    };
+        setSelectedWord(word)
+    }
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        setSearchTerm(event.target.value);
-    };
+        setSearchTerm(event.target.value)
+    }
 
     const selectedWordID = simulationWords.find(
         (word) => word.word === selectedWord
-    )?.simulationWordsID;
+    )?.simulationWordsID
 
     const selectedAssessment = currentSimulation?.assessment.find(
         (assessment) => assessment.simulationWordID === selectedWordID
-    );
+    )
 
     const chartData = {
         labels: ["Accuracy", "Mistake", "Duration", "Score"],
@@ -129,7 +129,7 @@ export default function TeacherSimulationWords() {
                 borderWidth: 1,
             },
         ],
-    };
+    }
 
     const chartOptions = {
         indexAxis: "y" as const, // Make sure to use 'y' or 'x'
@@ -145,7 +145,7 @@ export default function TeacherSimulationWords() {
                 },
             },
         },
-    };
+    }
 
     return (
         <main className="main-wrapper">
@@ -290,5 +290,5 @@ export default function TeacherSimulationWords() {
                 )}
             </section>
         </main>
-    );
+    )
 }

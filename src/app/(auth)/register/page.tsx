@@ -52,7 +52,7 @@ const Register: React.FC = () => {
     })
 
     const validateName = (name: string) => {
-        const nameRegex = /^[A-Za-z\s]+$/
+        const nameRegex = /^[A-Za-z\s-]+$/
         return nameRegex.test(name) && name.length >= 2
     }
 
