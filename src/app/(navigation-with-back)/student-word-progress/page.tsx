@@ -160,13 +160,6 @@ export default function StudentWordProgress() {
 
     return (
         <main className="main-wrapper">
-            <button
-                onClick={() => router.back()}
-                type="button"
-                className="studentwordprogress-button"
-            >
-                Back
-            </button>
             <section className="studentwordprogress-container">
                 <CardWord className="studentwordprogress-left">
                     <div className="left-container">

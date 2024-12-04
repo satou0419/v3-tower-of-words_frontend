@@ -113,9 +113,6 @@ export default function GameAssessment() {
     return (
         <main className="gameassessment-wrapper">
             <section className="gameassessment-container">
-                <button onClick={() => router.back()} type="button">
-                    Back
-                </button>
                 <CardTab
                     className="cardtab"
                     title="Game Assessment"

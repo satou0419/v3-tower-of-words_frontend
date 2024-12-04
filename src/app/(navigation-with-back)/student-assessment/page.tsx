@@ -122,13 +122,6 @@ export default function StudentAssessment() {
         <main className="studentassessment-wrapper">
             <section className="studentassessment-container">
                 <div className="studentassessment-buttons">
-                    <button
-                        className="button-back"
-                        onClick={() => router.back()}
-                        type="button"
-                    >
-                        Back
-                    </button>
                     <h1>{user.studentInfo?.data?.username}</h1>
                     <button
                         className="button-next"
