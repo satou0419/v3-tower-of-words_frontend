@@ -12,10 +12,10 @@
         flex-direction: column;
         gap: 2em;
 
-        .studentassessment-buttons{
+        .studentassessment-buttons {
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: flex-end;
         }
 
         .button-back[type="button"] {
@@ -32,16 +32,25 @@
                 0 3px 6px rgba(0, 0, 0, 0.1);
         }
 
-        .button-next[type="button"]{
+        .button-next[type="button"] {
             background-color: #ffaf40;
             height: 3em;
-            width: 10em;
+            width: 6em;
             box-shadow: var(--shadow-burst);
             border: none;
             border-radius: 5px;
             border-top: 2px solid #fff;
             color: #fff;
             cursor: pointer;
+        }
+
+        h1 {
+            position: absolute;
+            top: 1em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
         }
 
         .cardtab {
@@ -73,7 +82,7 @@
         color: #fff;
         overflow-y: scroll;
 
-        .studentassessment-data{
+        .studentassessment-data {
             display: flex;
             flex-direction: column;
             gap: 0.5em;
