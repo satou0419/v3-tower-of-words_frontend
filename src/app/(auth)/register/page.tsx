@@ -57,7 +57,7 @@ const Register: React.FC = () => {
     }
 
     const validateUsername = (username: string) => {
-        const usernameRegex = /^[a-z][a-z._]*[a-z._]?$/
+        const usernameRegex = /^[a-z][a-z._-]*[a-z._-]?$/
 
         return usernameRegex.test(username) && username.length >= 3
     }
