@@ -1211,12 +1211,7 @@ const AdventureGameplay = () => {
                     <button key="restart" onClick={handleGameOverRestart}>
                         Restart Game
                     </button>,
-                    <button
-                        key="exit"
-                        onClick={() =>
-                            (window.location.href = "/adventure-mode")
-                        }
-                    >
+                    <button key="exit" onClick={() => returnMenu}>
                         Exit to Main Menu
                     </button>,
                 ]}
