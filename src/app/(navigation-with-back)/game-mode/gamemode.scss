@@ -7,11 +7,11 @@
     flex-direction: column;
 
     .buttons-container {
-        width: 90%;
-        height: 4rem;
+        width: 96%;
+        height: 3rem;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         flex-direction: row;
 
         .back-button {
@@ -24,7 +24,8 @@
             padding: 0.5em 1em;
             border: none;
             border-top: 4px solid #fff;
-            box-shadow: 0 6px 12px rgba(252, 87, 118, 0.4), 0 3px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 6px 12px rgba(252, 87, 118, 0.4),
+                0 3px 6px rgba(0, 0, 0, 0.1);
         }
 
         .clone-button {
