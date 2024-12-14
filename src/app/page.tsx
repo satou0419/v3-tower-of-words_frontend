@@ -177,7 +177,9 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Rey Mar R. Segalle</span>
-                                    <span>UI-UX Designer</span>
+                                    <span>
+                                        Frontend Developer/UI-UX Designer
+                                    </span>
                                 </div>
                             </div>
                         </div>
