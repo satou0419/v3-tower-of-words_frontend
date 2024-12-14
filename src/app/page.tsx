@@ -123,7 +123,10 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Anton Joseph Cruz</span>
-                                    <span>Leader/Backend Developer</span>
+                                    <span>
+                                        Leader/Fullstack Developer/UI-UX
+                                        Designer
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -139,7 +142,8 @@ export default function Landing() {
                                 <div className="landing__name">
                                     <span>Gil Joshua S. Yabao</span>
                                     <span>
-                                        Graphic Designer/Backend Developer
+                                        Graphic Designer/Backend Developer/UI-UX
+                                        Designer
                                     </span>
                                 </div>
                             </div>
@@ -155,7 +159,10 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Jhon Lorenz E. Pabroa</span>
-                                    <span>Secretary/Backend Developer</span>
+                                    <span>
+                                        Secretary/Backend Developer/Database
+                                        Manager
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -170,7 +177,7 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Rey Mar R. Segalle</span>
-                                    <span>UI Designer</span>
+                                    <span>UI-UX Designer</span>
                                 </div>
                             </div>
                         </div>
@@ -185,7 +192,10 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Trisha Mae E. Rivera</span>
-                                    <span>Documentation</span>
+                                    <span>
+                                        Frontend Developer/Documentation/QA
+                                        Tester
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -200,7 +210,9 @@ export default function Landing() {
 
                                 <div className="landing__name">
                                     <span>Rey Dante G. Garcia</span>
-                                    <span>Frontend Developer</span>
+                                    <span>
+                                        Frontend Developer/Project Manager
+                                    </span>
                                 </div>
                             </div>
                         </div>
